@@ -1,0 +1,1 @@
+# oyst-1click-magento
