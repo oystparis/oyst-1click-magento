@@ -16,7 +16,7 @@
 "API key length must be 64 characters","La longueur de la clé d'API doit être de 64 caractères"
 "API URL","URL API"
 "Warning: URL must finish by ""/""","Avertissement : l'URL doit se terminer par ""/"""
-"CDN URL","URL CDN"
+"JavaScript CDN URL","URL CDN JavaScript"
 "Notification URL","URL de notification"
 
 "1-Click Catalog Synchronization","1-Click Synchronisation du catalogue"

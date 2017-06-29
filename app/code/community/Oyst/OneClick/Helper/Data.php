@@ -99,4 +99,23 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
         }
         return true;
     }
+
+    /**
+     * Get OneClick javascript CDN URL
+     *
+     * @return string
+     */
+    public function getOneClickJs()
+    {
+        if ($this->_getConfig('enable')) {
+            $mode = $this->_getConfig('mode');
+            $oneclickjs = $this->_getConfig('oneclickjs_' . $mode . '_url') . '1click/script/script.min.js';
+
+            if (Oyst_OneClick_Model_Source_Mode::CUSTOM === $mode) {
+                $oneclickjs = $this->_getConfig('oneclickjs_url');
+            }
+
+            return '<script src="' . $oneclickjs . '"></script>';
+        }
+    }
 }

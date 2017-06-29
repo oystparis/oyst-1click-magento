@@ -171,13 +171,13 @@
                             </depends>
                         </api_url>
 
-                        <!-- cdn url -->
-                        <cdn_url translate="label">
-                            <label>CDN URL</label>
+                        <!-- javascript cdn url -->
+                        <oneclickjs_url translate="label">
+                            <label>JavaScript CDN URL</label>
                             <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
                             <frontend_type>text</frontend_type>
                             <validate>required-entry</validate>
-                            <config_path>oyst/oneclick/cdn_url</config_path>
+                            <config_path>oyst/oneclick/oneclickjs_url</config_path>
                             <sort_order>5</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -186,7 +186,7 @@
                                 <enable>1</enable>
                                 <mode>custom</mode>
                             </depends>
-                        </cdn_url>
+                        </oneclickjs_url>
 
                         <!-- notification url -->
                         <notification_url translate="label,comment">

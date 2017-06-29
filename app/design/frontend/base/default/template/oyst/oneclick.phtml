@@ -1,0 +1,47 @@
+<?php
+/**
+ * This file is part of Oyst_OneClick for Magento.
+ *
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @author Oyst <plugin@oyst.com> <@oyst>
+ * @category Oyst
+ * @package Oyst_OneClick
+ * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
+ */
+
+/**
+ * @var Oyst_OneClick_Block_OneClick $this
+ */
+?>
+<?php
+$product = $this->getProduct();
+$notificationUrl = $this->getNotificationUrl();
+?>
+
+<div id="oyst-1click-button"></div>
+<script>
+    window.__OYST__ = window.__OYST__ || {};
+    window.__OYST__.getOneClickURL = function (cb) {
+        $(function () {
+            var form = new FormData();
+            form.append("product_reference", <?php echo $product->getId(); ?>);
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "<?php echo $notificationUrl ?>",
+                "method": "POST",
+                "headers": {
+                    "cache-control": "no-cache"
+                },
+                "processData": false,
+                "contentType": false,
+                "mimeType": "multipart/form-data",
+                "data": form
+            };
+            $.ajax(settings).done(function (data) {
+                data = JSON.parse(data);
+                cb(null, data.url);
+            })
+        })
+    }
+</script>

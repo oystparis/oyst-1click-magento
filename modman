@@ -3,6 +3,7 @@ app/code/community/Oyst/OneClick                                app/code/communi
 app/design/adminhtml/default/default/layout/oyst_oneclick.xml   app/design/adminhtml/default/default/layout/oyst_oneclick.xml
 app/design/adminhtml/default/default/template/oyst/oneclick     app/design/adminhtml/default/default/template/oyst/oneclick
 app/design/frontend/base/default/layout/oyst_oneclick.xml       app/design/frontend/base/default/layout/oyst_oneclick.xml
+app/design/frontend/base/default/template/oyst                  app/design/frontend/base/default/template/oyst
 app/etc/modules/Oyst_OneClick.xml                               app/etc/modules/Oyst_OneClick.xml
 app/locale/en_US/Oyst_OneClick.csv                              app/locale/en_US/Oyst_OneClick.csv
 app/locale/fr_FR/Oyst_OneClick.csv                              app/locale/fr_FR/Oyst_OneClick.csv
