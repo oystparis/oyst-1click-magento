@@ -23,4 +23,17 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     {
         return Mage::registry('product');
     }
+
+    /**
+     * Return the shop payment url
+     * Used to get in server-to-server payment url
+     *
+     * @return mixed
+     */
+    public function getOneClickUrl()
+    {
+        $store = Mage::getSingleton('adminhtml/session_quote')->getStore();
+
+        return Mage::getStoreConfig('oyst/oneclick/payment_url', $store->getId());
+    }
 }

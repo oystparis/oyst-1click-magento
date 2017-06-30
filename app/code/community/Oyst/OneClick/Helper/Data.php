@@ -118,4 +118,14 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
             return '<script src="' . $oneclickjs . '"></script>';
         }
     }
+
+    /**
+     * Test and set default value
+     *
+     * @param string $var
+     * @param string $value
+     */
+    function defaultValue(&$var, $value) {
+        $var =  !isset($var) ? $value : $var;
+    }
 }
