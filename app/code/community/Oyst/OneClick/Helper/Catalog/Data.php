@@ -229,7 +229,11 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     {
         // Get list of product from params
         $collection = $this->_prepareCollection($params);
-        Mage::helper('oyst_oneclick')->log('Product Collection Sql : ' . $collection->getSelect()->__toString());
+
+        /** @var Oyst_OneClick_Helper_Data $oystHelper */
+        $oystHelper = Mage::helper('oyst_oneclick');
+
+        $oystHelper->log('Product Collection Sql : ' . $collection->getSelect()->__toString());
 
         // Format list into OystProduct
         list($productsFormated, $importedProductIds) = $this->_format($collection);
@@ -239,10 +243,12 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $catalogApi = Mage::getModel('oyst_oneclick/catalog_apiWrapper');
 
         try {
-            $response = $catalogApi->sendProduct($productsFormated);
-            Mage::helper('oyst_oneclick')->log($response);
+            $response = $catalogApi->postProducts($productsFormated);
+            $oystHelper->log($response);
         } catch (Exception $e) {
-            Zend_Debug::dump($e->getMessage());
+            Mage::logException($e);
+            $session = Mage::getSingleton('adminhtml/session');
+            $session->addError($oystHelper->__('Could not synchronize catalog. Ckeck log files.'));
         }
 
         return array($response, $importedProductIds);

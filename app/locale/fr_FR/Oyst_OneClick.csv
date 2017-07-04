@@ -32,3 +32,9 @@
 "1-Click has been installed.","1-Click a été correctement installé."
 "Click <a href=""%s"">here</a> to set up your settings.","Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
 "Remove this message","Retirer ce message"
+
+"Send configuration","Envoyer la configuration"
+"Delivery mode synchronization was successful.","La synchronisation des modes de livraison a réussi."
+"The synchronization of delivery modes failed.","La synchronisation des modes de livraison a raté."
+"Save the configuration before sending.","Sauvegarder la configuration avant l'envoi."
+"Bad Json formatting. Use JSON Validator to fix it. Then save the configuration.","Mise en forme Json incorrecte. Utilisez JSON Validator pour valider le JSON. Puis sauvegarder la configuration."

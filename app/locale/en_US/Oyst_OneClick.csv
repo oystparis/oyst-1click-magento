@@ -32,3 +32,9 @@
 "1-Click has been installed.","1-Click has been installed."
 "Click <a href=""%s"">here</a> to set up your settings.","Click <a href=""%s"">here</a> to set up your settings."
 "Remove this message","Remove this message"
+
+"Send configuration","Send configuration"
+"Delivery mode synchronization was successful.","Delivery mode synchronization was successful."
+"The synchronization of delivery modes failed.","The synchronization of delivery modes failed."
+"Save the configuration before sending.","Save the configuration before sending."
+"Bad Json formatting. Use JSON Validator to fix it. Then save the configuration.","Bad Json formatting. Use JSON Validator to fix it. Then save the configuration."

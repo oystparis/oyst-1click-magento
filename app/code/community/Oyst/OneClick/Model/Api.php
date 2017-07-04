@@ -73,6 +73,7 @@ class Oyst_OneClick_Model_Api
 
         /** @var $type $oystClient */
         $oystClient = OystApiClientFactory::getClient($type, $apiKey, $userAgent, $env, $url);
+        $oystClient->setNotifyUrl($this->_getConfig('notification_url'));
 
         return $oystClient;
     }
