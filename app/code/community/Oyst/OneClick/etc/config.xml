@@ -128,8 +128,8 @@
             </abstract>
             <oneclick>
                 <sdk_version>v1.2.0</sdk_version>
-                <cdn_staging_url>//cdn.stagging.oyst.eu</cdn_staging_url>
-                <cdn_prod_url>//cdn.oyst.com</cdn_prod_url>
+                <oneclickjs_preprod_url>//cdn.staging.oyst.eu/</oneclickjs_preprod_url>
+                <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
                 <catalog_sync_mode>notification</catalog_sync_mode><!-- notification | direct -->
                 <catalog_number_per_pack>1</catalog_number_per_pack>
             </oneclick>
