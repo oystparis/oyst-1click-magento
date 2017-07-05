@@ -22,6 +22,7 @@ $count = preg_match($pattern, $url, $params);
 // if result, we set default config in core_config_data, else, user must set manually in backoffice
 if ($count) {
     Mage::getConfig()->saveConfig('oyst/oneclick/notification_url', $url . 'oyst_oneclick/notifications/index/');
+    Mage::getConfig()->saveConfig('oyst/oneclick/payment_url', $url . 'oyst_oneclick/payment/url/');
 }
 
 $installer->endSetup();

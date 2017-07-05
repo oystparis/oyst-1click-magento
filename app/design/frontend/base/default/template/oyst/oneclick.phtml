@@ -15,20 +15,21 @@
 ?>
 <?php
 $product = $this->getProduct();
-$notificationUrl = $this->getNotificationUrl();
+$oneClickUrl = $this->getOneClickUrl();
 ?>
-
 <div id="oyst-1click-button"></div>
 <script>
     window.__OYST__ = window.__OYST__ || {};
     window.__OYST__.getOneClickURL = function (cb) {
-        $(function () {
+        jQuery(function () {
             var form = new FormData();
-            form.append("product_reference", <?php echo $product->getId(); ?>);
+            form.append("productRef", "<?php echo $product->getId(); ?>");
+            form.append("quantity", 1);
+            form.append("version", 2);
             var settings = {
                 "async": true,
                 "crossDomain": true,
-                "url": "<?php echo $notificationUrl ?>",
+                "url": "<?php echo $oneClickUrl ?>",
                 "method": "POST",
                 "headers": {
                     "cache-control": "no-cache"
@@ -38,10 +39,10 @@ $notificationUrl = $this->getNotificationUrl();
                 "mimeType": "multipart/form-data",
                 "data": form
             };
-            $.ajax(settings).done(function (data) {
+            jQuery.ajax(settings).done(function (data) {
                 data = JSON.parse(data);
                 cb(null, data.url);
             })
         })
-    }
+    };
 </script>
