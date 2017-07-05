@@ -11,33 +11,52 @@
 
 use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystCatalogApi;
-
+use Oyst\Classes\OystCarrier;
+use Oyst\Classes\OneClickShipment;
+use Oyst\Classes\ShipmentAmount;
 /**
  * API Model
  */
 class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
 {
+    /** @var Oyst_OneClick_Model_Api $_oystClient */
+    protected $_oystClient;
+
+    /** @var OystCatalogApi $_catalogApi */
+    protected $_catalogApi;
+
     protected $_type = OystApiClientFactory::ENTITY_CATALOG;
 
+    public function __construct()
+    {
+        $this->_oystClient = Mage::getModel('oyst_oneclick/api');
+        $this->_catalogApi = $this->_oystClient->getClient($this->_type);
+    }
+
     /**
-     * API send
+     * Get config from Magento
+     *
+     * @param string $code
+     *
+     * @return mixed
+     */
+    protected function _getConfig($code)
+    {
+        return Mage::getStoreConfig("oyst/oneclick/$code");
+    }
+
+    /**
+     * Send products
      *
      * @param $dataFormated
      *
      * @return mixed
      */
-    public function sendProduct($dataFormated)
+    public function postProducts($dataFormated)
     {
-        /** @var Oyst_OneClick_Model_Api $oystClient */
-        $oystClient = Mage::getModel('oyst_oneclick/api');
-
-        /** @var OystCatalogApi $catalogApi */
-        $catalogApi = $oystClient->getClient($this->_type);
-
-        $result = $catalogApi->postProducts($dataFormated);
-
         try {
-            $oystClient->validateResult($catalogApi);
+            $result = $this->_catalogApi->postProducts($dataFormated);
+            $this->_oystClient->validateResult($this->_catalogApi);
         } catch (Exception $e) {
             return $result;
         }
@@ -54,16 +73,56 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
      */
     public function notifyImport()
     {
-        /** @var Oyst_OneClick_Model_Api $oystClient */
-        $oystClient = Mage::getModel('oyst_oneclick/api');
+        try {
+            $result = $this->_catalogApi->notifyImport();
+            $this->_oystClient->validateResult($this->_catalogApi);
+        } catch (Exception $e) {
+            return $result;
+        }
 
-        /** @var OystCatalogApi $catalogApi */
-        $catalogApi = $oystClient->getClient($this->_type);
+        return $result;
+    }
 
-        $result = $catalogApi->notifyImport();
+
+    /**
+     * Send shipments
+     *
+     * @return mixed
+     */
+    public function postShipments()
+    {
+        $shipmentsConfig = json_decode($this->_getConfig('shipments_config'));
+
+        /** @var Oyst_OneClick_Helper_Data $oystHelper */
+        $oystHelper = Mage::helper('oyst_oneclick');
+
+        $oneClickShipments = array();
+        foreach ($shipmentsConfig['shipments'] as $shipmentConfig) {
+            $oneClickShipment = new OneClickShipment();
+
+            extract($shipmentConfig['amount']);
+            $oystHelper->defaultValue($follower);
+            $oystHelper->defaultValue($leader);
+            $oystHelper->defaultValue($currency);
+            $oneClickShipment->setAmount(new ShipmentAmount($follower, $leader, $currency));
+
+            extract($shipmentConfig['carrier']);
+            $oystHelper->defaultValue($id);
+            $oystHelper->defaultValue($name);
+            $oystHelper->defaultValue($type);
+            $oneClickShipment->setCarrier(new OystCarrier($id, $name, $type));
+
+            $oneClickShipment->setDelay($shipmentConfig['delay']);
+            $oneClickShipment->setFreeShipping($shipmentConfig['free_shipping']);
+            $oneClickShipment->setPrimary($shipmentConfig['primary']);
+            $oneClickShipment->setZones($shipmentConfig['zones']);
+
+            $oneClickShipments[] = $oneClickShipment;
+        }
 
         try {
-            $oystClient->validateResult($catalogApi);
+            $result = $this->_catalogApi->postShipments($oneClickShipments);
+            $this->_oystClient->validateResult($this->_catalogApi);
         } catch (Exception $e) {
             return $result;
         }

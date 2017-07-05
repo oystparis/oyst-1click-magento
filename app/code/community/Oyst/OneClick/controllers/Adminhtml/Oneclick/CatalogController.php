@@ -124,4 +124,18 @@ class Oyst_OneClick_Adminhtml_OneClick_CatalogController extends Mage_Adminhtml_
 
         return $this;
     }
+
+    /**
+     * Return Json data of the last/current import catalog batch
+     *
+     * @return mixed|string|void
+     */
+    public function postShipmentsAction()
+    {
+        /** @var Oyst_OneClick_Model_Catalog_ApiWrapper $catalogApi */
+        $catalogApi = Mage::getModel('oyst_oneclick/catalog_apiWrapper');
+
+        $response = $catalogApi->postShipments();
+        Mage::helper('oyst_oneclick')->log($response);
+    }
 }

@@ -203,6 +203,18 @@
                                 <enable>1</enable>
                             </depends>
                         </notification_url>
+
+                        <!-- shipments config -->
+                        <shipments_config translate="label,comment">
+                            <label>Shipments configuration</label>
+                            <frontend_model>oyst_oneclick/adminhtml_system_config_form_field_config</frontend_model>
+                            <frontend_type>textarea</frontend_type>
+                            <config_path>oyst/oneclick/shipments_config</config_path>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shipments_config>
                     </fields>
                 </oneclick>
             </groups>

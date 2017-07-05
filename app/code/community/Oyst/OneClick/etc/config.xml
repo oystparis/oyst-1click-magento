@@ -132,6 +132,30 @@
                 <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
                 <catalog_sync_mode>notification</catalog_sync_mode><!-- notification | direct -->
                 <catalog_number_per_pack>1</catalog_number_per_pack>
+                <shipments_config><![CDATA[{
+  "shipments": [
+    {
+      "free_shipping": 100,
+      "primary": true,
+      "amount": {
+        "currency": "EUR",
+        "follower": 1,
+        "leader": 4.9
+      },
+      "carrier": {
+        "id": "flatrate",
+        "name": "Flate Rate",
+        "type": "home_delivery"
+      },
+      "delay": 72,
+      "zones": [
+        "FR",
+        "EN",
+        "IE"
+      ]
+    }
+  ]
+}]]></shipments_config>
             </oneclick>
         </oyst>
         <oyst_oneclick>
