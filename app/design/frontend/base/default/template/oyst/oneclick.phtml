@@ -25,7 +25,6 @@ $oneClickUrl = $this->getOneClickUrl();
             var form = new FormData();
             form.append("productRef", "<?php echo $product->getId(); ?>");
             form.append("quantity", 1);
-            form.append("version", 2);
             var settings = {
                 "async": true,
                 "crossDomain": true,

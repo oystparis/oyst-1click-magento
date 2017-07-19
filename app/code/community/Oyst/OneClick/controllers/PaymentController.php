@@ -23,6 +23,8 @@ class Oyst_OneClick_PaymentController extends Mage_Core_Controller_Front_Action
     {
         $rawData = Mage::app()->getRequest()->getPost();
 
+        $rawData['version'] = Mage::getStoreConfig('oyst/oneclick/order_api_version');
+
         /** @var Oyst_OneClick_Model_OneClick_ApiWrapper $oneclickApi */
         $oneclickApi = Mage::getModel('oyst_oneclick/oneclick_apiWrapper');
 
