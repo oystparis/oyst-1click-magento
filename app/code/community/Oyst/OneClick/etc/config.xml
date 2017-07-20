@@ -127,7 +127,8 @@
                 <contact_email>plugin@oyst.com</contact_email>
             </abstract>
             <oneclick>
-                <sdk_version>v1.2.0</sdk_version>
+                <sdk_version>v1.3.0</sdk_version>
+                <order_api_version>2</order_api_version>
                 <oneclickjs_preprod_url>//cdn.staging.oyst.eu/</oneclickjs_preprod_url>
                 <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
                 <catalog_sync_mode>notification</catalog_sync_mode><!-- notification | direct -->
@@ -143,8 +144,8 @@
         "leader": 4.9
       },
       "carrier": {
-        "id": "flatrate",
-        "name": "Flate Rate",
+        "id": "flatrate_flatrate",
+        "name": "Flat Rate",
         "type": "home_delivery"
       },
       "delay": 72,
@@ -165,6 +166,20 @@
             </dev>
             <mode>prod</mode>
         </oyst_oneclick>
+        <payment>
+            <oyst_oneclick translate="title" module="oyst_oneclick">
+                <active>1</active>
+                <model>oyst_oneclick/payment_method_oneclick</model>
+                <title>Oyst 1-Click</title>
+                <sort_order>100</sort_order>
+                <shipping_type>shipping</shipping_type>
+                <allow_quest_checkout>0</allow_quest_checkout>
+                <change_address>0</change_address>
+                <show_in_payment_step_checkout>0</show_in_payment_step_checkout>
+                <show_outside_of_checkout>0</show_outside_of_checkout>
+                <allow_billing_agreement_wizard>0</allow_billing_agreement_wizard>
+            </oyst_oneclick>
+        </payment>
     </default>
     <phpunit>
         <suite>

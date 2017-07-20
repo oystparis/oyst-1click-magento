@@ -59,7 +59,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Field_Config extends Mage
                         method: "post", 
                         onComplete: function (xhr) {
                             Element.hide("loading-mask");
-                            if (xhr.status == 200) {
+                            if (200 == xhr.status && "" == xhr.responseText) {
                                 showMessage("' . $trad['postShimpentsSuccess'] . '", "success");
                             } else {
                                 showMessage("' . $trad['postShimpentsError'] . '", "error");
