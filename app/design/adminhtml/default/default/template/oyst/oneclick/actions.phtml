@@ -13,6 +13,11 @@
  * @see Oyst_OneClick_Block_Adminhtml_Actions Actions
  */
 
+$trad = array(
+    'syncCatalogError' => $this->__('An error occurred while synchronizing the catalog with 1-Click.'),
+    'syncCatalogSuccess' => $this->__('1-Click synchronization was successfully done.'),
+);
+
 /** @var Oyst_OneClick_Model_Notification $oystHelper */
 $oystNotification = Mage::getModel('oyst_oneclick/notification');
 $lastNotification = $oystNotification->getLastFinishedNotification('import');
@@ -51,7 +56,7 @@ $oystHelper = Mage::helper('oyst_oneclick');
         $buttonDisable = 'disabled';
     }
     ?>
-    <div id="syncbutton">
+    <div id="syncbutton" data-msg-error="<?php echo $trad['syncCatalogError'] ?>" data-msg-success="<?php echo $trad['syncCatalogSuccess'] ?>">
         <button data-sync="<?php echo $isSyncInProgress ?>" data-sync-url="<?php echo $this->getUrl('adminhtml/oneclick_actions/json'); ?>" onclick="goToThis('<?php echo $url ?>');" type="submit" class="scalable task" style="vertical-align: middle; <?php echo $buttonDisableCss ?>) repeat-x 0 100%;" <?php echo $buttonDisable ?>>
             <span><span><span><?php echo $buttonText ?></span></span></span>
         </button>
