@@ -113,22 +113,22 @@ class Oyst_OneClick_Model_Api
     /**
      * Check the content of API response
      *
-     * @param mixed $result
+     * @param mixed $response
      */
-    public function validateResult($result)
+    public function validateResult($response)
     {
-        /** @var OystCatalogApi $result */
-        if (200 !== $result->getLastHttpCode()) {
+        /** @var OystCatalogApi $response */
+        if (200 !== $response->getLastHttpCode()) {
             /** @var Oyst_OneClick_Helper_Data $oystHelper */
             $oystHelper = Mage::helper('oyst_oneclick');
 
-            $oystHelper->log('LastHttpCode: ' . $result->getLastHttpCode());
-            $oystHelper->log('LastError: ' . $result->getLastError());
-            $oystHelper->log('NotifyUrl: ' . $result->getNotifyUrl());
-            $oystHelper->log('Body: ' . $result->getBody());
-            $oystHelper->log('Response: ' . $result->getResponse());
+            $oystHelper->log('LastHttpCode: ' . $response->getLastHttpCode());
+            $oystHelper->log('LastError: ' . $response->getLastError());
+            $oystHelper->log('NotifyUrl: ' . $response->getNotifyUrl());
+            $oystHelper->log('Body: ' . $response->getBody());
+            $oystHelper->log('Response: ' . $response->getResponse());
 
-            throw Mage::exception('Oyst_OneClick', $result->getLastError(), $result->getLastHttpCode());
+            throw Mage::exception('Oyst_OneClick', $response->getLastError(), $response->getLastHttpCode());
         }
     }
 }

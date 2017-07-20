@@ -11,7 +11,7 @@ GitHub_Release=
 function download_sdk {
     RET=1
     while [ "$RET" -ne "0" ]; do
-        echo exit | curl -sL $GitHubProjectReleaseUrl -o $GitHub_Repo.tar.gz
+        echo exit | curl -sL $GitHubProjectReleaseUrl -o $GitHub_Repo-$GitHub_Release.tar.gz
         RET=$?
         if [ "$RET" -ne "0" ]; then
             echo "Retry download Oyst SDK."
@@ -29,14 +29,15 @@ if [ -n "$GitHub_Release" ]; then
     GitHubProjectReleaseUrl=https://api.github.com/repos/$GitHub_Owner/$GitHub_Repo/tarball/$GitHub_Release
 else
     # Latest release url
-    GitHubProjectReleaseUrl=$(curl -LsS --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 \
-     "https://api.github.com/repos/$GitHub_Owner/$GitHub_Repo/releases/latest" | grep 'tarball_url' | cut -d\" -f4)
+    GitHubProjectLatestReleasesUrl=https://api.github.com/repos/$GitHub_Owner/$GitHub_Repo/releases/latest
+    GitHubProjectReleaseUrl=$(curl -LsS --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GitHubProjectLatestReleasesUrl | grep 'tarball_url' | cut -d\" -f4)
+    GitHub_Release=$(curl -LsS --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GitHubProjectLatestReleasesUrl | grep 'tag_name' | cut -d\" -f4)
 fi
 
 download_sdk
-tar -xzf $GitHub_Repo.tar.gz
+tar -xzf $GitHub_Repo-$GitHub_Release.tar.gz
 mv $GitHub_Owner-$GitHub_Repo-* $GitHub_Repo
-echo "Oyst SDK is downloaded in $ScriptDir."
+echo "Oyst SDK $GitHub_Release is downloaded in $ScriptDir."
 
 # Composer Install
 cd $GitHub_Repo

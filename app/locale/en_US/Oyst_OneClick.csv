@@ -34,6 +34,7 @@
 "Remove this message","Remove this message"
 
 "Send configuration","Send configuration"
+"Amount are in Euros.<br>Use ""."" as decimal separator.<br>Save configuration before sending.","Amount are in Euros.<br>Use ""."" as decimal separator.<br>Save configuration before sending."
 "Delivery mode synchronization was successful.","Delivery mode synchronization was successful."
 "The synchronization of delivery modes failed.","The synchronization of delivery modes failed."
 "Save the configuration before sending.","Save the configuration before sending."

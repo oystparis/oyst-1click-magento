@@ -23,9 +23,11 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
     {
         $event = $this->getRequest()->getPost('event');
         $data = $this->getRequest()->getPost('data');
+
         // @codingStandardsIgnoreLine
         $post = (array)Zend_Json::decode(str_replace("\n", '', file_get_contents('php://input')));
-        //set the type and data from notification url
+
+        // Set the type and data from notification url
         if (empty($event) && empty($data) && !empty($post)) {
             if (array_key_exists('event', $post)) {
                 $event = $post['event'];
@@ -46,9 +48,9 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
             return $this->badRequest();
         }
 
-        if ($event == 'catalog.import') {
+        if ('catalog.import' == $event) {
             $helperName = 'oyst_oneclick/catalog_data';
-        } elseif ($event == 'notification.newOrder') {
+        } elseif ('order.v2.new' == $event) {
             $helperName = 'oyst_oneclick/order_data';
         }
 

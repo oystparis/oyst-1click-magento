@@ -13,11 +13,23 @@ use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystOneClickApi;
 
 /**
- * API Model
+ * OneClick ApiWrapper Model
  */
 class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
 {
+    /** @var Oyst_OneClick_Model_Api $_oystClient */
+    protected $_oystClient;
+
+    /** @var OystOneClickApi $_oneClickApi */
+    protected $_oneClickApi;
+
     protected $_type = OystApiClientFactory::ENTITY_ONECLICK;
+
+    public function __construct()
+    {
+        $this->_oystClient = Mage::getModel('oyst_oneclick/api');
+        $this->_oneClickApi = $this->_oystClient->getClient($this->_type);
+    }
 
     /**
      * API send
@@ -29,30 +41,24 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
     public function send($dataFormated)
     {
         /** @var Oyst_OneClick_Model_Api $oystClient */
-        $oystClient = Mage::getModel('oyst_oneclick/api');
-
-        /** @var OystOneClickApi $oneclickApi */
-        $oneclickApi = $oystClient->getClient($this->_type);
-
         extract($dataFormated);
 
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');
 
-        $oystHelper->defaultValue($productRef);
+        $oystHelper->defaultValue($productRef, null);
         $oystHelper->defaultValue($quantity, 1);
         $oystHelper->defaultValue($variationRef, null);
         $oystHelper->defaultValue($user, null);
         $oystHelper->defaultValue($version, 1);
 
-        $result = $oneclickApi->authorizeOrder($productRef, $quantity, $variationRef, $user, $version);
-
         try {
-            $oystClient->validateResult($oneclickApi);
+            $response = $this->_oneClickApi->authorizeOrder($productRef, $quantity, $variationRef, $user, $version);
+            $this->_oystClient->validateResult($this->_oneClickApi);
         } catch (Exception $e) {
-            return $result;
+            Mage::logException($e);
         }
 
-        return $result;
+        return $response;
     }
 }

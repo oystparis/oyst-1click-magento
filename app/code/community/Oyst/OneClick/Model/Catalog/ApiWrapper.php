@@ -14,8 +14,9 @@ use Oyst\Api\OystCatalogApi;
 use Oyst\Classes\OystCarrier;
 use Oyst\Classes\OneClickShipment;
 use Oyst\Classes\ShipmentAmount;
+
 /**
- * API Model
+ * Catalog ApiWrapper Model
  */
 class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
 {
@@ -55,13 +56,13 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
     public function postProducts($dataFormated)
     {
         try {
-            $result = $this->_catalogApi->postProducts($dataFormated);
+            $response = $this->_catalogApi->postProducts($dataFormated);
             $this->_oystClient->validateResult($this->_catalogApi);
         } catch (Exception $e) {
-            return $result;
+            Mage::logException($e);
         }
 
-        return $result;
+        return $response;
     }
 
     /**
@@ -74,13 +75,13 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
     public function notifyImport()
     {
         try {
-            $result = $this->_catalogApi->notifyImport();
+            $response = $this->_catalogApi->notifyImport();
             $this->_oystClient->validateResult($this->_catalogApi);
         } catch (Exception $e) {
-            return $result;
+            Mage::logException($e);
         }
 
-        return $result;
+        return $response;
     }
 
 
@@ -91,7 +92,7 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
      */
     public function postShipments()
     {
-        $shipmentsConfig = json_decode($this->_getConfig('shipments_config'));
+        $shipmentsConfig = json_decode($this->_getConfig('shipments_config'), true);
 
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');
@@ -101,15 +102,15 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
             $oneClickShipment = new OneClickShipment();
 
             extract($shipmentConfig['amount']);
-            $oystHelper->defaultValue($follower);
-            $oystHelper->defaultValue($leader);
-            $oystHelper->defaultValue($currency);
+            $oystHelper->defaultValue($follower, null);
+            $oystHelper->defaultValue($leader, null);
+            $oystHelper->defaultValue($currency, null);
             $oneClickShipment->setAmount(new ShipmentAmount($follower, $leader, $currency));
 
             extract($shipmentConfig['carrier']);
-            $oystHelper->defaultValue($id);
-            $oystHelper->defaultValue($name);
-            $oystHelper->defaultValue($type);
+            $oystHelper->defaultValue($id, null);
+            $oystHelper->defaultValue($name, null);
+            $oystHelper->defaultValue($type, null);
             $oneClickShipment->setCarrier(new OystCarrier($id, $name, $type));
 
             $oneClickShipment->setDelay($shipmentConfig['delay']);
@@ -121,12 +122,12 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
         }
 
         try {
-            $result = $this->_catalogApi->postShipments($oneClickShipments);
+            $response = $this->_catalogApi->postShipments($oneClickShipments);
             $this->_oystClient->validateResult($this->_catalogApi);
         } catch (Exception $e) {
-            return $result;
+            Mage::logException($e);
         }
 
-        return $result;
+        return $response;
     }
 }
