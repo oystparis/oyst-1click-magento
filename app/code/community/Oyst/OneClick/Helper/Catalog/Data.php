@@ -52,36 +52,6 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
             'type' => 'string',
             'required' => true
         ),
-        'qty' => array(
-            'lib_method' => 'setAvailableQuantity',
-            'type' => 'int',
-        ),
-    );
-
-    /**
-     * Translate Sku attribute for Oyst <-> Magento
-     *
-     * @var array
-     */
-    protected $_skusAttrTranslate = array(
-        'id' => array(
-            'lib_method' => 'setRef',
-            'type' => 'string',
-            'required' => true
-        ),
-        'name' => array(
-            'lib_method' => 'setTitle',
-            'type' => 'string',
-            'required' => true
-        ),
-        'description' => array(
-            'lib_method' => 'setDescription',
-            'type' => 'string',
-        ),
-        'qty' => array(
-            'lib_method' => 'setAvailableQuantity',
-            'type' => 'int',
-        ),
         'weight' => array(
             'lib_method' => 'setWeight',
             'type' => 'string',
@@ -292,7 +262,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         // $collection->addPriceData();
         $collection->joinField('qty', 'cataloginventory/stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
         $collection->joinField('backorders', 'cataloginventory/stock_item', 'backorders', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
-//        $collection->joinField('min_sale_qty', 'cataloginventory/stock_item', 'min_sale_qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
+        $collection->joinField('min_sale_qty', 'cataloginventory/stock_item', 'min_sale_qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
         $collection->getSelect()->order('FIELD(type_id, "configurable", "grouped", "simple", "downloadable", "virtual", "bundle")');
 
         Mage::helper('oyst_oneclick')->log('The catalog product size is: ' . $collection->getSize());
@@ -365,7 +335,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
                     $oystProduct->{$simpleAttribute['lib_method']}($data);
                 }
             } elseif (array_key_exists('required', $simpleAttribute) && $simpleAttribute['required'] == true) {
-                if ($simpleAttribute['type'] == 'jsonb') {
+                if ('jsonb' == $simpleAttribute['type']) {
                     $data = '{}';
                 } else {
                     $data = 'Empty';
@@ -421,7 +391,12 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $product->unsRequestPath();
         $oystProduct->setUrl($product->getUrlInStore(array('_ignore_category' => true)));
         $oystProduct->setMaterialized(($product->isVirtual()) ? true : false);
-        $oystProduct->setAvailableQuantity((int)$product->getStockItem()->getQty());
+
+        $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
+        $oystProduct->setAvailableQuantity((int)$stock->getQty());
+
+        $productActive = ('1' === $product->getStatus()) ? true : false;
+        $oystProduct->setActive($productActive);
 
         // @TODO add verification of news_from_date/news_to_date
         $oystProduct->setCondition('new');
@@ -451,7 +426,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         if (empty($oystCategory)) {
             // Category is mandatory
-            $oystCategory[] = new OystCategory(0, 'none');
+            $oystCategory[] = new OystCategory('none', 'none');
         }
 
         $oystProduct->setCategories($oystCategory);
