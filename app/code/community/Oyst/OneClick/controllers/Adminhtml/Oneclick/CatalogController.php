@@ -78,11 +78,12 @@ class Oyst_OneClick_Adminhtml_OneClick_CatalogController extends Mage_Adminhtml_
                 if (isset($response['import_id'])) {
                     $this->_getSession()->addNotice(
                         Mage::helper('oyst_oneclick')->__(
-                            'Syncing request in progress (import id: %s)',
-                            $response['import_id'])
+                            'Syncing request in progress (import id: %s). <a href="#" onclick="goToThis(\'%s\');">Refresh</a>.',
+                            $response['import_id'],
+                            Mage::helper('adminhtml')->getUrl('adminhtml/oneclick_actions/index'))
                     );
                 } else {
-                    $this->_getSession()->addError(Mage::helper('oyst_oneclick')->__('An error was occurred'));
+                    $this->_getSession()->addError(Mage::helper('oyst_oneclick')->__('An error has occurred.'));
                 }
             } catch (Exception $e) {
                 Mage::logException($e);
@@ -110,10 +111,10 @@ class Oyst_OneClick_Adminhtml_OneClick_CatalogController extends Mage_Adminhtml_
                 // For direct push product
                 if (isset($result['imported']) && $result['imported'] >= 1) {
                     $this->_getSession()->addSuccess(
-                        Mage::helper('oyst_oneclick')->__('The sync was successfully done')
+                        Mage::helper('oyst_oneclick')->__('1-Click synchronization was successfully done.')
                     );
                 } else {
-                    $this->_getSession()->addError(Mage::helper('oyst_oneclick')->__('An error was occurred'));
+                    $this->_getSession()->addError(Mage::helper('oyst_oneclick')->__('An error occurred while synchronizing the catalog with 1-Click.'));
                 }
             } catch (Exception $e) {
                 Mage::logException($e);

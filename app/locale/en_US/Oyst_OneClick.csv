@@ -23,9 +23,10 @@
 "To sync catalog products with Oyst, click here:","To sync catalog products with Oyst, click here:"
 "Go to setup your API key","Go to setup your API key"
 "Catalog product sync","Catalog product sync"
-"Syncing request in progress (import id: %s)","Syncing request in progress (import id: %s)"
-"The sync was successfully done","The sync was successfully done"
-"An error was occurred","An error was occurred"
+"Syncing request in progress (import id: %s). <a href=""#"" onclick=""goToThis('%s');"">Refresh</a>.","Syncing request in progress (import id: %s). <a href=""#"" onclick=""goToThis('%s');"">Refresh</a>."
+"An error has occurred.","An error has occurred."
+"1-Click synchronization was successfully done.","1-Click synchronization was successfully done."
+"An error occurred while synchronizing the catalog with 1-Click.","An error occurred while synchronizing the catalog with 1-Click."
 
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings."
 
