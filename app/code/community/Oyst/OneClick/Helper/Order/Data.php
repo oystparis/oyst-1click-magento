@@ -437,17 +437,50 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Cancel Order
+     * Cancel and Refund Order
      *
      * @param Mage_Sales_Model_Order $order
      *
      * @return array
      */
-    public function cancel($order)
+    public function cancelAndRefund($order)
     {
-        /** @var Oyst_OneClick_Helper_Data $helper */
-        $helper = Mage::helper('oyst_oneclick');
+        if ($order->canCreditmemo()) {
+            $invoiceId = $order->getInvoiceCollection()->getFirstItem()->getId();
 
-        Mage::throwException($helper->__('Not implemented yet.'));
+            if (!$invoiceId) {
+                return $this;
+            }
+
+            $invoice = Mage::getModel('sales/order_invoice')->load($invoiceId)->setOrder($order);
+            $service = Mage::getModel('sales/service_order', $order);
+            $creditmemo = $service->prepareInvoiceCreditmemo($invoice);
+
+            $backToStock = array();
+            foreach ($order->getAllItems() as $item) {
+                $backToStock[$item->getId()] = true;
+            }
+
+            // Process back to stock flags
+            foreach ($creditmemo->getAllItems() as $creditmemoItem) {
+                if (Mage::helper('cataloginventory')->isAutoReturnEnabled()) {
+                    $creditmemoItem->setBackToStock(true);
+                } else {
+                    $creditmemoItem->setBackToStock(false);
+                }
+            }
+
+            $creditmemo->register();
+
+            $transactionSave = Mage::getModel('core/resource_transaction')
+                ->addObject($creditmemo)
+                ->addObject($creditmemo->getOrder());
+
+            if ($creditmemo->getInvoice()) {
+                $transactionSave->addObject($creditmemo->getInvoice());
+            }
+
+            $transactionSave->save();
+        }
     }
 }
