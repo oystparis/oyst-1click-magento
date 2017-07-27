@@ -40,3 +40,5 @@
 "The synchronization of delivery modes failed.","The synchronization of delivery modes failed."
 "Save the configuration before sending.","Save the configuration before sending."
 "Bad Json formatting. Use JSON Validator to fix it. Then save the configuration.","Bad Json formatting. Use JSON Validator to fix it. Then save the configuration."
+
+"Cancel and Refund","Cancel and Refund"

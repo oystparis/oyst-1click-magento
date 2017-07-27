@@ -40,3 +40,5 @@
 "The synchronization of delivery modes failed.","La synchronisation des modes de livraison a raté."
 "Save the configuration before sending.","Sauvegarder la configuration avant l'envoi."
 "Bad Json formatting. Use JSON Validator to fix it. Then save the configuration.","Mise en forme Json incorrecte. Utilisez JSON Validator pour valider le JSON. Puis sauvegarder la configuration."
+
+"Cancel and Refund","Annulation et Remboursement"

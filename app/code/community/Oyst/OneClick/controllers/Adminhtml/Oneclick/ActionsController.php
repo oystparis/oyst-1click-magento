@@ -103,4 +103,29 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
         $this->getResponse()->setHeader('Content-type', 'application/json');
         $this->getResponse()->setBody($jsonData);
     }
+
+
+    /**
+     * Cancel and refund order
+     */
+    public function cancelAndRefundAction()
+    {
+        $orderId = $this->getRequest()->getParam('order_id');
+
+        /** @var Mage_Sales_Model_Order $order */
+        $order = Mage::getModel('sales/order')->load($orderId);
+
+        if (empty($order->getOystOrderId())) {
+            Mage::throwException('Order has no OystOrderId');
+        }
+
+        /** @var Oyst_OneClick_Helper_Order_Data $helper */
+        $helper = Mage::helper('oyst_oneclick/order_data');
+
+        $helper->cancelAndRefund($order);
+
+        //$this->_redirectReferer();
+        Mage::app()->getResponse()->setRedirect($_SERVER['HTTP_REFERER']);
+        Mage::app()->getResponse()->sendResponse();
+    }
 }
