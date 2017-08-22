@@ -11,6 +11,7 @@
 
 use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystCatalogApi;
+use Oyst\Classes\OystUserAgent;
 
 /**
  * API Model
@@ -88,12 +89,9 @@ class Oyst_OneClick_Model_Api
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');
 
-        return sprintf(
-            'Magento v%s - %s v%s',
-            Mage::getVersion(),
-            $oystHelper->getModuleName(),
-            $oystHelper->getModuleVersion()
-        );
+        $userAgent = new OystUserAgent('Magento', $oystHelper->getModuleVersion(), Mage::getVersion(), 'php', phpversion());
+
+        return $userAgent;
     }
 
     /**
