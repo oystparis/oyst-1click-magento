@@ -153,14 +153,31 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
         $quote = Mage::getModel('sales/quote')->setIsSuperMode(true);
         $quote->setCreatedAt($params['created_at']);
         $quote->setUpdatedAt($params['created_at']);
+        $quote->setOystOrderId($params['id']);
+
         foreach ($params['items'] as $item) {
             /** @var Mage_Catalog_Model_Product $product */
             $product = Mage::getModel('catalog/product')->load($item['product_reference']);
             $product->setTitle($item['product']['title']);
             $product->setPrice($helper->getHumanAmount($item['product_amount']['value']));
-            $quote->addProduct($product, $item['quantity']);
-            //$quote->addProduct($product, new Varien_Object(array('qty' => $item['quantity'])));
-            $quote->setOystOrderId($params['id']);
+
+            $request = array('qty' => $item['quantity']);
+
+            if (!is_null($item['product']['variations']['informations'])) {
+                $superAttr = array();
+                foreach ($item['product']['variations']['informations'] as $attributeCode => $attributeValue) {
+                    $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $attributeCode);
+
+                    $attributeCodeId = $attribute->getId();
+                    if (!is_null($attributeCodeId)) {
+                        $superAttr[$attributeCodeId] = $attribute->getSource()->getOptionId($attributeValue);
+                    }
+                }
+
+                $request = array_merge($request, array('super_attribute' => $superAttr));
+            }
+
+            $quote->addProduct($product, new Varien_Object($request));
         }
 
         return $quote;
@@ -350,7 +367,7 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
             $order = $service->submit();
         }
         if (!$order) {
-            throw new Exception('service unable to create order based on given quote');
+            throw new Exception('Service unable to create order based on given quote.');
         }
 
         return $order;
@@ -386,8 +403,8 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
                         Oyst_OneClick_Model_Order_ApiWrapper::STATUS_ACCEPTED)
                 )->save();
 
+                $invIncrementIDs = array();
                 if ($order->hasInvoices()) {
-                    $invIncrementIDs = array();
                     foreach ($order->getInvoiceCollection() as $inv) {
                         $invIncrementIDs[] = $inv->getIncrementId();
                     }
