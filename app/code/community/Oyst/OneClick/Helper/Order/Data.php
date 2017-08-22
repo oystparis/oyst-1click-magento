@@ -469,8 +469,13 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
                 return $this;
             }
 
+            /** @var Mage_Sales_Model_Order_Invoice $invoice */
             $invoice = Mage::getModel('sales/order_invoice')->load($invoiceId)->setOrder($order);
+
+            /** @var Mage_Sales_Model_Service_Order $service */
             $service = Mage::getModel('sales/service_order', $order);
+
+            /** @var Mage_Sales_Model_Order_Creditmemo $creditmemo */
             $creditmemo = $service->prepareInvoiceCreditmemo($invoice);
 
             $backToStock = array();
@@ -489,6 +494,7 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
 
             $creditmemo->register();
 
+            /** @var Mage_Core_Model_Resource_Transaction $transactionSave */
             $transactionSave = Mage::getModel('core/resource_transaction')
                 ->addObject($creditmemo)
                 ->addObject($creditmemo->getOrder());
