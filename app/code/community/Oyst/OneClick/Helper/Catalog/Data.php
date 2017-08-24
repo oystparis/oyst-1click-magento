@@ -12,7 +12,6 @@
 use Oyst\Classes\OystCategory;
 use Oyst\Classes\OystPrice;
 use Oyst\Classes\OystProduct;
-use Oyst\Classes\OystSize;
 
 /**
  * Catalog Helper
@@ -56,7 +55,34 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
             'lib_method' => 'setWeight',
             'type' => 'string',
         ),
+
+        'ean' => array(
+            'lib_method' => 'setEan',
+            'type' => 'string',
+        ),
+        'isbn' => array(
+            'lib_method' => 'setEan',
+            'type' => 'string',
+        ),
+        'upc' => array(
+            'lib_method' => 'setEan',
+            'type' => 'string',
+        ),
     );
+
+    /**
+     * Custom attribute code
+     *
+     * @var array
+     */
+    protected $_customAttributesCode = array('color', 'size');
+
+    /**
+     * Variations attribute code
+     *
+     * @var array
+     */
+    protected $_variationAttributesCode = array('price', 'final_price');
 
     /**
      * Object construct
@@ -288,19 +314,21 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
             $oystProduct = new OystProduct();
 
             // Get product attributes
-            $attributes = $this->_getAttributes($product, $this->_productAttrTranslate, $oystProduct);
+            $this->_getAttributes($product, $this->_productAttrTranslate, $oystProduct);
             $importedProductIds[] = $product->getId();
             if ($product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
-                // Get sku attributes
-                $productIds = $this->_addVariations($product, $attributes, $oystProduct);
+                $this->_addVariations($product, $oystProduct);
             }
 
             // Add others attributes
             $this->_addAmount($product, $oystProduct);
             $this->_addComplexAttributes($product, $oystProduct);
-            $this->_addCategories($product, $oystProduct);
+            if (empty($product->getParentId())) {
+                $this->_addCategories($product, $oystProduct);
+            }
             $this->_addImages($product, $oystProduct);
             $this->_addRelatedProducts($product, $oystProduct);
+            $this->_addCustomAttributes($product, $oystProduct);
 
             $productsFormated[] = $oystProduct;
         }
@@ -314,14 +342,11 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      * Get product attributes
      *
      * @param Mage_Catalog_Model_Product $product
-     * @param array $translateAttribute $this->_skusAttrTranslate || $this->_productAttrTranslate
+     * @param array $translateAttribute
      * @param OystProduct $oystProduct
-     *
-     * @return array
      */
     protected function _getAttributes(Mage_Catalog_Model_Product $product, Array $translateAttribute, OystProduct &$oystProduct)
     {
-        $attributes = array();
         foreach ($translateAttribute as $attributeCode => $simpleAttribute) {
             if ($data = $product->getData($attributeCode)) {
                 if ($simpleAttribute['type'] == 'jsonb') {
@@ -331,6 +356,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
                 } else {
                     settype($data, $simpleAttribute['type']);
                 }
+
                 if ($data !== null) {
                     $oystProduct->{$simpleAttribute['lib_method']}($data);
                 }
@@ -343,8 +369,6 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
                 }
             }
         }
-
-        return $attributes;
     }
 
     /**
@@ -355,10 +379,19 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      *
      * @return array
      */
-    protected function _addVariations(Mage_Catalog_Model_Product $product, &$attributes, OystProduct &$oystProduct)
+    protected function _addVariations(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
+        $requiredAttributesCode = array_merge(
+            array_keys($this->_productAttrTranslate), $this->_customAttributesCode, $this->_variationAttributesCode
+        );
+
+        $requiredAttributesIds = array();
+        foreach ($requiredAttributesCode as $requiredAttributeCode) {
+            $requiredAttributesIds[] = Mage::getResourceModel('eav/entity_attribute')->getIdByCode('catalog_product', $requiredAttributeCode);
+        }
+
         /** @var Mage_Catalog_Model_Product_Type_Configurable $childProducts */
-        $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $product);
+        $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts($requiredAttributesIds, $product);
 
         list($variationProductsFormated, $importedProductIds) = $this->_format($childProducts);
 
@@ -371,7 +404,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      * @param Mage_Catalog_Model_Product $product
      * @param OystProduct $oystProduct
      */
-    public function _addAmount(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
+    protected function _addAmount(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
         $price = $product->getPrice();
         $oystPrice = new OystPrice($price, 'EUR');
@@ -400,6 +433,10 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         // @TODO add verification of news_from_date/news_to_date
         $oystProduct->setCondition('new');
+
+        // @TODO add verification for discount price
+        $isDiscounted = false;
+        $oystProduct->setDiscounted($isDiscounted);
     }
 
     /**
@@ -469,6 +506,28 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     {
         if ($relatedProducts = $product->getRelatedProductIds()) {
             $oystProduct->setRelatedProducts($relatedProducts);
+        }
+    }
+
+    /**
+     * Add custom attributes to product
+     *
+     * @param Mage_Catalog_Model_Product $product
+     * @param OystProduct $oystProduct
+     */
+    protected function _addCustomAttributes(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
+    {
+        foreach ($this->_customAttributesCode as $attributeCode) {
+            $value = '';
+            if (($attribute = $product->getResource()->getAttribute($attributeCode)) && !is_null($product->getData($attributeCode))) {
+                $value = $attribute->getFrontend()->getValue($product);
+            }
+
+            if (empty($value)) {
+                continue;
+            }
+
+            $oystProduct->addInformation($attributeCode, $value);
         }
     }
 }
