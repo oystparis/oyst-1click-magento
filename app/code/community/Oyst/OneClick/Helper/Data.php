@@ -126,7 +126,7 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
      * @param string $value
      */
     public function defaultValue(&$var, $value) {
-        $var =  !isset($var) ? $value : $var;
+        $var = !isset($var) ? $value : $var;
     }
 
 

@@ -69,7 +69,7 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
         $this->getResponse()->setBody(Zend_Json::encode($result));
     }
 
-    private function badRequest()
+    public function badRequest()
     {
         $this->getResponse()
             ->clearHeaders()

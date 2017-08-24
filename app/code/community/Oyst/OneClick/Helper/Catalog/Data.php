@@ -129,7 +129,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         // If last notification finish but with same id
         if ($lastNotification->getId() && $lastNotification->getImportRemaining() <= 0) {
-            $response['totalCount'] = Mage::getModel('catalog/product')->getCollection()->count();
+            $response['totalCount'] = Mage::getModel('catalog/product')->getCollection()->getSize();
             $response['import_id'] = $data['import_id'];
             $response['remaining'] = 0;
 
@@ -175,7 +175,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         // Set param for db
         $response['import_id'] = $data['import_id'];
-        $response['totalCount'] = Mage::getModel('catalog/product')->getCollection()->count();
+        $response['totalCount'] = Mage::getModel('catalog/product')->getCollection()->getSize();
         $done = $response['totalCount'] - count($excludedProductsId) - count($importedProductIds);
         $response['remaining'] = ($done <= 0) ? 0 : $done;
 
@@ -431,7 +431,6 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $productActive = ('1' === $product->getStatus()) ? true : false;
         $oystProduct->setActive($productActive);
 
-        // @TODO add verification of news_from_date/news_to_date
         $oystProduct->setCondition('new');
 
         // @TODO add verification for discount price

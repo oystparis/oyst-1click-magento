@@ -63,7 +63,7 @@ install:
 
 script:
   - mkdir -p build/logs
-  - curl --retry 2 --retry-delay 5 -f -sSL https://raw.githubusercontent.com/AOEpeople/MageTestStand/master/setup.sh | bash
+  - curl --retry 2 --retry-delay 5 -H "Authorization":"token $GITHUB_TOKEN" -f -sSL https://raw.githubusercontent.com/AOEpeople/MageTestStand/master/setup.sh | bash
   ## PHP CodeSniffer disable error on exit
   - vendor/bin/phpcs --config-set ignore_warnings_on_exit 1
   ## PHP Copy/Paste Detector
@@ -79,7 +79,7 @@ script:
   - vendor/bin/phploc $TRAVIS_BUILD_DIR --exclude bin --exclude lib --exclude vendor
   ## LINT
   - find $TRAVIS_BUILD_DIR/app -type f -name \*.php -exec php -l {} \;
-  ## Magento EQP Coding Standard
+  ## Magento EQP Code Sniffer Coding Standard
   - if [[ "${TRAVIS_PHP_VERSION:0:3}" = "5.6" ]]; then
       composer config http-basic.repo.magento.com $MAGENTO_REPO_PUBLIC_KEY $MAGENTO_REPO_PRIVATE_KEY &&
       composer require --no-interaction magento/marketplace-eqp &&
@@ -88,9 +88,9 @@ script:
       cp -a vendor/magento/marketplace-eqp/Utils vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/Utils &&
       vendor/bin/phpcs --standard=MEQP1 --extensions=php,phtml --ignore=lib,vendor --severity=10 $TRAVIS_BUILD_DIR;
     fi
-  ##  Magento ECG  Code Sniffer Coding Standard
-#  - cp -a vendor/magento-ecg/coding-standard/Ecg vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/Ecg &&
-#    vendor/bin/phpcs --standard=Ecg --extensions=php,phtml --ignore=lib,vendor $TRAVIS_BUILD_DIR;
+  ##  Magento ECG Code Sniffer Coding Standard
+  - cp -a vendor/magento-ecg/coding-standard/Ecg vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/Ecg &&
+    vendor/bin/phpcs --standard=Ecg --extensions=php,phtml --ignore=lib,vendor $TRAVIS_BUILD_DIR;
   ## PHPCompatibility
   - vendor/bin/phpcs --config-set installed_paths vendor/wimg/php-compatibility && vendor/bin/phpcs --standard=PHPCompatibility --extensions=php,phtml --ignore=lib,vendor --runtime-set testVersion ${TRAVIS_PHP_VERSION:0:3} $TRAVIS_BUILD_DIR
 

@@ -2,16 +2,16 @@
 
 # Download release of Oyst PHP SDK
 
-GitHub_Owner="oystparis"
-GitHub_Repo="oyst-php"
-GitHub_Release=
+GITHUB_OWNER="oystparis"
+GITHUB_REPO="oyst-php"
+GITHUB_RELEASE=
 
 # Do not change under this comment
 
 function download_sdk {
     RET=1
     while [ "$RET" -ne "0" ]; do
-        echo exit | curl -sL $GitHubProjectReleaseUrl -o $GitHub_Repo-$GitHub_Release.tar.gz
+        echo exit | curl -sL $GITHUB_PROJECT_RELEASE_URL -o $GITHUB_REPO-$GITHUB_RELEASE.tar.gz
         RET=$?
         if [ "$RET" -ne "0" ]; then
             echo "Retry download Oyst SDK."
@@ -20,27 +20,27 @@ function download_sdk {
     done
 }
 
-ScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $ScriptDir
-rm -rf $GitHub_Owner-$GitHub_Repo-* $GitHub_Repo $GitHub_Repo.tar.gz
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $SCRIPT_DIR
+rm -rf $GITHUB_OWNER-$GITHUB_REPO-* $GITHUB_REPO $GITHUB_REPO.tar.gz
 
-if [ -n "$GitHub_Release" ]; then
+if [ -n "$GITHUB_RELEASE" ]; then
     # Specified release url
-    GitHubProjectReleaseUrl=https://api.github.com/repos/$GitHub_Owner/$GitHub_Repo/tarball/$GitHub_Release
+    GITHUB_PROJECT_RELEASE_URL=https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/tarball/$GITHUB_RELEASE
 else
     # Latest release url
-    GitHubProjectLatestReleasesUrl=https://api.github.com/repos/$GitHub_Owner/$GitHub_Repo/releases/latest
-    GitHubProjectReleaseUrl=$(curl -LsS --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GitHubProjectLatestReleasesUrl | grep 'tarball_url' | cut -d\" -f4)
-    GitHub_Release=$(curl -LsS --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GitHubProjectLatestReleasesUrl | grep 'tag_name' | cut -d\" -f4)
+    GITHUB_PROJECT_LATEST_RELEASES_URL=https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/latest
+    GITHUB_PROJECT_RELEASE_URL=$(curl -LsS --connect-timeout 5 -H "Authorization":"token $GITHUB_TOKEN" --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GITHUB_PROJECT_LATEST_RELEASES_URL | grep 'tarball_url' | cut -d\" -f4)
+    GITHUB_RELEASE=$(curl -LsS --connect-timeout 5 -H "Authorization":"token $GITHUB_TOKEN" --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GITHUB_PROJECT_LATEST_RELEASES_URL | grep 'tag_name' | cut -d\" -f4)
 fi
 
 download_sdk
-tar -xzf $GitHub_Repo-$GitHub_Release.tar.gz
-mv $GitHub_Owner-$GitHub_Repo-* $GitHub_Repo
-echo "Oyst SDK $GitHub_Release is downloaded in $ScriptDir."
+tar -xzf $GITHUB_REPO-$GITHUB_RELEASE.tar.gz
+mv $GITHUB_OWNER-$GITHUB_REPO-* $GITHUB_REPO
+echo "Oyst SDK $GITHUB_RELEASE is downloaded in $SCRIPT_DIR."
 
 # Composer Install
-cd $GitHub_Repo
+cd $GITHUB_REPO
 composer install --no-dev
 echo "Composer install done."
 exit 0

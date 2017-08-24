@@ -163,7 +163,9 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
 
             $request = array('qty' => $item['quantity']);
 
-            if (!is_null($item['product']['variations']['informations'])) {
+            if (isset($item['product']['variations']) &&
+                isset($item['product']['variations']['informations']) &&
+                !is_null($item['product']['variations']['informations'])) {
                 $superAttr = array();
                 foreach ($item['product']['variations']['informations'] as $attributeCode => $attributeValue) {
                     $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $attributeCode);
@@ -463,7 +465,7 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
     public function cancelAndRefund($order)
     {
         if ($order->canCreditmemo()) {
-            $invoiceId = $order->getInvoiceCollection()->getFirstItem()->getId();
+            $invoiceId = $order->getInvoiceCollection()->clear()->setPageSize(1)->getFirstItem()->getId();
 
             if (!$invoiceId) {
                 return $this;
