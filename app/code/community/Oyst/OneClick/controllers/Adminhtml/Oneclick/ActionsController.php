@@ -122,6 +122,15 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
         /** @var Oyst_OneClick_Helper_Order_Data $helper */
         $helper = Mage::helper('oyst_oneclick/order_data');
 
+        /** @var Oyst_OneClick_Model_Order_ApiWrapper $orderApi */
+        $orderApi = Mage::getModel('oyst_oneclick/order_apiWrapper');
+
+        try {
+            $response = $orderApi->updateOrder($order->getOystOrderId(), 'refunded');
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+
         $helper->cancelAndRefund($order);
 
         //$this->_redirectReferer();
