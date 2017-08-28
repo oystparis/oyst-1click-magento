@@ -163,6 +163,16 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
 
             $request = array('qty' => $item['quantity']);
 
+            if (Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE == $product->getTypeId()) {
+                $links = Mage::getModel('downloadable/product_type')->getLinks($product);
+                $linkId = 0;
+                foreach ($links as $link) {
+                    $linkId = $link->getId();
+                }
+
+                $request = array_merge($request, array('links' => $linkId));
+            }
+
             if (isset($item['product']['variations']) &&
                 isset($item['product']['variations']['informations']) &&
                 !is_null($item['product']['variations']['informations'])) {
@@ -359,17 +369,22 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
      */
     protected function _submitQuote($quote)
     {
-        /** @var Mage_Sales_Model_Service_Quote $service */
-        $service = Mage::getModel('sales/service_quote', $quote);
-        $order = false;
-        if (method_exists($service, 'submitAll')) {
-            $service->submitAll();
-            $order = $service->getOrder();
-        } else {
-            $order = $service->submit();
-        }
-        if (!$order) {
-            throw new Exception('Service unable to create order based on given quote.');
+        try {
+            /** @var Mage_Sales_Model_Service_Quote $service */
+            $service = Mage::getModel('sales/service_quote', $quote);
+            $order = false;
+            if (method_exists($service, 'submitAll')) {
+                $service->submitAll();
+                $order = $service->getOrder();
+            } else {
+                $order = $service->submit();
+            }
+            if (!$order) {
+                throw new Exception('Service unable to create order based on given quote.');
+            }
+            $order->save();
+        } catch (Exception $e) {
+            Mage::helper('oyst_oneclick')->log('Error create order: ' . $e->getMessage());
         }
 
         return $order;
