@@ -127,16 +127,42 @@ class Oyst_OneClick_Adminhtml_OneClick_CatalogController extends Mage_Adminhtml_
     }
 
     /**
-     * Return Json data of the last/current import catalog batch
+     * Return Json data of the shipment export
      *
      * @return mixed|string|void
      */
     public function postShipmentsAction()
     {
+        $this->getResponse()->setHeader('Content-type', 'application/json');
+
+        if (!$isAjax = Mage::app()->getRequest()->isAjax()) {
+            $this->getResponse()->setHttpResponseCode(401);
+            $this->getResponse()->setBody(
+                Mage::helper('core')->jsonEncode(array('error' => array('message' => 'not ajax request')))
+            );
+
+            return $this;
+        }
+
         /** @var Oyst_OneClick_Model_Catalog_ApiWrapper $catalogApi */
         $catalogApi = Mage::getModel('oyst_oneclick/catalog_apiWrapper');
 
         $response = $catalogApi->postShipments();
+
+        $this->getResponse()->setHttpResponseCode(200);
+
+        /** @var OystCatalogApi $response */
+        if (200 !== $response->getLastHttpCode()) {
+            $this->getResponse()->setHttpResponseCode($response->getLastHttpCode());
+            $this->getResponse()->setBody(
+                Mage::helper('core')->jsonEncode(
+                    array('error' => array('code' => $response->getLastHttpCode(), 'message' => $response->getLastError()))
+                )
+            );
+        }
+
         Mage::helper('oyst_oneclick')->log($response);
+
+        return $this;
     }
 }

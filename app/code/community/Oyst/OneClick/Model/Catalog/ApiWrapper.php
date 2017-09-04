@@ -134,10 +134,12 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
         try {
             $response = $this->_catalogApi->postShipments($oneClickShipments);
             $this->_oystClient->validateResult($this->_catalogApi);
+
+            return $this->_catalogApi;
         } catch (Exception $e) {
             Mage::logException($e);
         }
 
-        return $response;
+        return $this->_catalogApi;
     }
 }

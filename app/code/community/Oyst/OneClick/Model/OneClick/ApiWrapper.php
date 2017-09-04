@@ -52,7 +52,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
         $oystHelper->defaultValue($dataFormated['variationRef'], null);
         $oystHelper->defaultValue($dataFormated['user'], null);
         $oystHelper->defaultValue($dataFormated['version'], 1);
-        $oystHelper->defaultValue($dataFormated['isMaterialized'], 1);
+        $oystHelper->defaultValue($dataFormated['isMaterialized'], true);
 
         Mage::helper('oyst_oneclick')->log('$dataFormated');
         Mage::helper('oyst_oneclick')->log($dataFormated);
