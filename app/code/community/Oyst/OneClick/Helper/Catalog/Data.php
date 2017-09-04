@@ -19,6 +19,20 @@ use Oyst\Classes\OystProduct;
 class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 {
     /**
+     * Supported type of product
+     *
+     * @var array
+     */
+    public $_supportedProductTypes = array(
+        Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+        Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
+        //Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+        //Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
+        //Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL,
+        //Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE,
+    );
+
+    /**
      * Translate Product attribute for Oyst <-> Magento
      *
      * @var array
@@ -137,7 +151,11 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         // If last notification finish but with same id
         if ($lastNotification->getId() && $lastNotification->getImportRemaining() <= 0) {
-            $response['totalCount'] = Mage::getModel('catalog/product')->getCollection()->getSize();
+            $totalCount = Mage::getModel('catalog/product')
+                ->getCollection()
+                ->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes))
+                ->getSize();
+            $response['totalCount'] = $totalCount;
             $response['import_id'] = $data['import_id'];
             $response['remaining'] = 0;
 
@@ -183,7 +201,11 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         // Set param for db
         $response['import_id'] = $data['import_id'];
-        $response['totalCount'] = Mage::getModel('catalog/product')->getCollection()->getSize();
+        $totalCount = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes))
+            ->getSize();
+        $response['totalCount'] = $totalCount;
         $done = $response['totalCount'] - count($excludedProductsId) - count($importedProductIds);
         $response['remaining'] = ($done <= 0) ? 0 : $done;
 
@@ -271,7 +293,10 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     {
         // Construct param for list in db request
         /** @var Mage_Catalog_Model_Resource_Product_Collection $collection */
-        $collection = Mage::getModel('catalog/product')->getCollection()->addAttributeToSelect('*');
+        $collection = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes))
+            ->addAttributeToSelect('*');
 
         if (!empty($params) && is_array($params)) {
             if (!empty($params["product_id_include_filter"])) {
@@ -299,7 +324,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $collection->joinField('qty', 'cataloginventory/stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
         $collection->joinField('backorders', 'cataloginventory/stock_item', 'backorders', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
         $collection->joinField('min_sale_qty', 'cataloginventory/stock_item', 'min_sale_qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
-        $collection->getSelect()->order('FIELD(type_id, "configurable", "grouped", "simple", "downloadable", "virtual", "bundle")');
+        $collection->getSelect()->order('FIELD(type_id, ' . ('"'.implode('","', $this->_supportedProductTypes).'"') . ')');
 
         Mage::helper('oyst_oneclick')->log('The catalog product size is: ' . $collection->getSize());
 
@@ -609,5 +634,22 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
             $oystProduct->addInformation($attributeCode, $value);
         }
+    }
+
+    /**
+     * Check if product is supported
+     *
+     * @param Mage_Catalog_Model_Product $product
+     *
+     * @return bool
+     */
+    public function isSupportedProduct($product)
+    {
+        $supported = false;
+        if (in_array($product->getTypeId(), $this->_supportedProductTypes)) {
+            $supported = true;
+        }
+
+        return $supported;
     }
 }

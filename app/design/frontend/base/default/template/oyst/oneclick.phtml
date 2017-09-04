@@ -14,77 +14,86 @@
  */
 ?>
 <?php
+/** @var Mage_Catalog_Model_Product $product */
 $product = $this->getProduct();
+
+/** @var string $oneClickUrl */
 $oneClickUrl = $this->getOneClickUrl();
+
+/** @var Oyst_OneClick_Helper_Catalog_Data $catalogHelper */
+$catalogHelper = Mage::helper('oyst_oneclick/catalog_data');
+
+if ($catalogHelper->isSupportedProduct($product)) :
 ?>
-<div id="oyst-1click-button"></div>
-<script>
-    function getSimpleProductId() {
-        if (typeof(spConfig) == 'undefined') {
-            return null;
+    <div id="oyst-1click-button"></div>
+    <script>
+        function getSimpleProductId() {
+            if (typeof(spConfig) == 'undefined') {
+                return null;
+            }
+
+            var productCandidates = [];
+
+            jQuery.each(spConfig.settings, function (selectIndex, select) {
+                var attributeId = select.id.replace('attribute', '');
+                var selectedValue = select.options[select.selectedIndex].value;
+
+                jQuery.each(spConfig.config.attributes[attributeId].options, function (optionIndex, option) {
+                    if (option.id == selectedValue) {
+                        var optionProducts = option.products;
+
+                        if (0 == productCandidates.length) {
+                            productCandidates = optionProducts;
+                        } else {
+                            var productIntersection = [];
+                            jQuery.each(optionProducts, function (productIndex, productId) {
+                                if (-1 < productCandidates.indexOf(productId)) {
+                                    productIntersection.push(productId);
+                                }
+                            });
+                            productCandidates = productIntersection;
+                        }
+                    }
+                });
+            });
+
+            return (1 == productCandidates.length) ? productCandidates[0] : null;
         }
 
-        var productCandidates = [];
+        (function() {
+            window.__OYST__ = window.__OYST__ || {};
+            window.__OYST__.getOneClickURL = function (cb) {
+                jQuery(function () {
+                    var productAddToCartForm = new VarienForm('product_addtocart_form');
+                    var qty = $("qty").value ? $("qty").value : 1;
 
-        jQuery.each(spConfig.settings, function (selectIndex, select) {
-            var attributeId = select.id.replace('attribute', '');
-            var selectedValue = select.options[select.selectedIndex].value;
+                    var form = new FormData();
+                    form.append("productRef", <?php echo $product->getId(); ?>);
+                    form.append("variationRef", getSimpleProductId());
+                    form.append("quantity", qty);
 
-            jQuery.each(spConfig.config.attributes[attributeId].options, function (optionIndex, option) {
-                if (option.id == selectedValue) {
-                    var optionProducts = option.products;
+                    var settings = {
+                        "async": true,
+                        "crossDomain": true,
+                        "url": "<?php echo $oneClickUrl ?>",
+                        "method": "POST",
+                        "headers": {
+                            "cache-control": "no-cache"
+                        },
+                        "processData": false,
+                        "contentType": false,
+                        "mimeType": "multipart/form-data",
+                        "data": form
+                    };
+                    var formValidation = productAddToCartForm.validator.validate() ?
+                        null : productAddToCartForm.validator.validate();
 
-                    if (0 == productCandidates.length) {
-                        productCandidates = optionProducts;
-                    } else {
-                        var productIntersection = [];
-                        jQuery.each(optionProducts, function (productIndex, productId) {
-                            if (-1 < productCandidates.indexOf(productId)) {
-                                productIntersection.push(productId);
-                            }
-                        });
-                        productCandidates = productIntersection;
-                    }
-                }
-            });
-        });
-
-        return (1 == productCandidates.length) ? productCandidates[0] : null;
-    }
-
-    (function() {
-        window.__OYST__ = window.__OYST__ || {};
-        window.__OYST__.getOneClickURL = function (cb) {
-            jQuery(function () {
-                var productAddToCartForm = new VarienForm('product_addtocart_form');
-                var qty = $("qty").value ? $("qty").value : 1;
-
-                var form = new FormData();
-                form.append("productRef", <?php echo $product->getId(); ?>);
-                form.append("variationRef", getSimpleProductId());
-                form.append("quantity", qty);
-
-                var settings = {
-                    "async": true,
-                    "crossDomain": true,
-                    "url": "<?php echo $oneClickUrl ?>",
-                    "method": "POST",
-                    "headers": {
-                        "cache-control": "no-cache"
-                    },
-                    "processData": false,
-                    "contentType": false,
-                    "mimeType": "multipart/form-data",
-                    "data": form
-                };
-                var formValidation = productAddToCartForm.validator.validate() ?
-                    null : productAddToCartForm.validator.validate();
-
-                jQuery.ajax(settings).done(function (data) {
-                    data = JSON.parse(data);
-                    cb(formValidation, data.url);
-                });
-            })
-        };
-    })();
-</script>
+                    jQuery.ajax(settings).done(function (data) {
+                        data = JSON.parse(data);
+                        cb(formValidation, data.url);
+                    });
+                })
+            };
+        })();
+    </script>
+<?php endif; ?>
