@@ -64,8 +64,7 @@ if ($catalogHelper->isSupportedProduct($product)) :
             window.__OYST__ = window.__OYST__ || {};
             window.__OYST__.getOneClickURL = function (cb) {
                 jQuery(function () {
-                    var productAddToCartForm = new VarienForm('product_addtocart_form');
-                    var qty = $("qty").value ? $("qty").value : 1;
+                    var qty = $$("input[name='qty']")[0].value ? $$("input[name='qty']")[0].value : 1;
 
                     var form = new FormData();
                     form.append("productRef", <?php echo $product->getId(); ?>);
@@ -90,7 +89,7 @@ if ($catalogHelper->isSupportedProduct($product)) :
 
                     jQuery.ajax(settings).done(function (data) {
                         data = JSON.parse(data);
-                        cb(formValidation, data.url);
+                        cb(null, data.url);
                     });
                 })
             };

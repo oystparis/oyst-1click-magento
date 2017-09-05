@@ -23,7 +23,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      *
      * @var array
      */
-    public $_supportedProductTypes = array(
+    protected $_supportedProductTypes = array(
         Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
         Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
         //Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
@@ -92,12 +92,18 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     protected $_customAttributesCode = array('color', 'size');
 
     /**
+     * Selected system attribute code
+     *
+     * @var array
+     */
+    protected $_systemSelectedAttributesCode = array();
+
+    /**
      * Variations attribute code
      *
      * @var array
      */
     protected $_variationAttributesCode = array('price', 'final_price');
-
 
     /**
      * User defined attribute code
@@ -261,7 +267,8 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         $oystHelper->log('Product Collection Sql : ' . $collection->getSelect()->__toString());
 
-        $this->_userDefinedAttributeCode = $this->getUserDefinedAttributeCode();
+        $this->_userDefinedAttributeCode = $this->_getUserDefinedAttributeCode();
+        $this->_systemSelectedAttributesCode = $this->_getSystemSelectedAttributeCode();
 
         // Format list into OystProduct
         list($productsFormated, $importedProductIds) = $this->_format($collection);
@@ -383,25 +390,44 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      *
      * @return array
      */
-    protected function getUserDefinedAttributeCode()
+    protected function _getUserDefinedAttributeCode()
     {
         /** @var Mage_Eav_Model_Entity_Type $type */
         $type = Mage::getModel('eav/entity_type');
         $type->loadByCode('catalog_product');
 
-        /* @var $attr Mage_Eav_Model_Resource_Entity_Attribute_Collection */
-        $attributeCollection = Mage::getResourceModel('eav/entity_attribute_collection')
+        /* @var $attrs Mage_Eav_Model_Resource_Entity_Attribute_Collection */
+        $attrs = Mage::getResourceModel('eav/entity_attribute_collection')
             ->setEntityTypeFilter($type)
             ->addFieldToFilter('is_user_defined', true)
             ->addFieldToFilter('frontend_input', 'select');
 
         $userDefinedAttributeCode = array();
         /* @var $attribute Mage_Eav_Model_Entity_Attribute */
-        foreach ($attributeCollection as $attribute) {
+        foreach ($attrs as $attribute) {
             $userDefinedAttributeCode[] = $attribute->getAttributeCode();
         }
 
         return $userDefinedAttributeCode;
+    }
+
+    /**
+     * Return the selected system attributes code
+     *
+     * @return array
+     */
+    protected function _getSystemSelectedAttributeCode()
+    {
+        $code = 'systemattributes';
+        $attrsIds = explode(',', Mage::getStoreConfig("oyst/oneclick/$code"));
+
+        $systempSelectedAttributeCode = array();
+        foreach ($attrsIds as $attributeId) {
+            $attribute = Mage::getModel('eav/entity_attribute')->load($attributeId);
+            $systempSelectedAttributeCode[] = $attribute->getAttributeCode();
+        }
+
+        return $systempSelectedAttributeCode;
     }
 
     /**
@@ -412,7 +438,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      *
      * @return array
      */
-    public function getProductAttributeCodeDefinedByUser(Mage_Catalog_Model_Product $product, $userDefinedAttributeCode)
+    protected function _getProductAttributeCodeDefinedByUser(Mage_Catalog_Model_Product $product, $userDefinedAttributeCode)
     {
         $attributes = $product->getAttributes();
         $productAttributeCode = array();
@@ -423,7 +449,8 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $attributeCodes = array_unique(
             array_merge(
                 array_intersect($userDefinedAttributeCode, $productAttributeCode),
-                $this->_customAttributesCode
+                $this->_customAttributesCode,
+                $this->_systemSelectedAttributesCode
             )
         );
 
@@ -473,12 +500,13 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      */
     protected function _addVariations(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
-        $productAttributeCodeDefinedByUser = $this->getProductAttributeCodeDefinedByUser($product, $this->_userDefinedAttributeCode);
+        $productAttributeCodeDefinedByUser = $this->_getProductAttributeCodeDefinedByUser($product, $this->_userDefinedAttributeCode);
 
         $requiredAttributesCode = array_unique(
             array_merge(
                 array_keys($this->_productAttrTranslate),
                 $this->_customAttributesCode,
+                $this->_systemSelectedAttributesCode,
                 $productAttributeCodeDefinedByUser,
                 $this->_variationAttributesCode
             )
@@ -616,7 +644,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      */
     protected function _addCustomAttributesToInformation(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
-        $attributeCodes = $this->getProductAttributeCodeDefinedByUser($product, $this->_userDefinedAttributeCode);
+        $attributeCodes = $this->_getProductAttributeCodeDefinedByUser($product, $this->_userDefinedAttributeCode);
 
         Mage::helper('oyst_oneclick')->log('$attributeCodes');
         Mage::helper('oyst_oneclick')->log($attributeCodes);

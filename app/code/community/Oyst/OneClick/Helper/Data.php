@@ -111,7 +111,7 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
             $mode = $this->_getConfig('mode');
             $oneclickjs = $this->_getConfig('oneclickjs_' . $mode . '_url') . '1click/script/script.min.js';
 
-            if (Oyst_OneClick_Model_Source_Mode::CUSTOM === $mode) {
+            if (Oyst_OneClick_Model_System_Source_Config_Mode::CUSTOM === $mode) {
                 $oneclickjs = $this->_getConfig('oneclickjs_url');
             }
 
