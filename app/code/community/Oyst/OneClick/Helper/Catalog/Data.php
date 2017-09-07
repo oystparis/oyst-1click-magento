@@ -19,6 +19,20 @@ use Oyst\Classes\OystProduct;
 class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 {
     /**
+     * Supported type of product
+     *
+     * @var array
+     */
+    protected $_supportedProductTypes = array(
+        Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+        Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
+        //Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+        //Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
+        //Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL,
+        //Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE,
+    );
+
+    /**
      * Translate Product attribute for Oyst <-> Magento
      *
      * @var array
@@ -78,11 +92,25 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     protected $_customAttributesCode = array('color', 'size');
 
     /**
+     * Selected system attribute code
+     *
+     * @var array
+     */
+    protected $_systemSelectedAttributesCode = array();
+
+    /**
      * Variations attribute code
      *
      * @var array
      */
     protected $_variationAttributesCode = array('price', 'final_price');
+
+    /**
+     * User defined attribute code
+     *
+     * @var array
+     */
+    protected $_userDefinedAttributeCode = array();
 
     /**
      * Object construct
@@ -129,7 +157,11 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         // If last notification finish but with same id
         if ($lastNotification->getId() && $lastNotification->getImportRemaining() <= 0) {
-            $response['totalCount'] = Mage::getModel('catalog/product')->getCollection()->count();
+            $totalCount = Mage::getModel('catalog/product')
+                ->getCollection()
+                ->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes))
+                ->getSize();
+            $response['totalCount'] = $totalCount;
             $response['import_id'] = $data['import_id'];
             $response['remaining'] = 0;
 
@@ -175,7 +207,11 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         // Set param for db
         $response['import_id'] = $data['import_id'];
-        $response['totalCount'] = Mage::getModel('catalog/product')->getCollection()->count();
+        $totalCount = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes))
+            ->getSize();
+        $response['totalCount'] = $totalCount;
         $done = $response['totalCount'] - count($excludedProductsId) - count($importedProductIds);
         $response['remaining'] = ($done <= 0) ? 0 : $done;
 
@@ -231,6 +267,9 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         $oystHelper->log('Product Collection Sql : ' . $collection->getSelect()->__toString());
 
+        $this->_userDefinedAttributeCode = $this->_getUserDefinedAttributeCode();
+        $this->_systemSelectedAttributesCode = $this->_getSystemSelectedAttributeCode();
+
         // Format list into OystProduct
         list($productsFormated, $importedProductIds) = $this->_format($collection);
 
@@ -261,7 +300,10 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     {
         // Construct param for list in db request
         /** @var Mage_Catalog_Model_Resource_Product_Collection $collection */
-        $collection = Mage::getModel('catalog/product')->getCollection()->addAttributeToSelect('*');
+        $collection = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes))
+            ->addAttributeToSelect('*');
 
         if (!empty($params) && is_array($params)) {
             if (!empty($params["product_id_include_filter"])) {
@@ -289,7 +331,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $collection->joinField('qty', 'cataloginventory/stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
         $collection->joinField('backorders', 'cataloginventory/stock_item', 'backorders', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
         $collection->joinField('min_sale_qty', 'cataloginventory/stock_item', 'min_sale_qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
-        $collection->getSelect()->order('FIELD(type_id, "configurable", "grouped", "simple", "downloadable", "virtual", "bundle")');
+        $collection->getSelect()->order('FIELD(type_id, ' . ('"'.implode('","', $this->_supportedProductTypes).'"') . ')');
 
         Mage::helper('oyst_oneclick')->log('The catalog product size is: ' . $collection->getSize());
 
@@ -313,10 +355,15 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
             $oystProduct = new OystProduct();
 
+            if (is_array($products)) {
+                // This need to be improved
+                $product = Mage::getModel('catalog/product')->load($product->getId());
+            }
+
             // Get product attributes
             $this->_getAttributes($product, $this->_productAttrTranslate, $oystProduct);
             $importedProductIds[] = $product->getId();
-            if ($product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
+            if ($product->isConfigurable()) {
                 $this->_addVariations($product, $oystProduct);
             }
 
@@ -328,7 +375,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
             }
             $this->_addImages($product, $oystProduct);
             $this->_addRelatedProducts($product, $oystProduct);
-            $this->_addCustomAttributes($product, $oystProduct);
+            $this->_addCustomAttributesToInformation($product, $oystProduct);
 
             $productsFormated[] = $oystProduct;
         }
@@ -336,6 +383,78 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $importedProductIds = array_unique($importedProductIds);
 
         return array($productsFormated, $importedProductIds);
+    }
+
+    /**
+     * Return the user defined attributes code
+     *
+     * @return array
+     */
+    protected function _getUserDefinedAttributeCode()
+    {
+        /** @var Mage_Eav_Model_Entity_Type $type */
+        $type = Mage::getModel('eav/entity_type');
+        $type->loadByCode('catalog_product');
+
+        /* @var $attrs Mage_Eav_Model_Resource_Entity_Attribute_Collection */
+        $attrs = Mage::getResourceModel('eav/entity_attribute_collection')
+            ->setEntityTypeFilter($type)
+            ->addFieldToFilter('is_user_defined', true)
+            ->addFieldToFilter('frontend_input', 'select');
+
+        $userDefinedAttributeCode = array();
+        /* @var $attribute Mage_Eav_Model_Entity_Attribute */
+        foreach ($attrs as $attribute) {
+            $userDefinedAttributeCode[] = $attribute->getAttributeCode();
+        }
+
+        return $userDefinedAttributeCode;
+    }
+
+    /**
+     * Return the selected system attributes code
+     *
+     * @return array
+     */
+    protected function _getSystemSelectedAttributeCode()
+    {
+        $code = 'systemattributes';
+        $attrsIds = explode(',', Mage::getStoreConfig("oyst/oneclick/$code"));
+
+        $systempSelectedAttributeCode = array();
+        foreach ($attrsIds as $attributeId) {
+            $attribute = Mage::getModel('eav/entity_attribute')->load($attributeId);
+            $systempSelectedAttributeCode[] = $attribute->getAttributeCode();
+        }
+
+        return $systempSelectedAttributeCode;
+    }
+
+    /**
+     * Return the product attributes code defined by user
+     *
+     * @param Mage_Catalog_Model_Product $product
+     * @param $userDefinedAttributeCode
+     *
+     * @return array
+     */
+    protected function _getProductAttributeCodeDefinedByUser(Mage_Catalog_Model_Product $product, $userDefinedAttributeCode)
+    {
+        $attributes = $product->getAttributes();
+        $productAttributeCode = array();
+        foreach ($attributes as $attribute) {
+            $productAttributeCode[] = $attribute->getAttributeCode();
+        }
+
+        $attributeCodes = array_unique(
+            array_merge(
+                array_intersect($userDefinedAttributeCode, $productAttributeCode),
+                $this->_customAttributesCode,
+                $this->_systemSelectedAttributesCode
+            )
+        );
+
+        return $attributeCodes;
     }
 
     /**
@@ -381,8 +500,16 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      */
     protected function _addVariations(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
-        $requiredAttributesCode = array_merge(
-            array_keys($this->_productAttrTranslate), $this->_customAttributesCode, $this->_variationAttributesCode
+        $productAttributeCodeDefinedByUser = $this->_getProductAttributeCodeDefinedByUser($product, $this->_userDefinedAttributeCode);
+
+        $requiredAttributesCode = array_unique(
+            array_merge(
+                array_keys($this->_productAttrTranslate),
+                $this->_customAttributesCode,
+                $this->_systemSelectedAttributesCode,
+                $productAttributeCodeDefinedByUser,
+                $this->_variationAttributesCode
+            )
         );
 
         $requiredAttributesIds = array();
@@ -423,7 +550,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $oystProduct->setUrl($product->getUrlModel()->getProductUrl($product));
         $product->unsRequestPath();
         $oystProduct->setUrl($product->getUrlInStore(array('_ignore_category' => true)));
-        $oystProduct->setMaterialized(($product->isVirtual()) ? true : false);
+        $oystProduct->setMaterialized(!($product->isVirtual()) ? true : false);
 
         $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
         $oystProduct->setAvailableQuantity((int)$stock->getQty());
@@ -431,7 +558,6 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $productActive = ('1' === $product->getStatus()) ? true : false;
         $oystProduct->setActive($productActive);
 
-        // @TODO add verification of news_from_date/news_to_date
         $oystProduct->setCondition('new');
 
         // @TODO add verification for discount price
@@ -510,14 +636,20 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Add custom attributes to product
+     * Add custom attributes to product information field
      *
      * @param Mage_Catalog_Model_Product $product
      * @param OystProduct $oystProduct
+     * @param Array $userDefinedAttributeCode
      */
-    protected function _addCustomAttributes(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
+    protected function _addCustomAttributesToInformation(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
-        foreach ($this->_customAttributesCode as $attributeCode) {
+        $attributeCodes = $this->_getProductAttributeCodeDefinedByUser($product, $this->_userDefinedAttributeCode);
+
+        Mage::helper('oyst_oneclick')->log('$attributeCodes');
+        Mage::helper('oyst_oneclick')->log($attributeCodes);
+
+        foreach($attributeCodes as $attributeCode) {
             $value = '';
             if (($attribute = $product->getResource()->getAttribute($attributeCode)) && !is_null($product->getData($attributeCode))) {
                 $value = $attribute->getFrontend()->getValue($product);
@@ -526,8 +658,26 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
             if (empty($value)) {
                 continue;
             }
+            Mage::helper('oyst_oneclick')->log('$attributeCode: ' . $attributeCode . '  -  value: ' . $value);
 
             $oystProduct->addInformation($attributeCode, $value);
         }
+    }
+
+    /**
+     * Check if product is supported
+     *
+     * @param Mage_Catalog_Model_Product $product
+     *
+     * @return bool
+     */
+    public function isSupportedProduct($product)
+    {
+        $supported = false;
+        if (in_array($product->getTypeId(), $this->_supportedProductTypes)) {
+            $supported = true;
+        }
+
+        return $supported;
     }
 }

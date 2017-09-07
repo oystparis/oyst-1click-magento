@@ -40,20 +40,33 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
      */
     public function send($dataFormated)
     {
-        /** @var Oyst_OneClick_Model_Api $oystClient */
-        extract($dataFormated);
+        /** @var Mage_Catalog_Model_Product $product */
+        $product = Mage::getModel('catalog/product')->load($dataFormated['productRef']);
+        $dataFormated['isMaterialized'] = !$product->isVirtual();
 
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');
 
-        $oystHelper->defaultValue($productRef, null);
-        $oystHelper->defaultValue($quantity, 1);
-        $oystHelper->defaultValue($variationRef, null);
-        $oystHelper->defaultValue($user, null);
-        $oystHelper->defaultValue($version, 1);
+        $oystHelper->defaultValue($dataFormated['productRef'], null);
+        $oystHelper->defaultValue($dataFormated['quantity'], 1);
+        $oystHelper->defaultValue($dataFormated['variationRef'], null);
+        $oystHelper->defaultValue($dataFormated['user'], null);
+        $oystHelper->defaultValue($dataFormated['version'], 1);
+        $oystHelper->defaultValue($dataFormated['isMaterialized'], true);
+
+        Mage::helper('oyst_oneclick')->log('$dataFormated');
+        Mage::helper('oyst_oneclick')->log($dataFormated);
 
         try {
-            $response = $this->_oneClickApi->authorizeOrder($productRef, $quantity, $variationRef, $user, $version);
+            $response = $this->_oneClickApi->authorizeOrder(
+                $dataFormated['productRef'],
+                $dataFormated['quantity'],
+                $dataFormated['variationRef'],
+                $dataFormated['user'],
+                $dataFormated['version'],
+                null,
+                $dataFormated['isMaterialized']
+            );
             $this->_oystClient->validateResult($this->_oneClickApi);
         } catch (Exception $e) {
             Mage::logException($e);

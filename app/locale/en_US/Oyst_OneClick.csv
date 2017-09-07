@@ -19,6 +19,8 @@
 "JavaScript CDN URL","JavaScript CDN URL"
 "Notification URL","Notification URL"
 "Shipments configuration","Shipments configuration"
+"Export select system attributes as custom options","Export select system attributes as custom options"
+"Color, size and all other custom attributes are exported by default.","Color, size and all other custom attributes are exported by default."
 
 "1-Click Catalog Synchronization","1-Click Catalog Synchronization"
 "To sync catalog products with Oyst, click here:","To sync catalog products with Oyst, click here:"

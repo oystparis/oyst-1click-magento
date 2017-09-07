@@ -104,7 +104,6 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
         $this->getResponse()->setBody($jsonData);
     }
 
-
     /**
      * Cancel and refund order
      */
@@ -134,7 +133,7 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
         $helper->cancelAndRefund($order);
 
         //$this->_redirectReferer();
-        Mage::app()->getResponse()->setRedirect($_SERVER['HTTP_REFERER']);
+        Mage::app()->getResponse()->setRedirect($this->getRequest()->getServer('HTTP_REFERER'));
         Mage::app()->getResponse()->sendResponse();
     }
 }

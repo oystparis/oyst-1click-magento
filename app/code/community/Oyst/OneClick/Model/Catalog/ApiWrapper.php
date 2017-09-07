@@ -101,17 +101,27 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
         foreach ($shipmentsConfig['shipments'] as $shipmentConfig) {
             $oneClickShipment = new OneClickShipment();
 
-            extract($shipmentConfig['amount']);
-            $oystHelper->defaultValue($follower, null);
-            $oystHelper->defaultValue($leader, null);
-            $oystHelper->defaultValue($currency, null);
-            $oneClickShipment->setAmount(new ShipmentAmount($follower, $leader, $currency));
+            $oystHelper->defaultValue($shipmentConfig['amount']['follower'], null);
+            $oystHelper->defaultValue($shipmentConfig['amount']['leader'], null);
+            $oystHelper->defaultValue($shipmentConfig['amount']['currency'], null);
+            $oneClickShipment->setAmount(
+                new ShipmentAmount(
+                    $shipmentConfig['amount']['follower'],
+                    $shipmentConfig['amount']['leader'],
+                    $shipmentConfig['amount']['currency']
+                )
+            );
 
-            extract($shipmentConfig['carrier']);
-            $oystHelper->defaultValue($id, null);
-            $oystHelper->defaultValue($name, null);
-            $oystHelper->defaultValue($type, null);
-            $oneClickShipment->setCarrier(new OystCarrier($id, $name, $type));
+            $oystHelper->defaultValue($shipmentConfig['carrier']['id'], null);
+            $oystHelper->defaultValue($shipmentConfig['carrier']['name'], null);
+            $oystHelper->defaultValue($shipmentConfig['carrier']['type'], null);
+            $oneClickShipment->setCarrier(
+                new OystCarrier(
+                    $shipmentConfig['carrier']['id'],
+                    $shipmentConfig['carrier']['name'],
+                    $shipmentConfig['carrier']['type']
+                )
+            );
 
             $oneClickShipment->setDelay($shipmentConfig['delay']);
             $oneClickShipment->setFreeShipping($shipmentConfig['free_shipping']);
@@ -124,10 +134,12 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
         try {
             $response = $this->_catalogApi->postShipments($oneClickShipments);
             $this->_oystClient->validateResult($this->_catalogApi);
+
+            return $this->_catalogApi;
         } catch (Exception $e) {
             Mage::logException($e);
         }
 
-        return $response;
+        return $this->_catalogApi;
     }
 }

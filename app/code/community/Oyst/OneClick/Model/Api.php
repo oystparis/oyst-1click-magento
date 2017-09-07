@@ -101,7 +101,7 @@ class Oyst_OneClick_Model_Api
      */
     protected function _getCustomApiUrl()
     {
-        if (Oyst_OneClick_Model_Source_Mode::CUSTOM === $this->_getConfig('mode')) {
+        if (Oyst_OneClick_Model_System_Source_Config_Mode::CUSTOM === $this->_getConfig('mode')) {
             return $this->_getConfig('api_url');
         }
 

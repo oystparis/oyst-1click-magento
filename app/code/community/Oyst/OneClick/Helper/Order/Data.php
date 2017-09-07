@@ -163,7 +163,19 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
 
             $request = array('qty' => $item['quantity']);
 
-            if (!is_null($item['product']['variations']['informations'])) {
+            if (Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE == $product->getTypeId()) {
+                $links = Mage::getModel('downloadable/product_type')->getLinks($product);
+                $linkId = 0;
+                foreach ($links as $link) {
+                    $linkId = $link->getId();
+                }
+
+                $request = array_merge($request, array('links' => $linkId));
+            }
+
+            if (isset($item['product']['variations']) &&
+                isset($item['product']['variations']['informations']) &&
+                !is_null($item['product']['variations']['informations'])) {
                 $superAttr = array();
                 foreach ($item['product']['variations']['informations'] as $attributeCode => $attributeValue) {
                     $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $attributeCode);
@@ -357,17 +369,22 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
      */
     protected function _submitQuote($quote)
     {
-        /** @var Mage_Sales_Model_Service_Quote $service */
-        $service = Mage::getModel('sales/service_quote', $quote);
-        $order = false;
-        if (method_exists($service, 'submitAll')) {
-            $service->submitAll();
-            $order = $service->getOrder();
-        } else {
-            $order = $service->submit();
-        }
-        if (!$order) {
-            throw new Exception('Service unable to create order based on given quote.');
+        try {
+            /** @var Mage_Sales_Model_Service_Quote $service */
+            $service = Mage::getModel('sales/service_quote', $quote);
+            $order = false;
+            if (method_exists($service, 'submitAll')) {
+                $service->submitAll();
+                $order = $service->getOrder();
+            } else {
+                $order = $service->submit();
+            }
+            if (!$order) {
+                throw new Exception('Service unable to create order based on given quote.');
+            }
+            $order->save();
+        } catch (Exception $e) {
+            Mage::helper('oyst_oneclick')->log('Error create order: ' . $e->getMessage());
         }
 
         return $order;
@@ -463,7 +480,7 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
     public function cancelAndRefund($order)
     {
         if ($order->canCreditmemo()) {
-            $invoiceId = $order->getInvoiceCollection()->getFirstItem()->getId();
+            $invoiceId = $order->getInvoiceCollection()->clear()->setPageSize(1)->getFirstItem()->getId();
 
             if (!$invoiceId) {
                 return $this;
