@@ -138,7 +138,6 @@
                 <contact_email>plugin@oyst.com</contact_email>
             </abstract>
             <oneclick>
-                <sdk_version>v1.6.0</sdk_version>
                 <order_api_version>2</order_api_version>
                 <oneclickjs_preprod_url>//cdn.staging.oyst.eu/</oneclickjs_preprod_url>
                 <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>

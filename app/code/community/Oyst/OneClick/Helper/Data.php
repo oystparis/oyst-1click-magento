@@ -39,6 +39,19 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the SDK version
+     *
+     * @return string SDK version
+     */
+    public function getSdkVersion()
+    {
+        /** @var Oyst_OneClick_Model_Api $oystModel */
+        $oystModel = Mage::getModel('oyst_oneclick/api');
+
+        return $oystModel->getSdkVersion();
+    }
+
+    /**
      * Global function for log if enabled
      *
      * @param string $message
