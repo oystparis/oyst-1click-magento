@@ -27,43 +27,10 @@ if ($catalogHelper->isSupportedProduct($product)) :
 ?>
     <div id="oyst-1click-button"></div>
     <script>
-        function getSimpleProductId() {
-            if (typeof(spConfig) == 'undefined') {
-                return null;
-            }
-
-            var productCandidates = [];
-
-            jQuery.each(spConfig.settings, function (selectIndex, select) {
-                var attributeId = select.id.replace('attribute', '');
-                var selectedValue = select.options[select.selectedIndex].value;
-
-                jQuery.each(spConfig.config.attributes[attributeId].options, function (optionIndex, option) {
-                    if (option.id == selectedValue) {
-                        var optionProducts = option.products;
-
-                        if (0 == productCandidates.length) {
-                            productCandidates = optionProducts;
-                        } else {
-                            var productIntersection = [];
-                            jQuery.each(optionProducts, function (productIndex, productId) {
-                                if (-1 < productCandidates.indexOf(productId)) {
-                                    productIntersection.push(productId);
-                                }
-                            });
-                            productCandidates = productIntersection;
-                        }
-                    }
-                });
-            });
-
-            return (1 == productCandidates.length) ? productCandidates[0] : null;
-        }
-
-        (function() {
+        (function () {
             window.__OYST__ = window.__OYST__ || {};
             window.__OYST__.getOneClickURL = function (cb) {
-                jQuery(function () {
+                ready(function () {
                     var qty = $$("input[name='qty']")[0].value ? $$("input[name='qty']")[0].value : 1;
 
                     var form = new FormData();
@@ -72,26 +39,26 @@ if ($catalogHelper->isSupportedProduct($product)) :
                     form.append("quantity", qty);
 
                     var settings = {
-                        "async": true,
-                        "crossDomain": true,
-                        "url": "<?php echo $oneClickUrl ?>",
                         "method": "POST",
-                        "headers": {
-                            "cache-control": "no-cache"
-                        },
-                        "processData": false,
-                        "contentType": false,
+                        "url": "<?php echo $oneClickUrl ?>",
+                        "async": true,
+                        'cacheControl': "no-cache",
                         "mimeType": "multipart/form-data",
                         "data": form
                     };
-                    var formValidation = productAddToCartForm.validator.validate() ?
-                        null : productAddToCartForm.validator.validate();
 
-                    jQuery.ajax(settings).done(function (data) {
-                        data = JSON.parse(data);
-                        cb(null, data.url);
-                    });
-                })
+                    var xhr = new XMLHttpRequest();
+                    xhr.open(settings.method, settings.url, settings.async);
+                    xhr.setRequestHeader('cache-control', settings.cacheControl);
+                    xhr.onload = function () {
+                        if (200 === xhr.status) {
+                            console.log(xhr.responseText);
+                            var data = JSON.parse(xhr.responseText);
+                            cb(null, data.url);
+                        }
+                    };
+                    xhr.send(form);
+                });
             };
         })();
     </script>

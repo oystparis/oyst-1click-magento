@@ -24,6 +24,7 @@
                 </action>
             </block>
             <action method="addCss" ifconfig="oyst/oneclick/enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
+            <action method="addItem"><type>skin_js</type><name>js/oyst/oneclick.js</name></action>
         </reference>
 
         <reference name="product.info.addtocart">
