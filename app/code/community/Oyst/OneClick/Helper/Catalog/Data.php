@@ -546,10 +546,126 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      */
     protected function _addAmount(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
-        $price = $product->getPrice();
-        $oystPrice = new OystPrice($price, 'EUR');
+        $prices = $this->_getPrices($product);
+        $oystPrice = new OystPrice($prices['price-ttc'], 'EUR');
 
         $oystProduct->setAmountIncludingTax($oystPrice);
+    }
+
+    /**
+     * Get prices
+     *
+     * @param Mage_Catalog_Model_Product $product
+     * @param Mage_Catalog_Model_Product $configurable
+     * @param integer $storeId
+     *
+     * @return array
+     */
+    protected function _getPrices(Mage_Catalog_Model_Product $product, Mage_Catalog_Model_Product $configurable = null, $storeId = null)
+    {
+        $store = Mage::app()->getStore($storeId);
+        $priceIncludesTax = Mage::helper('tax')->priceIncludesTax($store);
+        $shippingPriceIncludesTax = Mage::helper('tax')->shippingPriceIncludesTax($store);
+        $calculator = Mage::getSingleton('tax/calculation');
+        $taxClassId = $product->getTaxClassId();
+        $request = $calculator->getRateRequest(null, null, null, $store);
+        $taxPercent = $calculator->getRate($request->setProductClassId($taxClassId));
+
+        if ($configurable) {
+            $price = $configurable->getPrice();
+            $finalPrice = $configurable->getFinalPrice();
+            $configurablePrice = 0;
+            $configurableOldPrice = 0;
+            $attributes = $configurable->getTypeInstance(true)->getConfigurableAttributes($configurable);
+            $attributes = Mage::helper('core')->decorateArray($attributes);
+            if ($attributes) {
+                foreach ($attributes as $attribute) {
+                    $productAttribute = $attribute->getProductAttribute();
+                    $productAttributeId = $productAttribute->getId();
+                    $attributeValue = $product->getData($productAttribute->getAttributeCode());
+                    if (count($attribute->getPrices()) > 0) {
+                        foreach ($attribute->getPrices() as $priceChange) {
+                            if (is_array($price) && array_key_exists('value_index',
+                                    $price) && $price['value_index'] == $attributeValue
+                            ) {
+                                $configurableOldPrice += (float)($priceChange['is_percent'] ? (((float)$priceChange['pricing_value']) * $price / 100) : $priceChange['pricing_value']);
+                                $configurablePrice += (float)($priceChange['is_percent'] ? (((float)$priceChange['pricing_value']) * $finalPrice / 100) : $priceChange['pricing_value']);
+                            }
+                        }
+                    }
+                }
+            }
+            $configurable->setConfigurablePrice($configurablePrice);
+            $configurable->setParentId(true);
+            Mage::dispatchEvent(
+                'catalog_product_type_configurable_price',
+                array('product' => $configurable)
+            );
+            $configurablePrice = $configurable->getConfigurablePrice();
+            $price = $product->getPrice() + $configurableOldPrice;
+            $finalPrice = $product->getFinalPrice() + $configurablePrice;
+        } else {
+            if ($product->getTypeId() == 'grouped') {
+                $price = 0;
+                $finalPrice = 0;
+                $childs = Mage::getModel('catalog/product_type_grouped')->getChildrenIds($product->getId());
+                $childs = $childs[Mage_Catalog_Model_Product_Link::LINK_TYPE_GROUPED];
+                foreach ($childs as $value) {
+                    $product = Mage::getModel('lenexport/catalog_product')->load($value);
+                    $price += $product->getPrice();
+                    $finalPrice += $product->getFinalPrice();
+                }
+                $priceIncludingTax = Mage::helper('tax')->getPrice(
+                    $product->setTaxPercent(null),
+                    $price,
+                    true
+                );
+                $finalPriceIncludingTax = Mage::helper('tax')->getPrice(
+                    $product->setTaxPercent(null),
+                    $finalPrice,
+                    true
+                );
+            } else {
+                $price = $product->getPrice();
+                $finalPrice = $product->getFinalPrice();
+            }
+        }
+
+        $priceIncludingTax = $price;
+        $finalPriceIncludingTax = $finalPrice;
+        if (!$priceIncludesTax) {
+            $priceIncludingTax = $price + $calculator->calcTaxAmount($price, $taxPercent, false);
+            $finalPriceIncludingTax = $finalPrice + $calculator->calcTaxAmount($finalPrice, $taxPercent, false);
+        }
+
+        // Get prices
+        $data['price-ttc'] = round($finalPriceIncludingTax, 2);
+        $data['price-before-discount'] = round($priceIncludingTax, 2);
+        $discountAmount = $priceIncludingTax - $finalPriceIncludingTax;
+        $data['discount-amount'] = $discountAmount > 0 ? round($discountAmount, 2) : '0';
+        $data['discount-percent'] = $discountAmount > 0 ? round(($discountAmount * 100) / $priceIncludingTax,
+            0) : '0';
+        $data['start-date-discount'] = $product->getSpecialFromDate();
+        $data['end-date-discount'] = $product->getSpecialToDate();
+
+        // Retrieving promotions
+        $dateTs = Mage::app()->getLocale()->storeTimeStamp($product->getStoreId());
+        if (method_exists(Mage::getResourceModel('catalogrule/rule'), 'getRulesFromProduct')) {
+            $promo = Mage::getResourceModel('catalogrule/rule')->getRulesFromProduct($dateTs, $product->getStoreId(), 1, $product->getId());
+        } elseif (method_exists(Mage::getResourceModel('catalogrule/rule'), 'getRulesForProduct')) {
+            $promo = Mage::getResourceModel('catalogrule/rule')->getRulesForProduct($dateTs, $product->getStoreId(), $product->getId());
+        }
+        if (count($promo)) {
+            $promo = $promo[0];
+
+            $from = isset($promo['from_time']) ? $promo['from_time'] : $promo['from_date'];
+            $to = isset($promo['to_time']) ? $promo['to_time'] : $promo['to_date'];
+
+            $data['start-date-discount'] = date('Y-m-d H:i:s', strtotime($from));
+            $data['end-date-discount'] = is_null($to) ? '' : date('Y-m-d H:i:s', strtotime($to));
+        }
+
+        return $data;
     }
 
     /**
