@@ -129,4 +129,14 @@ class Oyst_OneClick_Model_Api
             throw Mage::exception('Oyst_OneClick', $response->getLastError(), $response->getLastHttpCode());
         }
     }
+
+    /**
+     * Get the SDK version
+     *
+     * @return string
+     */
+    public function getSdkVersion()
+    {
+        return (string)OystApiClientFactory::getVersion();
+    }
 }

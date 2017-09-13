@@ -15,6 +15,7 @@ function download_sdk {
         RET=$?
         if [ "$RET" -ne "0" ]; then
             echo "Retry download Oyst SDK."
+            echo "Please set GITHUB_TOKEN environment variable."
         fi
        sleep 5
     done
@@ -30,8 +31,14 @@ if [ -n "$GITHUB_RELEASE" ]; then
 else
     # Latest release url
     GITHUB_PROJECT_LATEST_RELEASES_URL=https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/latest
-    GITHUB_PROJECT_RELEASE_URL=$(curl -LsS --connect-timeout 5 -H "Authorization":"token $GITHUB_TOKEN" --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GITHUB_PROJECT_LATEST_RELEASES_URL | grep 'tarball_url' | cut -d\" -f4)
-    GITHUB_RELEASE=$(curl -LsS --connect-timeout 5 -H "Authorization":"token $GITHUB_TOKEN" --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GITHUB_PROJECT_LATEST_RELEASES_URL | grep 'tag_name' | cut -d\" -f4)
+
+    if [ -n "$GITHUB_TOKEN" ]; then
+        GITHUB_PROJECT_RELEASE_URL=$(curl -LsS --connect-timeout 5 -H "Authorization":"token $GITHUB_TOKEN" --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GITHUB_PROJECT_LATEST_RELEASES_URL | grep 'tarball_url' | cut -d\" -f4)
+        GITHUB_RELEASE=$(curl -LsS --connect-timeout 5 -H "Authorization":"token $GITHUB_TOKEN" --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GITHUB_PROJECT_LATEST_RELEASES_URL | grep 'tag_name' | cut -d\" -f4)
+    else
+        GITHUB_PROJECT_RELEASE_URL=$(curl -LsS --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GITHUB_PROJECT_LATEST_RELEASES_URL | grep 'tarball_url' | cut -d\" -f4)
+        GITHUB_RELEASE=$(curl -LsS --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 $GITHUB_PROJECT_LATEST_RELEASES_URL | grep 'tag_name' | cut -d\" -f4)
+    fi
 fi
 
 download_sdk

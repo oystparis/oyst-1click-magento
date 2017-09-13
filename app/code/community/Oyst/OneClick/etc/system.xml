@@ -63,7 +63,7 @@
                         <module_version translate="label">
                             <label>Module version</label>
                             <frontend_type>label</frontend_type>
-                            <frontend_model>oyst_oneclick/adminhtml_version</frontend_model>
+                            <frontend_model>oyst_oneclick/adminhtml_version_module</frontend_model>
                             <sort_order>13</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -75,7 +75,7 @@
                             <label>Oyst SDK version</label>
                             <comment><![CDATA[<a href="https://github.com/OystParis/oyst-php" target="_blank">OystParis/oyst-php</a>]]></comment>
                             <frontend_type>label</frontend_type>
-                            <config_path>oyst/oneclick/sdk_version</config_path>
+                            <frontend_model>oyst_oneclick/adminhtml_version_sdk</frontend_model>
                             <sort_order>14</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>

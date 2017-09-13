@@ -33,6 +33,14 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
+     * List of product id to sync
+     * Empty = all
+     *
+     * @var array
+     */
+    protected $productIds = array();
+
+    /**
      * Translate Product attribute for Oyst <-> Magento
      *
      * @var array
@@ -157,10 +165,13 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         // If last notification finish but with same id
         if ($lastNotification->getId() && $lastNotification->getImportRemaining() <= 0) {
-            $totalCount = Mage::getModel('catalog/product')
-                ->getCollection()
-                ->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes))
-                ->getSize();
+            $totalCount = Mage::getModel('catalog/product')->getCollection();
+            if (!empty($this->productIds)) {
+                $totalCount = $totalCount->addAttributeToFilter('entity_id', array('in' => $this->productIds));
+            }
+            $totalCount = $totalCount->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
+            $totalCount = $totalCount->getSize();
+
             $response['totalCount'] = $totalCount;
             $response['import_id'] = $data['import_id'];
             $response['remaining'] = 0;
@@ -207,10 +218,12 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         // Set param for db
         $response['import_id'] = $data['import_id'];
-        $totalCount = Mage::getModel('catalog/product')
-            ->getCollection()
-            ->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes))
-            ->getSize();
+        $totalCount = Mage::getModel('catalog/product')->getCollection();
+        if (!empty($this->productIds)) {
+            $totalCount = $totalCount->addAttributeToFilter('entity_id', array('in' => $this->productIds));
+        }
+        $totalCount = $totalCount->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
+        $totalCount = $totalCount->getSize();
         $response['totalCount'] = $totalCount;
         $done = $response['totalCount'] - count($excludedProductsId) - count($importedProductIds);
         $response['remaining'] = ($done <= 0) ? 0 : $done;
@@ -300,10 +313,12 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     {
         // Construct param for list in db request
         /** @var Mage_Catalog_Model_Resource_Product_Collection $collection */
-        $collection = Mage::getModel('catalog/product')
-            ->getCollection()
-            ->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes))
-            ->addAttributeToSelect('*');
+        $collection = Mage::getModel('catalog/product')->getCollection();
+        if (!empty($this->productIds)) {
+            $collection = $collection->addAttributeToFilter('entity_id', array('in' => $this->productIds));
+        }
+        $collection = $collection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
+        $collection = $collection->addAttributeToSelect('*');
 
         if (!empty($params) && is_array($params)) {
             if (!empty($params["product_id_include_filter"])) {
@@ -370,9 +385,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
             // Add others attributes
             $this->_addAmount($product, $oystProduct);
             $this->_addComplexAttributes($product, $oystProduct);
-            if (empty($product->getParentId())) {
-                $this->_addCategories($product, $oystProduct);
-            }
+            $this->_addCategories($product, $oystProduct);
             $this->_addImages($product, $oystProduct);
             $this->_addRelatedProducts($product, $oystProduct);
             $this->_addCustomAttributesToInformation($product, $oystProduct);
