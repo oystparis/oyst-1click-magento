@@ -34,7 +34,6 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
     /**
      * List of product id to sync
-     * Empty = all
      *
      * @var array
      */
