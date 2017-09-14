@@ -33,13 +33,6 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
-     * List of product id to sync
-     *
-     * @var array
-     */
-    protected $productIds = array();
-
-    /**
      * Translate Product attribute for Oyst <-> Magento
      *
      * @var array
@@ -162,14 +155,19 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
             Mage::throwException($this->__('Last Notification id %s is not finished', $data['import_id']));
         }
 
+        // This is to debug product ids
+        //$params['product_id_include_filter'] = array();
+
         // If last notification finish but with same id
         if ($lastNotification->getId() && $lastNotification->getImportRemaining() <= 0) {
-            $totalCount = Mage::getModel('catalog/product')->getCollection();
-            if (!empty($this->productIds)) {
-                $totalCount = $totalCount->addAttributeToFilter('entity_id', array('in' => $this->productIds));
+            $productCollection = Mage::getModel('catalog/product')->getCollection();
+            if (!empty($params['product_id_include_filter'])) {
+                $productCollection->addAttributeToFilter('entity_id', array(
+                    'in' => $params['product_id_include_filter']
+                ));
             }
-            $totalCount = $totalCount->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
-            $totalCount = $totalCount->getSize();
+            $productCollection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
+            $totalCount = $productCollection->getSize();
 
             $response['totalCount'] = $totalCount;
             $response['import_id'] = $data['import_id'];
@@ -217,12 +215,15 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         // Set param for db
         $response['import_id'] = $data['import_id'];
-        $totalCount = Mage::getModel('catalog/product')->getCollection();
-        if (!empty($this->productIds)) {
-            $totalCount = $totalCount->addAttributeToFilter('entity_id', array('in' => $this->productIds));
+        $productCollection = Mage::getModel('catalog/product')->getCollection();
+        if (!empty($params['product_id_include_filter'])) {
+            $productCollection->addAttributeToFilter('entity_id', array(
+                'in' => $params['product_id_include_filter']
+            ));
         }
-        $totalCount = $totalCount->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
-        $totalCount = $totalCount->getSize();
+        $productCollection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
+        $totalCount = $productCollection->getSize();
+
         $response['totalCount'] = $totalCount;
         $done = $response['totalCount'] - count($excludedProductsId) - count($importedProductIds);
         $response['remaining'] = ($done <= 0) ? 0 : $done;
@@ -313,20 +314,17 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         // Construct param for list in db request
         /** @var Mage_Catalog_Model_Resource_Product_Collection $collection */
         $collection = Mage::getModel('catalog/product')->getCollection();
-        if (!empty($this->productIds)) {
-            $collection = $collection->addAttributeToFilter('entity_id', array('in' => $this->productIds));
-        }
-        $collection = $collection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
-        $collection = $collection->addAttributeToSelect('*');
+        $collection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
+        $collection->addAttributeToSelect('*');
 
         if (!empty($params) && is_array($params)) {
-            if (!empty($params["product_id_include_filter"])) {
+            if (!empty($params['product_id_include_filter'])) {
                 $collection->addAttributeToFilter('entity_id', array(
                     'in' => $params['product_id_include_filter']
                 ));
             }
 
-            if (!empty($params["product_id_exclude_filter"])) {
+            if (!empty($params['product_id_exclude_filter'])) {
                 $collection->addAttributeToFilter('entity_id', array(
                     'nin' => $params['product_id_exclude_filter']
                 ));
