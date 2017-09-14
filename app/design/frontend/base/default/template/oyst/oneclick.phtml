@@ -52,7 +52,6 @@ if ($catalogHelper->isSupportedProduct($product)) :
                     xhr.setRequestHeader('cache-control', settings.cacheControl);
                     xhr.onload = function () {
                         if (200 === xhr.status) {
-                            console.log(xhr.responseText);
                             var data = JSON.parse(xhr.responseText);
                             cb(null, data.url);
                         }

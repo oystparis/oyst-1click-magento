@@ -181,8 +181,10 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
                     $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $attributeCode);
 
                     $attributeCodeId = $attribute->getId();
-                    if (!is_null($attributeCodeId)) {
-                        $superAttr[$attributeCodeId] = $attribute->getSource()->getOptionId($attributeValue);
+                    if (!is_null($attributeCodeId) &&
+                        !is_null($optionId = $attribute->getSource()->getOptionId($attributeValue))
+                    ) {
+                        $superAttr[$attributeCodeId] = $optionId;
                     }
                 }
 
@@ -290,17 +292,8 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
      */
     protected function _initAddresses($params, $quote)
     {
-        // If customer exist in magento we load it and addresses
-        /** @var Mage_Customer_Model_Customer $customer */
-        if ($customer = $this->_getCustomerByEmailAndWebsite($params['user']['email'])) {
-            $defaultShippingAddress = $customer->getDefaultShippingAddress();
-            $defaultBillingAddress = $customer->getDefaultBillingAddress();
-        }
-
-        // New guest
-        if (is_null($customer)) {
-            $defaultShippingAddress = $defaultBillingAddress = Mage::getModel('customer/address');
-        }
+        // Consider all address info only from API same as New guest
+        $defaultShippingAddress = $defaultBillingAddress = Mage::getModel('customer/address');
 
         // Format addresses
         $shippingInfoFormated = $this->_formatAddress($defaultShippingAddress, 'shipping', $params);
