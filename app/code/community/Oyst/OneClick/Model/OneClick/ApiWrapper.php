@@ -40,9 +40,9 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
      */
     public function send($dataFormated)
     {
-        /** @var Mage_Catalog_Model_Product $product */
-        $product = Mage::getModel('catalog/product')->load($dataFormated['productRef']);
-        //$dataFormated['isMaterialized'] = !$product->isVirtual();
+        /** @var Oyst_OneClick_Helper_Catalog_Data $oystCatalogHelper */
+        $oystCatalogHelper = Mage::helper('oyst_oneclick/catalog_data');
+        $oystProduct = $oystCatalogHelper->getOystProduct($dataFormated['productRef']);
 
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');
@@ -62,7 +62,8 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
                 $dataFormated['quantity'],
                 $dataFormated['variationRef'],
                 $dataFormated['user'],
-                $dataFormated['version']
+                $dataFormated['version'],
+                $oystProduct
             );
             $this->_oystClient->validateResult($this->_oneClickApi);
         } catch (Exception $e) {

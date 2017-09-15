@@ -806,4 +806,32 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
 
         return $supported;
     }
+
+    /**
+     * Return a OystProduct
+     *
+     * @param $productId
+     * @return OystProduct
+     * @internal param $id
+     */
+    public function getOystProduct($productId)
+    {
+        // Params used to pass data in prepare collection
+        $params['product_id_include_filter'] = array($productId);
+
+        // Get list of product from params
+        $collection = $this->_prepareCollection($params);
+
+        /** @var Oyst_OneClick_Helper_Data $oystHelper */
+        $oystHelper = Mage::helper('oyst_oneclick');
+        $oystHelper->log('Catalog less product collection Sql : ' . $collection->getSelect()->__toString());
+
+        $this->_userDefinedAttributeCode = $this->_getUserDefinedAttributeCode();
+        $this->_systemSelectedAttributesCode = $this->_getSystemSelectedAttributeCode();
+
+        // Format list into OystProduct
+        list($productsFormated, $importedProductIds) = $this->_format($collection);
+
+        return $productsFormated[0];
+    }
 }
