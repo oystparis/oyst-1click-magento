@@ -47,25 +47,6 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Send products
-     *
-     * @param $dataFormated
-     *
-     * @return mixed
-     */
-    public function postProducts($dataFormated)
-    {
-        try {
-            $response = $this->_catalogApi->postProducts($dataFormated);
-            $this->_oystClient->validateResult($this->_catalogApi);
-        } catch (Exception $e) {
-            Mage::logException($e);
-        }
-
-        return $response;
-    }
-
-    /**
      * Notify Oyst to export catalog of products
      *
      * @param $dataFormated
@@ -83,7 +64,6 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
 
         return $response;
     }
-
 
     /**
      * Send shipments

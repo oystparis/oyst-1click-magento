@@ -137,172 +137,6 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Synchronisation process from notification controller
-     *
-     * @param array $event
-     * @param array $data
-     * @return number
-     */
-    public function syncFromNotification($event, $data)
-    {
-        // Get last notification
-        /** @var Oyst_OneClick_Model_Notification $lastNotification */
-        $lastNotification = Mage::getModel('oyst_oneclick/notification');
-        $lastNotification = $lastNotification->getLastNotification('catalog', $data['import_id']);
-
-        // If last notification is not finished
-        if ($lastNotification->getId() && $lastNotification->getStatus() != 'finished') {
-            Mage::throwException($this->__('Last Notification id %s is not finished', $data['import_id']));
-        }
-
-        // This is to debug product ids
-        //$params['product_id_include_filter'] = array();
-
-        // If last notification finish but with same id
-        if ($lastNotification->getId() && $lastNotification->getImportRemaining() <= 0) {
-            $productCollection = Mage::getModel('catalog/product')->getCollection();
-            if (!empty($params['product_id_include_filter'])) {
-                $productCollection->addAttributeToFilter('entity_id', array(
-                    'in' => $params['product_id_include_filter']
-                ));
-            }
-            $productCollection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
-            $totalCount = $productCollection->getSize();
-
-            $response['totalCount'] = $totalCount;
-            $response['import_id'] = $data['import_id'];
-            $response['remaining'] = 0;
-
-            return $response;
-        }
-
-        // Set param 'num_per_page'
-        if ($numberPerPack = $this->_getConfig('catalog_number_per_pack')) {
-            $params['num_per_page'] = $numberPerPack;
-        }
-
-        // Set param 'import_id'
-        $params['import_id'] = $data['import_id'];
-
-        // Get last notification with this id and have remaining
-        $notificationCollection = Mage::getModel('oyst_oneclick/notification')->getCollection()->addDataIdToFilter('catalog', $data['import_id']);
-        $excludedProductsId = array();
-
-        // Set id to exclude
-        foreach ($notificationCollection as $pastNotification) {
-            if ($productsId = Zend_Json::decode($pastNotification->getProductsId())) {
-                $excludedProductsId = array_merge($excludedProductsId, $productsId);
-            }
-        }
-        $params['product_id_exclude_filter'] = $excludedProductsId;
-
-        // Create new notification in db with status 'start'
-        $notification = Mage::getModel('oyst_oneclick/notification');
-        $notification->setData(array(
-            'event' => $event,
-            'oyst_data' => Zend_Json::encode($data),
-            'status' => 'start',
-            'created_at' => Zend_Date::now(),
-            'executed_at' => Zend_Date::now(),
-        ));
-        $notification->save();
-        Mage::helper('oyst_oneclick')->log('Start of import id: ' . $data['import_id']);
-
-        // Synchronize with Oyst
-        $notification->setImportStart(Zend_Date::now());
-        list($result, $importedProductIds) = $this->sync($params);
-        $notification->setImportEnd(Zend_Date::now());
-
-        // Set param for db
-        $response['import_id'] = $data['import_id'];
-        $productCollection = Mage::getModel('catalog/product')->getCollection();
-        if (!empty($params['product_id_include_filter'])) {
-            $productCollection->addAttributeToFilter('entity_id', array(
-                'in' => $params['product_id_include_filter']
-            ));
-        }
-        $productCollection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
-        $totalCount = $productCollection->getSize();
-
-        $response['totalCount'] = $totalCount;
-        $done = $response['totalCount'] - count($excludedProductsId) - count($importedProductIds);
-        $response['remaining'] = ($done <= 0) ? 0 : $done;
-
-        // Save new status and result in db
-        $notification->setStatus('finished')
-            ->setOystData(Zend_Json::encode($data))
-            ->setProductsId(Zend_Json::encode($importedProductIds))
-            ->setImportQty(count($importedProductIds))
-            ->setImportRemaining($response['remaining'])
-            ->setExecutedAt(Zend_Date::now())
-            ->save();
-        Mage::helper('oyst_oneclick')->log('End of import id: ' . $data['import_id']);
-
-        // Import in progress
-        if (0 < $response['remaining']) {
-            Mage::getSingleton('adminhtml/session')->addSuccess(
-                Mage::helper('oyst_oneclick')->__(
-                    '1-Click synchronization %s/%s (import id: %s).',
-                    $response['remaining'],
-                    $response['totalCount'],
-                    $response['import_id']
-                )
-            );
-        }
-
-        // Import is finished
-        if (0 == $response['remaining']) {
-            Mage::getSingleton('adminhtml/session')->addSuccess(
-                Mage::helper('oyst_oneclick')->__(
-                    '1-Click synchronization was successfully done (import id: %s).',
-                    $response['import_id']
-                )
-            );
-        }
-
-        return $response;
-    }
-
-    /**
-     * Synchronization process
-     *
-     * @param array $params
-     *
-     * @return array
-     */
-    public function sync($params = array())
-    {
-        // Get list of product from params
-        $collection = $this->_prepareCollection($params);
-
-        /** @var Oyst_OneClick_Helper_Data $oystHelper */
-        $oystHelper = Mage::helper('oyst_oneclick');
-
-        $oystHelper->log('Product Collection Sql : ' . $collection->getSelect()->__toString());
-
-        $this->_userDefinedAttributeCode = $this->_getUserDefinedAttributeCode();
-        $this->_systemSelectedAttributesCode = $this->_getSystemSelectedAttributeCode();
-
-        // Format list into OystProduct
-        list($productsFormated, $importedProductIds) = $this->_format($collection);
-
-        // Sync API
-        /** @var Oyst_OneClick_Model_Catalog_ApiWrapper $catalogApi */
-        $catalogApi = Mage::getModel('oyst_oneclick/catalog_apiWrapper');
-
-        try {
-            $response = $catalogApi->postProducts($productsFormated);
-            $oystHelper->log($response);
-        } catch (Exception $e) {
-            Mage::logException($e);
-            $session = Mage::getSingleton('adminhtml/session');
-            $session->addError($oystHelper->__('Could not synchronize catalog. Ckeck log files.'));
-        }
-
-        return array($response, $importedProductIds);
-    }
-
-    /**
      * Prepare Database Request with filters
      *
      * @param array $params
@@ -833,5 +667,30 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         list($productsFormated, $importedProductIds) = $this->_format($collection);
 
         return $productsFormated[0];
+    }
+
+    /**
+     * Count product collection
+     *
+     * @param $param
+     *
+     * @return mixed
+     */
+    protected function _countProductCollection($param)
+    {
+        $productCollection = Mage::getModel('catalog/product')->getCollection();
+        if (!empty($params['product_id_include_filter'])) {
+            $productCollection->addAttributeToFilter('entity_id', array(
+                'in' => $params['product_id_include_filter']
+            ));
+        }
+        if (!empty($params['product_id_exclude_filter'])) {
+            $productCollection->addAttributeToFilter('entity_id', array(
+                'nin' => $params['product_id_exclude_filter']
+            ));
+        }
+        $productCollection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
+
+        return $productCollection->getSize();
     }
 }

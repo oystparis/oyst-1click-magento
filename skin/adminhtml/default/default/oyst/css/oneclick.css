@@ -1,56 +1,18 @@
-#syncbutton {
-    line-height: 30px;
-    vertical-align: middle;
-}
-.progress {
-    display: inline-block;
-    height: 24px;
-    margin-left: 5px;
-    vertical-align: middle;
-    width: 24px;
-    position: relative;
-}
-.progress > svg {
-    height: 100%;
-    display: block;
-}
-@keyframes rotating {
-    from {
-        transform: rotate(0deg);
-        -ms-transform: rotate(0deg);
-        -moz-transform: rotate(0deg);
-        -webkit-transform: rotate(0deg);
-        -o-transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-        -ms-transform: rotate(360deg);
-        -moz-transform: rotate(360deg);
-        -webkit-transform: rotate(360deg);
-        -o-transform: rotate(360deg);
-    }
-}
-@-webkit-keyframes rotating /* Safari and Chrome */ {
-    from {
-        transform: rotate(0deg);
-        -ms-transform: rotate(0deg);
-        -moz-transform: rotate(0deg);
-        -webkit-transform: rotate(0deg);
-        -o-transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-        -ms-transform: rotate(360deg);
-        -moz-transform: rotate(360deg);
-        -webkit-transform: rotate(360deg);
-        -o-transform: rotate(360deg);
-    }
-}
-.rotating {
-    -webkit-animation: rotating 2s linear infinite;
-    -moz-animation: rotating 2s linear infinite;
-    -ms-animation: rotating 2s linear infinite;
-    -o-animation: rotating 2s linear infinite;
-    animation: rotating 2s linear infinite;
-    transform-origin: 50% 50%;
+/**
+ * This file is part of Oyst_OneClick for Magento.
+ *
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @author Oyst <plugin@oyst.com> <@oyst>
+ * @category Oyst
+ * @package Oyst_OneClick
+ * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
+ */
+
+/**
+ * OneClick Customs CSS
+ */
+
+#oyst_oneclick_oneclick_shipments_config {
+    font-family: courier, courier new, serif;
+    height: 30em;
 }

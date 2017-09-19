@@ -10,3 +10,6 @@ app/locale/fr_FR/Oyst_OneClick.csv                              app/locale/fr_FR
 js/oyst                                                         js/oyst
 lib/Oyst                                                        lib/Oyst
 skin/adminhtml/default/default/oyst                             skin/adminhtml/default/default/oyst
+skin/frontend/base/default/css/oyst                             skin/frontend/base/default/css/oyst
+skin/frontend/base/default/images/oyst                          skin/frontend/base/default/images/oyst
+skin/frontend/base/default/js/oyst                              skin/frontend/base/default/js/oyst
