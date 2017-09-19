@@ -15,24 +15,6 @@
 class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
 {
     /**
-     * Include JS in head if section is moneybookers
-     */
-    protected function _prepareLayout()
-    {
-        $section = $this->getAction()->getRequest()->getParam('section', false);
-        if ('oyst_oneclick' == $section) {
-            $this->getLayout()
-                ->getBlock('head')
-                ->addJs('oyst/oneclick.js');
-
-            $this->getLayout()
-                ->getBlock('head')
-                ->addCss('oyst/css/oneclick.css');
-        }
-        parent::_prepareLayout();
-    }
-
-    /**
      * Retrieve product
      *
      * @return Mage_Catalog_Model_Product
