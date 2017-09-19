@@ -15,7 +15,7 @@
         <Oyst_OneClick>
             <active>true</active>
             <codePool>community</codePool>
-            <version>1.0.0</version>
+            <version>1.0.0-dev-21</version>
         </Oyst_OneClick>
     </modules>
 </config>

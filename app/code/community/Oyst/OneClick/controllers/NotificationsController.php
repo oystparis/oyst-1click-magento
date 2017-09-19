@@ -15,7 +15,7 @@
 class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_Action
 {
     /**
-     * Get notification for catalog, order and payment callback
+     * Get notification for order
      *
      * @return null
      */
@@ -48,9 +48,7 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
             return $this->badRequest();
         }
 
-        if ('catalog.import' == $event) {
-            $helperName = 'oyst_oneclick/catalog_data';
-        } elseif ('order.v2.new' == $event) {
+        if ('order.v2.new' == $event) {
             $helperName = 'oyst_oneclick/order_data';
         }
 
@@ -60,7 +58,6 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
         }
 
         /**
-         * @var Oyst_OneClick_Helper_Catalog_Data $result
          * @var Oyst_OneClick_Helper_Order_Data $result
          */
         $result = $helper->syncFromNotification($event, $data);

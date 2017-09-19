@@ -5,16 +5,10 @@
             <title>1-Click</title>
             <sort_order>100</sort_order>
             <children>
-                <actions translate="title" module="oyst_oneclick">
-                    <title>Catalog Synchronization</title>
-                    <action>adminhtml/oneclick_actions</action>
-                    <sort_order>10</sort_order>
-                </actions>
-
                 <settings translate="title" module="oyst_oneclick">
                     <title>Settings</title>
                     <action>adminhtml/system_config/edit/section/oyst_oneclick</action>
-                    <sort_order>20</sort_order>
+                    <sort_order>10</sort_order>
                 </settings>
             </children>
         </oyst_oneclick>
@@ -31,13 +25,9 @@
                         <title>1-Click</title>
                         <sort_order>1000</sort_order>
                         <children>
-                            <synchronization translate="title">
-                                <title>Manage Synchronization</title>
-                                <sort_order>10</sort_order>
-                            </synchronization>
                             <settings translate="title">
                                 <title>Settings</title>
-                                <sort_order>20</sort_order>
+                                <sort_order>10</sort_order>
                             </settings>
                         </children>
                     </oyst_oneclick>

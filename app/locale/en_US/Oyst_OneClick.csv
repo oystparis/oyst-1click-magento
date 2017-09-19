@@ -22,15 +22,6 @@
 "Export select system attributes as custom options","Export select system attributes as custom options"
 "Color, size and all other custom attributes are exported by default.","Color, size and all other custom attributes are exported by default."
 
-"1-Click Catalog Synchronization","1-Click Catalog Synchronization"
-"To sync catalog products with Oyst, click here:","To sync catalog products with Oyst, click here:"
-"Go to setup your API key","Go to setup your API key"
-"Catalog product sync","Catalog product sync"
-"Syncing request in progress (import id: %s). <a href=""#"" onclick=""goToThis('%s');"">Refresh</a>.","Syncing request in progress (import id: %s). <a href=""#"" onclick=""goToThis('%s');"">Refresh</a>."
-"An error has occurred.","An error has occurred."
-"1-Click synchronization was successfully done.","1-Click synchronization was successfully done."
-"An error occurred while synchronizing the catalog with 1-Click.","An error occurred while synchronizing the catalog with 1-Click."
-
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings."
 
 "1-Click has been installed.","1-Click has been installed."
