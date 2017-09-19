@@ -42,6 +42,7 @@
     },
     "support": {
         "issues": "https://github.com/OystParis/oyst-1click-magento/issues",
-        "source": "https://github.com/OystParis/oyst-1click-magento/"
+        "source": "https://github.com/OystParis/oyst-1click-magento",
+        "build": "https://travis-ci.com/oystparis/oyst-1click-magento"
     }
 }
