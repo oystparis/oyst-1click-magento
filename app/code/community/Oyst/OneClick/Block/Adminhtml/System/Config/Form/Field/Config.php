@@ -25,19 +25,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Field_Config extends Mage
 
         $shipmentsConfig = Mage::getStoreConfig("oyst/oneclick/shipments_config");
 
-        $output = '<style type="text/css">
-                #oyst_oneclick_oneclick_shipments_config { font-family: courier, courier new, serif; height: 30em; }
-            </style>
-            <script type="text/javascript">
+        $output = '<script type="text/javascript">
             //<![CDATA[
-                function showMessage(txt, type) {
-                    var html = \'<ul class="messages"><li class="\' + type + \'-msg"><ul><li>\' + txt + \'</li></ul></li></ul>\';
-                    $("messages").update(html);
-                    var url = location.href;
-                    var n = url.indexOf("#");
-                    url = url.substring(0, n != -1 ? n : url.length);
-                    location.replace(url + "#html-body");
-                }
                 postShipments = (function() {
                     // one way to clean data to be able to compare
                     try {
