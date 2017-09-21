@@ -378,9 +378,13 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     protected function _addAmount(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
         $prices = $this->_getPrices($product);
-        $oystPrice = new OystPrice($prices['price-ttc'], 'EUR');
+        $oystPriceIncludingTaxes = new OystPrice($prices['price-including-tax'], 'EUR');
+        $oystProduct->setAmountIncludingTax($oystPriceIncludingTaxes);
 
-        $oystProduct->setAmountIncludingTax($oystPrice);
+        if (isset($prices['price-excluding-tax'])) {
+            $oystPriceExcludingTaxes = new OystPrice($prices['price-excluding-tax'], 'EUR');
+            $oystProduct->setAmountExcludingTax($oystPriceExcludingTaxes);
+        }
     }
 
     /**
@@ -442,7 +446,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
                 $childs = Mage::getModel('catalog/product_type_grouped')->getChildrenIds($product->getId());
                 $childs = $childs[Mage_Catalog_Model_Product_Link::LINK_TYPE_GROUPED];
                 foreach ($childs as $value) {
-                    $product = Mage::getModel('lenexport/catalog_product')->load($value);
+                    $product = Mage::getModel('catalog/product')->load($value);
                     $price += $product->getPrice();
                     $finalPrice += $product->getFinalPrice();
                 }
@@ -465,12 +469,13 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $priceIncludingTax = $price;
         $finalPriceIncludingTax = $finalPrice;
         if (!$priceIncludesTax) {
+            $data['price-excluding-tax'] = round($finalPrice, 2);
             $priceIncludingTax = $price + $calculator->calcTaxAmount($price, $taxPercent, false);
             $finalPriceIncludingTax = $finalPrice + $calculator->calcTaxAmount($finalPrice, $taxPercent, false);
         }
 
         // Get prices
-        $data['price-ttc'] = round($finalPriceIncludingTax, 2);
+        $data['price-including-tax'] = round($finalPriceIncludingTax, 2);
         $data['price-before-discount'] = round($priceIncludingTax, 2);
         $discountAmount = $priceIncludingTax - $finalPriceIncludingTax;
         $data['discount-amount'] = $discountAmount > 0 ? round($discountAmount, 2) : '0';
@@ -645,8 +650,8 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      * Return a OystProduct
      *
      * @param $productId
+     *
      * @return OystProduct
-     * @internal param $id
      */
     public function getOystProduct($productId)
     {

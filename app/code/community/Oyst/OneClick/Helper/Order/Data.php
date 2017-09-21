@@ -144,7 +144,7 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
      *
      * @return array
      */
-    protected function _initQuote($params)
+    protected function _initQuote($params, $storeId = null)
     {
         /** @var Oyst_OneClick_Helper_Data $helper */
         $helper = Mage::helper('oyst_oneclick');
@@ -155,11 +155,24 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
         $quote->setUpdatedAt($params['created_at']);
         $quote->setOystOrderId($params['id']);
 
+        $store = Mage::app()->getStore($storeId);
+        $priceIncludesTax = Mage::helper('tax')->priceIncludesTax($store);
+        $shippingPriceIncludesTax = Mage::helper('tax')->shippingPriceIncludesTax($store);
+
         foreach ($params['items'] as $item) {
             /** @var Mage_Catalog_Model_Product $product */
             $product = Mage::getModel('catalog/product')->load($item['product_reference']);
             $product->setTitle($item['product']['title']);
-            $product->setPrice($helper->getHumanAmount($item['product_amount']['value']));
+            $product->setPrice($helper->getHumanAmount($item['product']['amount_including_taxes']['value']));
+
+            if (!$priceIncludesTax) {
+                Mage::log('In !$priceIncludesTax');
+                $calculator = Mage::getSingleton('tax/calculation');
+                $taxClassId = $product->getTaxClassId();
+                $request = $calculator->getRateRequest(null, null, null, $store);
+                $taxPercent = $calculator->getRate($request->setProductClassId($taxClassId));
+                $product->setPrice($helper->getHumanAmount($item['product']['amount_excluding_taxes']['value']));
+            }
 
             $request = array('qty' => $item['quantity']);
 
@@ -332,7 +345,7 @@ class Oyst_OneClick_Helper_Order_Data extends Mage_Core_Helper_Abstract
 
         $formattedAddress = array(
             'city' => (string)$address->getCity() ? $address->getCity() : $orderAddress['city'],
-            'country_id' => (string)$address->getCountryId() ? $address->getCountryId() : $orderAddress['country'],
+            'country_id' => (string)$address->getCountryId() ? $address->getCountryId() : 'FR',// Bad hack to always be in FR ; $orderAddress['country'],
             'firstname' => (string)$address->getFirstname() ? $address->getFirstname() : $orderAddress['first_name'],
             'lastname' => (string)$address->getLastname() ? $address->getLastname() : $orderAddress['last_name'],
             'postcode' => (string)$address->getPostcode() ? $address->getPostcode() : $orderAddress['postcode'],

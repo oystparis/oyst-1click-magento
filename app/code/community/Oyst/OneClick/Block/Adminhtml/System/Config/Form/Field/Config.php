@@ -46,7 +46,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Field_Config extends Mage
                     } catch (e) {
                         showMessage("' . $trad['jsonBadFormat'] . '", "error");
                     }
-                    
+
                     if (dataFromTextarea !== dataFromConfig) {
                         Element.show("loading-mask");
                         showMessage("' . $trad['saveBeforePost'] . '", "error");
@@ -56,7 +56,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Field_Config extends Mage
 
                     var url = "' . $this->getUrl('adminhtml/oneclick_catalog/postShipments') . '";
                     var myAjax = new Ajax.Request(url, {
-                        method: "post", 
+                        method: "post",
                         onComplete: function (xhr) {
                             Element.hide("loading-mask");
                             if (200 == xhr.status && "" == xhr.responseText) {

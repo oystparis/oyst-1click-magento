@@ -15,7 +15,11 @@
         <Oyst_OneClick>
             <active>true</active>
             <codePool>community</codePool>
-            <version>1.0.0-dev-22</version>
+            <depends>
+                <Mage_Catalog />
+                <Mage_CatalogInventory />
+                <Mage_Sales />
+            </depends>
         </Oyst_OneClick>
     </modules>
 </config>
