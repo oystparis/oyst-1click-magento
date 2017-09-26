@@ -1,7 +1,7 @@
 oyst-1click-magento
 ===================
 
-[![Master Branch](https://travis-ci.com/oystparis/oyst-1click-magento.svg?branch=v1)](https://travis-ci.com/oystparis/oyst-1click-magento)
+[![Master Branch](https://travis-ci.com/oystparis/oyst-1click-magento.svg?token=6RqPSPYAqNi5kLCsQzDS&branch=master)](https://travis-ci.com/oystparis/oyst-1click-magento)
 [![Latest version](https://img.shields.io/badge/latest-1.0.0-green.svg)](https://github.com/oystparis/oyst-1click-magento/releases)
 [![Magento = 1.7.x.x](https://img.shields.io/badge/magento-1.7-blue.svg)](#)
 [![Magento = 1.8.x.x](https://img.shields.io/badge/magento-1.8-blue.svg)](#)

@@ -1,0 +1,145 @@
+<_>
+   <form_key>1hd0RIXmIJKFDM0u</form_key>
+   <name>Oyst_OneClick</name>
+   <channel>community</channel>
+   <version_ids>
+      <version_ids>2</version_ids>
+   </version_ids>
+   <summary>&lt;strong&gt;Oyst 1-Click&lt;/strong&gt; is a purchase button which enables your customers to buy in 1 clic directly from your product page.</summary>
+   <description>&lt;strong&gt;Oyst 1-Click&lt;/strong&gt; helps e-commerce website to multiply their conversion rate by 2:&lt;br /&gt;
+&lt;ul&gt;
+&lt;li&gt;Multiply your conversion rate by 2 on desktop and by 5 on mobile ;&lt;/li&gt;
+&lt;li&gt;Prevent cart abandonment between the product page and the payment confirmation-thrive thanks to Oyst community, our network effect will bring you more customers ;&lt;/li&gt;
+&lt;li&gt;A boon for purchases on mobile where conversion rate are particularly low.&lt;/li&gt;
+&lt;/ul&gt;
+Oyst 1-Click is powered by strong security technologies:&lt;br /&gt;
+&lt;ul&gt;
+&lt;li&gt;Our technology Everkey uses cross-checking among 117 criteria (data science, biometrics) to prevent any fraud) ;&lt;/li&gt;
+&lt;li&gt;We have a partnership with Adyen, one of the global leaders of online payment (Uber, Blablacar, Airbnb).&lt;/li&gt;
+&lt;/ul&gt;</description>
+   <license>Apache</license>
+   <license_uri>https://www.apache.org/licenses/LICENSE-2.0.txt</license_uri>
+   <version>1.0.0-dev-27</version>
+   <stability>devel</stability>
+   <notes>Check https://github.com/OystParis/oyst-1click-magento for details.</notes>
+   <authors>
+      <name>
+         <name>Oyst</name>
+      </name>
+      <user>
+         <user>1-Click</user>
+      </user>
+      <email>
+         <email>plugin@oyst.com</email>
+      </email>
+   </authors>
+   <depends_php_min>5.3.0</depends_php_min>
+   <depends_php_max>8.0.0</depends_php_max>
+   <depends>
+      <package>
+         <name>
+            <name/>
+         </name>
+         <channel>
+            <channel/>
+         </channel>
+         <min>
+            <min/>
+         </min>
+         <max>
+            <max/>
+         </max>
+         <files>
+            <files>                                    </files>
+         </files>
+      </package>
+      <extension>
+         <name>
+            <name>Core</name>
+         </name>
+         <min>
+            <min/>
+         </min>
+         <max>
+            <max/>
+         </max>
+      </extension>
+   </depends>
+   <contents>
+      <target>
+         <target>magelocal</target>
+         <target>magecommunity</target>
+         <target>magedesign</target>
+         <target>magedesign</target>
+         <target>magedesign</target>
+         <target>magedesign</target>
+         <target>mageetc</target>
+         <target>magelib</target>
+         <target>magelocale</target>
+         <target>mageweb</target>
+         <target>mageskin</target>
+         <target>mageskin</target>
+         <target>mageskin</target>
+      </target>
+      <path>
+         <path/>
+         <path>Oyst</path>
+         <path>adminhtml/default/default/layout/oyst_oneclick.xml</path>
+         <path>adminhtml/default/default/template/oyst</path>
+         <path>frontend/base/default/layout/oyst_oneclick.xml</path>
+         <path>frontend/base/default/template/oyst</path>
+         <path>modules/Oyst_OneClick.xml</path>
+         <path>Oyst</path>
+         <path/>
+         <path>js/oyst</path>
+         <path>adminhtml/default/default/oyst</path>
+         <path>frontend/base/default/css/oyst</path>
+         <path>frontend/base/default/js/oyst</path>
+      </path>
+      <type>
+         <type>file</type>
+         <type>dir</type>
+         <type>file</type>
+         <type>dir</type>
+         <type>file</type>
+         <type>dir</type>
+         <type>file</type>
+         <type>dir</type>
+         <type>dir</type>
+         <type>dir</type>
+         <type>dir</type>
+         <type>dir</type>
+         <type>dir</type>
+      </type>
+      <include>
+         <include/>
+         <include/>
+         <include/>
+         <include/>
+         <include/>
+         <include/>
+         <include/>
+         <include/>
+         <include>#Oyst_OneClick.csv#</include>
+         <include/>
+         <include/>
+         <include/>
+         <include/>
+      </include>
+      <ignore>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+      </ignore>
+   </contents>
+</_>
