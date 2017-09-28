@@ -22,6 +22,7 @@ function ready(fn) {
 
 /**
  * Return the simple product id from a configurable product
+ *
  * @returns {null}
  */
 function getSimpleProductId() {
@@ -55,4 +56,15 @@ function getSimpleProductId() {
     });
 
     return (1 == productCandidates.length) ? productCandidates[0] : null;
+}
+
+/**
+ * Test if the form is valid
+ *
+ * return bool
+ */
+function isOystOneClickButtonFormValid(formName) {
+    var form = new VarienForm(formName);
+
+    return form.validator.validate();
 }
