@@ -22,12 +22,12 @@ class Oyst_OneClick_Block_Adminhtml_Config_Mode extends Mage_Adminhtml_Block_Sys
 
         $javascript = "
         <script type=\"text/javascript\">
-            element = $('" . $element->getHtmlId() . "');
+            var element = $('" . $element->getHtmlId() . "');
             Event.observe(element, 'change', function(){
                 if (element.selectedOptions[0].value != '" . $element->getValue() . "'){
-                    $('oneclick_mode_comment').style.display = 'block';
+                    $('oneclick-mode-comment').show();
                 } else {
-                    $('oneclick_mode_comment').style.display = 'none';
+                    $('oneclick-mode-comment').hide();
                 }
             });
         </script>";

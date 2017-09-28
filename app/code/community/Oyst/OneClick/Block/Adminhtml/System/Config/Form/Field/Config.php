@@ -17,8 +17,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Field_Config extends Mage
     protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
         $trad = array(
-            'postShimpentsSuccess' => $this->__('Delivery mode synchronization was successful.'),
-            'postShimpentsError' => $this->__('The synchronization of delivery modes failed.'),
+            'postShipmentsSuccess' => $this->__('Delivery mode synchronization was successful.'),
+            'postShipmentsError' => $this->__('The synchronization of delivery modes failed.'),
             'saveBeforePost' => $this->__('Save the configuration before sending.'),
             'jsonBadFormat' => $this->__('Bad Json formatting. Use JSON Validator to fix it.'),
         );
@@ -59,10 +59,10 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Field_Config extends Mage
                         method: "post",
                         onComplete: function (xhr) {
                             Element.hide("loading-mask");
-                            if (200 == xhr.status && "" == xhr.responseText) {
-                                showMessage("' . $trad['postShimpentsSuccess'] . '", "success");
+                            if (200 === xhr.status && "" === xhr.responseText) {
+                                showMessage("' . $trad['postShipmentsSuccess'] . '", "success");
                             } else {
-                                showMessage("' . $trad['postShimpentsError'] . '", "error");
+                                showMessage("' . $trad['postShipmentsError'] . '", "error");
                             }
                         }
                     });

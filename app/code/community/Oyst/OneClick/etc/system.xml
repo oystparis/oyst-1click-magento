@@ -123,7 +123,7 @@
                         <!-- mode -->
                         <mode translate="label,comment,tooltip">
                             <label>Mode</label>
-                            <comment><![CDATA[<p id="oneclick_mode_comment" style="color:red; display:none;">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>]]></comment>
+                            <comment><![CDATA[<p id="oneclick-mode-comment" style="color:red; display:none;">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>]]></comment>
                             <tooltip><![CDATA[Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.]]></tooltip>
                             <frontend_type>select</frontend_type>
                             <frontend_model>oyst_oneclick/adminhtml_config_mode</frontend_model>

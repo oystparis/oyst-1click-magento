@@ -26,7 +26,7 @@ function ready(fn) {
  * @returns {null}
  */
 function getSimpleProductId() {
-    if (typeof(spConfig) == 'undefined') {
+    if ('undefined' === typeof(spConfig)) {
         return null;
     }
 

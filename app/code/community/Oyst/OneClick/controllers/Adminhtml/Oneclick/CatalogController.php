@@ -18,6 +18,7 @@ class Oyst_OneClick_Adminhtml_OneClick_CatalogController extends Mage_Adminhtml_
      * Test if user can access to this sections
      *
      * @return bool
+     *
      * @see Mage_Adminhtml_Controller_Action::_isAllowed()
      */
     protected function _isAllowed()

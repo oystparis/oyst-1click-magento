@@ -9,7 +9,7 @@
 "Enabled","Activé"
 "Enable module logs","Activer les logs du module"
 "Mode","Environnement"
-"<p id=""oneclick_mode_comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""oneclick_mode_comment"" style=""color:red; display:none;"">Veuillez noter que, après avoir changé cette valeur, vous devrez peut-être mettre à jour le champ Clé d'API.</p>"
+"<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Veuillez noter que, après avoir changé cette valeur, vous devrez peut-être mettre à jour le champ Clé d'API.</p>"
 "custom","personnalisé"
 "Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.","En fonction de la sélection, l'extension communiquera avec le service 1-Click de test / pré-production / production. Choisissez personnalisé, si vous devez utiliser des URL spéciales pour la gateway."
 "API Key","Clé d'API"

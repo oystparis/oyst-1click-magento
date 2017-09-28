@@ -15,8 +15,6 @@
 function showMessage(txt, type) {
     var html = '<ul class="messages"><li class="' + type + '-msg"><ul><li>' + txt + '</li></ul></li></ul>';
     $("messages").update(html);
-    var url = location.href;
-    var n = url.indexOf("#");
-    url = url.substring(0, n != -1 ? n : url.length);
+    var url = location.href.split('#')[0]
     location.replace(url + "#html-body");
 }

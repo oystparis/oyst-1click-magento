@@ -37,16 +37,16 @@ if ($catalogHelper->isSupportedProduct($product)) :
 
                     var form = new FormData();
                     form.append("productRef", <?php echo $product->getId(); ?>);
-                    form.append("variationRef", getSimpleProductId());
                     form.append("quantity", qty);
+                    form.append("variationRef", getSimpleProductId());
 
                     var settings = {
-                        "method": "POST",
-                        "url": "<?php echo $oneClickUrl ?>",
-                        "async": true,
-                        'cacheControl': "no-cache",
-                        "mimeType": "multipart/form-data",
-                        "data": form
+                        async: true,
+                        cacheControl: "no-cache",
+                        data: form
+                        method: "POST",
+                        mimeType: "multipart/form-data",
+                        url: "<?php echo $oneClickUrl ?>",
                     };
 
                     var xhr = new XMLHttpRequest();
