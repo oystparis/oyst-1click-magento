@@ -1,0 +1,71 @@
+<?php
+/**
+ * This file is part of Oyst_OneClick for Magento.
+ *
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @author Oyst <plugin@oyst.com> <@oyst>
+ * @category Oyst
+ * @package Oyst_OneClick
+ * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
+ */
+
+/**
+ * @var Oyst_OneClick_Block_OneClick $this
+ */
+?>
+<?php
+/** @var Mage_Catalog_Model_Product $product */
+$product = $this->getProduct();
+
+/** @var string $oneClickUrl */
+$oneClickUrl = $this->getOneClickUrl();
+
+/** @var Oyst_OneClick_Helper_Catalog_Data $catalogHelper */
+$catalogHelper = Mage::helper('oyst_oneclick/catalog_data');
+
+if ($catalogHelper->isSupportedProduct($product)) :
+?>
+    <div id="oyst-1click-button"></div>
+    <script>
+        (function () {
+            window.__OYST__ = window.__OYST__ || {};
+            window.__OYST__.getOneClickURL = function (cb, opts) {
+                opts = opts || {};
+
+                ready(function () {
+                    var qty = $$("input[name='qty']")[0].value ? $$("input[name='qty']")[0].value : 1;
+
+                    var form = new FormData();
+                    form.append("productRef", <?php echo $product->getId(); ?>);
+                    form.append("quantity", qty);
+                    form.append("variationRef", getSimpleProductId());
+
+                    var settings = {
+                        async: true,
+                        cacheControl: "no-cache",
+                        data: form
+                        method: "POST",
+                        mimeType: "multipart/form-data",
+                        url: "<?php echo $oneClickUrl ?>",
+                    };
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open(settings.method, settings.url, settings.async);
+                    xhr.setRequestHeader('cache-control', settings.cacheControl);
+                    xhr.onload = function () {
+                        if (200 === xhr.status) {
+                            var data = JSON.parse(xhr.responseText);
+                            var isErrorsInForm = null;
+                            // If not the preload of button run form validation to know if they are errors
+                            if (!opts.preload) {
+                                var isErrorsInForm = !isOystOneClickButtonFormValid('product_addtocart_form');
+                            }
+                            cb(isErrorsInForm, data.url);
+                        }
+                    };
+                    xhr.send(form);
+                });
+            };
+        })();
+    </script>
+<?php endif; ?>

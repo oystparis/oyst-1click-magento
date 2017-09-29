@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+/**
+ * This file is part of Oyst_OneClick for Magento.
+ *
+ * @license All rights reserved, Oyst
+ * @author Oyst <plugin@oyst.com> <@oyst>
+ * @category Oyst
+ * @package Oyst_OneClick
+ * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
+ */
+-->
+<layout version="0.1.0">
+
+    <default>
+        <block type="oyst_oneclick/oneClick" name="oyst.oneclick.express.checkout" template="oyst/oneclick.phtml"/>
+    </default>
+
+    <catalog_product_view>
+        <reference name="head">
+            <block type="core/text" name="cdnjs.oyst-oneclick">
+                <action method="setText" ifconfig="oyst/oneclick/enable">
+                    <text helper="oyst_oneclick/getOneClickJs"/>
+                </action>
+            </block>
+            <action method="addCss" ifconfig="oyst/oneclick/enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
+            <action method="addItem"><type>skin_js</type><name>js/oyst/oneclick.js</name></action>
+        </reference>
+
+        <reference name="product.info.addtocart">
+            <action method="append" ifconfig="oyst/oneclick/enable">
+                <block>oyst.oneclick.express.checkout</block>
+            </action>
+        </reference>
+    </catalog_product_view>
+
+</layout>

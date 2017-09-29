@@ -1,0 +1,38 @@
+"Catalog Synchronization","Catalog Synchronization"
+"Settings","Settings"
+
+"Developed by","Developed by"
+"Contact email","Contact email"
+"Module version","Module version"
+"Oyst SDK version","Oyst SDK version"
+
+"Enabled","Enabled"
+"Enable module logs","Enable module logs"
+"Mode","Mode"
+"<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>"
+"Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.","Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway."
+"custom","custom"
+"API Key","API Key"
+"API key length must be 64 characters","API key length must be 64 characters"
+"API URL","API URL"
+"Warning: URL must finish by ""/""","Warning: URL must finish by ""/"""
+"JavaScript CDN URL","JavaScript CDN URL"
+"Notification URL","Notification URL"
+"Shipments configuration","Shipments configuration"
+"Export select system attributes as custom options","Export select system attributes as custom options"
+"Color, size and all other custom attributes are exported by default.","Color, size and all other custom attributes are exported by default."
+
+"Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings."
+
+"1-Click has been installed.","1-Click has been installed."
+"Click <a href=""%s"">here</a> to set up your settings.","Click <a href=""%s"">here</a> to set up your settings."
+"Remove this message","Remove this message"
+
+"Send configuration","Send configuration"
+"Amount are in Euros.<br>Use ""."" as decimal separator.<br>Save configuration before sending.","Amount are in Euros.<br>Use ""."" as decimal separator.<br>Save configuration before sending."
+"Delivery mode synchronization was successful.","Delivery mode synchronization was successful."
+"The synchronization of delivery modes failed.","The synchronization of delivery modes failed."
+"Save the configuration before sending.","Save the configuration before sending."
+"Bad Json formatting. Use JSON Validator to fix it. Then save the configuration.","Bad Json formatting. Use JSON Validator to fix it. Then save the configuration."
+
+"Cancel and Refund","Cancel and Refund"

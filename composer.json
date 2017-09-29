@@ -1,0 +1,48 @@
+{
+    "name": "oyst/oyst-1click-magento",
+    "description": "Official Magento Plugin to use the 1-Click payment.",
+    "type": "magento-module",
+    "homepage": "https://github.com/OystParis/oyst-1click-magento/",
+    "keywords": ["magento", "oyst", "api", "php", "payment", "1-click", "catalog", "order", "module"],
+    "authors": [
+        {
+            "name": "Oyst Team",
+            "email": "plugin@oyst.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "magento-hackathon/magento-composer-installer": "*"
+    },
+    "require-dev":  {
+        "phpunit/phpunit": "4.1.*@dev",
+        "firegento/mage-ci": "master-dev",
+        "squizlabs/php_codesniffer": "2.6.*",
+        "magento-ecg/coding-standard": "dev-php-5.3-compatible|2.*",
+        "sebastian/phpdcd": "*",
+        "sebastian/phpcpd": "*",
+        "phpmd/phpmd": "*",
+        "phploc/phploc": "*",
+        "wimg/php-compatibility": "*",
+        "simplyadmire/composer-plugins": "@dev"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url":  "https://packages.firegento.com"
+        }
+    ],
+    "scripts": {
+        "post-install-cmd": [
+            "./lib/Oyst/get-sdk.sh"
+        ],
+        "post-update-cmd": [
+            "./lib/Oyst/get-sdk.sh"
+        ]
+    },
+    "support": {
+        "issues": "https://github.com/OystParis/oyst-1click-magento/issues",
+        "source": "https://github.com/OystParis/oyst-1click-magento",
+        "build": "https://travis-ci.com/oystparis/oyst-1click-magento"
+    }
+}

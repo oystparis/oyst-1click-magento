@@ -1,0 +1,38 @@
+"Catalog Synchronization","Synchronisation du catalogue"
+"Settings","Paramètres"
+
+"Developed by","Développé par"
+"Contact email","Courriel de contact"
+"Module version","Version du module"
+"Oyst SDK version","Compatible avec le SDK Oyst"
+
+"Enabled","Activé"
+"Enable module logs","Activer les logs du module"
+"Mode","Environnement"
+"<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Veuillez noter que, après avoir changé cette valeur, vous devrez peut-être mettre à jour le champ Clé d'API.</p>"
+"custom","personnalisé"
+"Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.","En fonction de la sélection, l'extension communiquera avec le service 1-Click de test / pré-production / production. Choisissez personnalisé, si vous devez utiliser des URL spéciales pour la gateway."
+"API Key","Clé d'API"
+"API key length must be 64 characters","La longueur de la clé d'API doit être de 64 caractères"
+"API URL","URL API"
+"Warning: URL must finish by ""/""","Avertissement : l'URL doit se terminer par ""/"""
+"JavaScript CDN URL","URL CDN JavaScript"
+"Notification URL","URL de notification"
+"Shipments configuration","Configuration des frais de port"
+"Export select system attributes as custom options","Exporter les attributs select du système comme options personnalisées"
+"Color, size and all other custom attributes are exported by default.","La couleur, la taille et tous les autres attributs personnalisés sont exportés par défaut."
+
+"Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","L'API Oyst 1-Click n'est pas configuré. Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
+
+"1-Click has been installed.","1-Click a été correctement installé."
+"Click <a href=""%s"">here</a> to set up your settings.","Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
+"Remove this message","Retirer ce message"
+
+"Send configuration","Envoyer la configuration"
+"Amount are in Euros.<br>Use ""."" as decimal separator.<br>Save configuration before sending.","Le montant est en euros.<br>Utiliser ""."" comme séparateur décimal.<br>Enregistrer la configuration avant d'envoyer."
+"Delivery mode synchronization was successful.","La synchronisation des modes de livraison a réussi."
+"The synchronization of delivery modes failed.","La synchronisation des modes de livraison a raté."
+"Save the configuration before sending.","Sauvegarder la configuration avant l'envoi."
+"Bad Json formatting. Use JSON Validator to fix it. Then save the configuration.","Mise en forme Json incorrecte. Utilisez JSON Validator pour valider le JSON. Puis sauvegarder la configuration."
+
+"Cancel and Refund","Annulation et Remboursement"

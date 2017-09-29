@@ -1,0 +1,68 @@
+<?php
+/**
+ * This file is part of Oyst_OneClick for Magento.
+ *
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @author Oyst <plugin@oyst.com> <@oyst>
+ * @category Oyst
+ * @package Oyst_OneClick
+ * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
+ */
+
+/**
+ * @see Oyst_OneClick_Block_Adminhtml_Actions Actions
+ */
+
+$trad = array(
+    'syncCatalogError' => $this->__('An error occurred while synchronizing the catalog with 1-Click.'),
+    'syncCatalogSuccess' => $this->__('1-Click synchronization was successfully done.'),
+);
+
+/** @var Oyst_OneClick_Model_Notification $oystHelper */
+$oystNotification = Mage::getModel('oyst_oneclick/notification');
+$lastNotification = $oystNotification->getLastFinishedNotification('import');
+$isSyncInProgress = (0 < $lastNotification->getImportRemaining()) ? true : false;
+
+/** @var Oyst_OneClick_Helper_Data $oystHelper */
+$oystHelper = Mage::helper('oyst_oneclick');
+?>
+
+<div class='content-header'>
+    <table cellspacing='0'>
+        <tbody>
+            <tr><td><h3 class='head-dashboard'>
+                <?php echo Mage::helper('oyst_oneclick')->__('1-Click Catalog Synchronization'); ?>
+            </h3></td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div id='action-button-container'>
+    <?php
+    $url = $this->getUrl('adminhtml/system_config/edit/section/oyst_oneclick');
+    $buttonText = $oystHelper->__('Go to setup your API key');
+    if ($oystHelper->isApiKeyValid()) {
+        $url = $this->getUrl('adminhtml/oneclick_catalog/sync');
+        $buttonText = $oystHelper->__('Catalog product sync');
+        ?>
+        <p><?php echo $oystHelper->__('To sync catalog products with Oyst, click here:') ?></p>
+    <?php } ?>
+
+    <?php
+    $buttonDisableCss = '';
+    $buttonDisable = '';
+    if ($isSyncInProgress) {
+        $buttonDisableCss = "background: #C3C3C3 url(images/btn_bg.gif) repeat-x 0 100%;";
+        $buttonDisable = 'disabled';
+    }
+    ?>
+    <div id="syncbutton" data-msg-error="<?php echo $trad['syncCatalogError'] ?>" data-msg-success="<?php echo $trad['syncCatalogSuccess'] ?>">
+        <button data-sync="<?php echo $isSyncInProgress ?>" data-sync-url="<?php echo $this->getUrl('adminhtml/oneclick_actions/json'); ?>" onclick="goToThis('<?php echo $url ?>');" type="submit" class="scalable task" style="vertical-align: middle; <?php echo $buttonDisableCss ?>) repeat-x 0 100%;" <?php echo $buttonDisable ?>>
+            <span><span><span><?php echo $buttonText ?></span></span></span>
+        </button>
+        <?php if ($isSyncInProgress): ?>
+            <div class="rotating progress" id="progress"></div>
+            <span id="remaining"></span><span id="totalCount"></span>
+        <?php endif; ?>
+    </div>
+</div>

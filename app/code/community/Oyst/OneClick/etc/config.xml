@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Oyst_OneClick>
+            <version>0.1.0</version>
+        </Oyst_OneClick>
+    </modules>
+    <global>
+        <helpers>
+            <oyst_oneclick>
+                <class>Oyst_OneClick_Helper</class>
+            </oyst_oneclick>
+        </helpers>
+        <blocks>
+            <oyst_oneclick>
+                <class>Oyst_OneClick_Block</class>
+            </oyst_oneclick>
+        </blocks>
+        <models>
+            <oyst_oneclick>
+                <class>Oyst_OneClick_Model</class>
+                <resourceModel>oyst_oneclick_resource</resourceModel>
+            </oyst_oneclick>
+            <oyst_oneclick_resource>
+                <class>Oyst_OneClick_Model_Resource</class>
+                <entities>
+                    <notification>
+                        <table>oyst_notification</table>
+                    </notification>
+                </entities>
+            </oyst_oneclick_resource>
+        </models>
+        <resources>
+            <oyst_oneclick_setup>
+                <setup>
+                    <module>Oyst_OneClick</module>
+                    <class>Mage_Core_Model_Resource_Setup</class>
+                </setup>
+            </oyst_oneclick_setup>
+        </resources>
+        <fieldsets>
+            <sales_convert_quote>
+                <oyst_order_id>
+                    <to_order>*</to_order>
+                </oyst_order_id>
+            </sales_convert_quote>
+            <sales_convert_order>
+                <oyst_order_id>
+                    <to_quote>*</to_quote>
+                </oyst_order_id>
+            </sales_convert_order>
+        </fieldsets>
+        <events>
+            <!-- Support the lib/Oyst/oyst-php folder -->
+            <controller_front_init_before>
+                <observers>
+                    <oyst_lib_load>
+                        <type>object</type>
+                        <class>Oyst_OneClick_Helper_Autoloader</class>
+                        <method>createAndRegister</method>
+                    </oyst_lib_load>
+                </observers>
+            </controller_front_init_before>
+
+            <!-- Custom cancel and refund -->
+            <core_block_abstract_prepare_layout_before>
+                <observers>
+                    <custom_void>
+                        <class>Oyst_OneClick_Model_Adminhtml_Observer</class>
+                        <method>cancelAndRefundButton</method>
+                    </custom_void>
+                </observers>
+            </core_block_abstract_prepare_layout_before>
+
+        </events>
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Oyst_OneClick after="Mage_Adminhtml">Oyst_OneClick_Adminhtml</Oyst_OneClick>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <frontend>
+        <routers>
+            <oyst_oneclick>
+                <use>standard</use>
+                <args>
+                    <module>Oyst_OneClick</module>
+                    <frontName>oyst_oneclick</frontName>
+                </args>
+            </oyst_oneclick>
+        </routers>
+        <translate>
+            <modules>
+                <Oyst_OneClick>
+                    <files>
+                        <default>Oyst_OneClick.csv</default>
+                    </files>
+                </Oyst_OneClick>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <oyst_oneclick module="Oyst_OneClick">
+                    <file>oyst_oneclick.xml</file>
+                </oyst_oneclick>
+            </updates>
+        </layout>
+    </frontend>
+    <adminhtml>
+        <layout>
+            <updates>
+                <oyst_oneclick>
+                    <file>oyst_oneclick.xml</file>
+                </oyst_oneclick>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Oyst_OneClick>
+                    <files>
+                        <default>Oyst_OneClick.csv</default>
+                    </files>
+                </Oyst_OneClick>
+            </modules>
+        </translate>
+    </adminhtml>
+    <!-- Default configuration values -->
+    <default>
+        <oyst>
+            <abstract>
+                <developed_by>Oyst</developed_by>
+                <contact_email>plugin@oyst.com</contact_email>
+            </abstract>
+            <oneclick>
+                <order_api_version>2</order_api_version>
+                <oneclickjs_preprod_url>//cdn.staging.oyst.eu/</oneclickjs_preprod_url>
+                <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
+                <catalog_sync_mode>notification</catalog_sync_mode><!-- notification | direct -->
+                <catalog_number_per_pack>1</catalog_number_per_pack>
+                <shipments_config><![CDATA[{
+  "shipments": [
+    {
+      "free_shipping": 100,
+      "primary": true,
+      "amount": {
+        "currency": "EUR",
+        "follower": 1,
+        "leader": 4.9
+      },
+      "carrier": {
+        "id": "flatrate_flatrate",
+        "name": "Flat Rate",
+        "type": "home_delivery"
+      },
+      "delay": 72,
+      "zones": [
+        "FR",
+        "EN",
+        "IE"
+      ]
+    }
+  ]
+}]]></shipments_config>
+            </oneclick>
+        </oyst>
+        <oyst_oneclick>
+            <dev>
+                <register_autoloader>1</register_autoloader>
+                <autoloader_basepath>lib/Oyst/oyst-php</autoloader_basepath>
+            </dev>
+            <mode>prod</mode>
+        </oyst_oneclick>
+        <payment>
+            <oyst_oneclick translate="title" module="oyst_oneclick">
+                <active>1</active>
+                <model>oyst_oneclick/payment_method_oneclick</model>
+                <title>Oyst 1-Click</title>
+                <sort_order>100</sort_order>
+                <shipping_type>shipping</shipping_type>
+                <allow_quest_checkout>0</allow_quest_checkout>
+                <change_address>0</change_address>
+                <show_in_payment_step_checkout>0</show_in_payment_step_checkout>
+                <show_outside_of_checkout>0</show_outside_of_checkout>
+                <allow_billing_agreement_wizard>0</allow_billing_agreement_wizard>
+            </oyst_oneclick>
+        </payment>
+    </default>
+    <phpunit>
+        <suite>
+            <modules>
+                <Oyst_OneClick />
+            </modules>
+        </suite>
+    </phpunit>
+</config>

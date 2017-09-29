@@ -1,0 +1,244 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * This file is part of Oyst_OneClick for Magento.
+ *
+ * @license All rights reserved, Oyst
+ * @author Oyst <plugin@oyst.com> <@oyst>
+ * @category Oyst
+ * @package Oyst_OneClick
+ * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
+ */
+-->
+<config>
+    <tabs>
+        <oyst translate="label" module="oyst_oneclick">
+            <label>Oyst</label>
+            <sort_order>0</sort_order>
+        </oyst>
+    </tabs>
+    <sections>
+        <oyst_oneclick translate="label" module="oyst_oneclick">
+            <label>1-Click</label>
+            <tab>oyst</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>0</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <!--=============== Module information (version, contact...) ================= -->
+                <informations translate="label">
+                    <label>Informations</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <!-- author -->
+                        <developed_by translate="label">
+                            <label>Developed by</label>
+                            <comment><![CDATA[<a href="http://www.oyst.com" target="_blank">www.oyst.com</a>]]></comment>
+                            <frontend_type>label</frontend_type>
+                            <config_path>oyst/abstract/developed_by</config_path>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </developed_by>
+
+                        <!-- email -->
+                        <contact_email translate="label">
+                            <label>Contact email</label>
+                            <frontend_type>label</frontend_type>
+                            <config_path>oyst/abstract/contact_email</config_path>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </contact_email>
+
+                        <!-- module version -->
+                        <module_version translate="label">
+                            <label>Module version</label>
+                            <frontend_type>label</frontend_type>
+                            <frontend_model>oyst_oneclick/adminhtml_version_module</frontend_model>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </module_version>
+
+                        <!-- sdk version -->
+                        <gateway_version translate="label">
+                            <label>Oyst SDK version</label>
+                            <comment><![CDATA[<a href="https://github.com/OystParis/oyst-php" target="_blank">OystParis/oyst-php</a>]]></comment>
+                            <frontend_type>label</frontend_type>
+                            <frontend_model>oyst_oneclick/adminhtml_version_sdk</frontend_model>
+                            <sort_order>14</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </gateway_version>
+                    </fields>
+                </informations>
+
+                <!--============================== OneClick Settings ================================ -->
+                <oneclick translate="label">
+                    <label>1-Click</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <!-- enable -->
+                        <enable translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/enable</config_path>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enable>
+
+                        <!-- enable module logs -->
+                        <log_enable translate="label">
+                            <label>Enable module logs</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/log_enable</config_path>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>1</enable>
+                            </depends>
+                        </log_enable>
+
+                        <!-- mode -->
+                        <mode translate="label,comment,tooltip">
+                            <label>Mode</label>
+                            <comment><![CDATA[<p id="oneclick-mode-comment" style="color:red; display:none;">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>]]></comment>
+                            <tooltip><![CDATA[Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.]]></tooltip>
+                            <frontend_type>select</frontend_type>
+                            <frontend_model>oyst_oneclick/adminhtml_config_mode</frontend_model>
+                            <source_model>oyst_oneclick/system_source_config_mode</source_model>
+                            <config_path>oyst/oneclick/mode</config_path>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>1</enable>
+                            </depends>
+                        </mode>
+
+                        <!-- api login -->
+                        <api_login translate="label">
+                            <label>API Key</label>
+                            <comment>API key length must be 64 characters</comment>
+                            <validate>required-entry validate-length maximum-length-64 minimum-length-64</validate>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/api_login</config_path>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>1</enable>
+                            </depends>
+                        </api_login>
+
+                        <!-- api url -->
+                        <api_url translate="label">
+                            <label>API URL</label>
+                            <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
+                            <validate>required-entry</validate>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/api_url</config_path>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>1</enable>
+                                <mode>custom</mode>
+                            </depends>
+                        </api_url>
+
+                        <!-- javascript cdn url -->
+                        <oneclickjs_url translate="label">
+                            <label>JavaScript CDN URL</label>
+                            <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <validate>required-entry</validate>
+                            <config_path>oyst/oneclick/oneclickjs_url</config_path>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>1</enable>
+                                <mode>custom</mode>
+                            </depends>
+                        </oneclickjs_url>
+
+                        <!-- notification url -->
+                        <notification_url translate="label,comment">
+                            <label>Notification URL</label>
+                            <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
+                            <validate>required-entry</validate>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/notification_url</config_path>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>1</enable>
+                            </depends>
+                        </notification_url>
+
+                        <!-- shipments config -->
+                        <shipments_config translate="label,comment">
+                            <label>Shipments configuration</label>
+                            <comment><![CDATA[Amount are in Euros.<br>Use "." as decimal separator.<br>Save configuration before sending.]]></comment>
+                            <frontend_model>oyst_oneclick/adminhtml_system_config_form_field_config</frontend_model>
+                            <frontend_type>textarea</frontend_type>
+                            <config_path>oyst/oneclick/shipments_config</config_path>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>1</enable>
+                            </depends>
+                        </shipments_config>
+
+                        <!-- system attributes -->
+                        <systemattributes translate="label,comment">
+                            <label>Export select system attributes as custom options</label>
+                            <comment><![CDATA[Color, size and all other custom attributes are exported by default.]]></comment>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>oyst_oneclick/system_source_config_systemattributes</source_model>
+                            <config_path>oyst/oneclick/systemattributes</config_path>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                            <depends>
+                                <enable>1</enable>
+                            </depends>
+                        </systemattributes>
+                    </fields>
+                </oneclick>
+            </groups>
+        </oyst_oneclick>
+    </sections>
+</config>
