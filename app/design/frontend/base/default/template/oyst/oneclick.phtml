@@ -43,10 +43,10 @@ if ($catalogHelper->isSupportedProduct($product)) :
                     var settings = {
                         async: true,
                         cacheControl: "no-cache",
-                        data: form
+                        data: form,
                         method: "POST",
                         mimeType: "multipart/form-data",
-                        url: "<?php echo $oneClickUrl ?>",
+                        url: "<?php echo $oneClickUrl ?>"
                     };
 
                     var xhr = new XMLHttpRequest();
