@@ -1,7 +1,7 @@
 # Oyst 1-Click plugin for Magento
 
 [![Build Status](https://travis-ci.org/oystparis/oyst-1click-magento.svg?branch=master)](https://travis-ci.org/oystparis/oyst-1click-magento)
-[![Latest Stable Version](https://img.shields.io/badge/latest-0.1.0-green.svg)](https://github.com/oystparis/oyst-1click-magento/releases)
+[![Latest Stable Version](https://img.shields.io/badge/latest-0.1.1-green.svg)](https://github.com/oystparis/oyst-1click-magento/releases)
 [![Magento = 1.7.x.x](https://img.shields.io/badge/magento-1.7-blue.svg)](#)
 [![Magento = 1.8.x.x](https://img.shields.io/badge/magento-1.8-blue.svg)](#)
 [![Magento = 1.9.x.x](https://img.shields.io/badge/magento-1.9-blue.svg)](#)
@@ -57,7 +57,7 @@ This is the preferred installation method, unless installing manually.
 ```
 $ modman init
 $ modman clone https://github.com/oystparis/oyst-1click-magento
-$ ./oyst-1click-magento/lib/Oyst/get-sdk.sh
+$ ./lib/Oyst/get-sdk.sh
 ```
 
 ### Manual installation
@@ -69,7 +69,7 @@ $ ./oyst-1click-magento/lib/Oyst/get-sdk.sh
 * Copy the `js` folder into your Magento codebase
 * Copy the `lib` folder into your Magento codebase
 * Copy the `skin` folder into your Magento codebase
-* Exec `lib/Oyst/get-sdk.sh`
+* Exec `./lib/Oyst/get-sdk.sh`
 
 #### By downloading an official releases
 
