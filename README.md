@@ -57,7 +57,7 @@ This is the preferred installation method, unless installing manually.
 ```
 $ modman init
 $ modman clone https://github.com/oystparis/oyst-1click-magento
-$ ./oyst-1click-magento/lib/Oyst/get-sdk.sh
+$ ./lib/Oyst/get-sdk.sh
 ```
 
 ### Manual installation
@@ -69,7 +69,7 @@ $ ./oyst-1click-magento/lib/Oyst/get-sdk.sh
 * Copy the `js` folder into your Magento codebase
 * Copy the `lib` folder into your Magento codebase
 * Copy the `skin` folder into your Magento codebase
-* Exec `lib/Oyst/get-sdk.sh`
+* Exec `./lib/Oyst/get-sdk.sh`
 
 #### By downloading an official releases
 
