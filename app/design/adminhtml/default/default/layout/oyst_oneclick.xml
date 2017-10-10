@@ -16,4 +16,10 @@
             <block type="oyst_oneclick/adminhtml_notifications" name="oyst_oneclick_notifications" as="oyst_oneclick_notifications" template="oyst/oneclick/notifications.phtml" before="-" />
         </reference>
     </default>
+
+    <adminhtml_system_config_edit>
+        <reference name="head">
+            <action method="addJs"><script>oyst/oneclick.js</script></action>
+        </reference>
+    </adminhtml_system_config_edit>
 </layout>
