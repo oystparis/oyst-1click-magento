@@ -17,10 +17,11 @@
  * Main function to init 1-Click
  *
  * @param {String} productId
+ * @param {null|String} configurableProductChildId
  * @param {String} oneClickUrl
  * @param {Boolean} isProductAddtocartFormValidate
  */
-function oystOneClick(productId, oneClickUrl, isProductAddtocartFormValidate) {
+function oystOneClick(productId, configurableProductChildId, oneClickUrl, isProductAddtocartFormValidate) {
     window.__OYST__ = window.__OYST__ || {};
     window.__OYST__.getOneClickURL = function (cb, opts) {
         opts = opts || {};
@@ -31,7 +32,9 @@ function oystOneClick(productId, oneClickUrl, isProductAddtocartFormValidate) {
             var form = new FormData();
             form.append("productRef", productId);
             form.append("quantity", qty);
-            form.append("variationRef", getSimpleProductId());
+            var variationRef = configurableProductChildId;
+            "" === configurableProductChildId && (variationRef = getSimpleProductId());
+            form.append("variationRef", variationRef);
 
             var settings = {
                 async: true,
