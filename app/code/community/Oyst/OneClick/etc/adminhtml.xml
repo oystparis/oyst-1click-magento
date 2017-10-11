@@ -1,19 +1,5 @@
 <?xml version="1.0"?>
 <config>
-    <menu>
-        <oyst_oneclick module="oyst_oneclick">
-            <title>1-Click</title>
-            <sort_order>100</sort_order>
-            <children>
-                <settings translate="title" module="oyst_oneclick">
-                    <title>Settings</title>
-                    <action>adminhtml/system_config/edit/section/oyst_oneclick</action>
-                    <sort_order>10</sort_order>
-                </settings>
-            </children>
-        </oyst_oneclick>
-    </menu>
-
     <acl>
         <resources>
             <all>

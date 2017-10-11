@@ -11,18 +11,12 @@
  */
 -->
 <config>
-    <tabs>
-        <oyst translate="label" module="oyst_oneclick">
-            <label>Oyst</label>
-            <sort_order>0</sort_order>
-        </oyst>
-    </tabs>
     <sections>
         <oyst_oneclick translate="label" module="oyst_oneclick">
-            <label>1-Click</label>
-            <tab>oyst</tab>
+            <label>Oyst 1-Click</label>
+            <tab>sales</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>0</sort_order>
+            <sort_order>999</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
@@ -157,8 +151,7 @@
                         <!-- api url -->
                         <api_url translate="label">
                             <label>API URL</label>
-                            <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
-                            <validate>required-entry</validate>
+                            <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>oyst/oneclick/api_url</config_path>
                             <sort_order>4</sort_order>
@@ -174,9 +167,8 @@
                         <!-- javascript cdn url -->
                         <oneclickjs_url translate="label">
                             <label>JavaScript CDN URL</label>
-                            <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
                             <frontend_type>text</frontend_type>
-                            <validate>required-entry</validate>
+                            <validate>required-entry validate-url</validate>
                             <config_path>oyst/oneclick/oneclickjs_url</config_path>
                             <sort_order>5</sort_order>
                             <show_in_default>1</show_in_default>
@@ -191,8 +183,7 @@
                         <!-- notification url -->
                         <notification_url translate="label,comment">
                             <label>Notification URL</label>
-                            <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
-                            <validate>required-entry</validate>
+                            <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>oyst/oneclick/notification_url</config_path>
                             <sort_order>6</sort_order>

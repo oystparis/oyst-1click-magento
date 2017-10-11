@@ -28,44 +28,14 @@ if ($catalogHelper->isSupportedProduct($product)) :
     <div id="oyst-1click-button"></div>
     <script>
         (function () {
-            window.__OYST__ = window.__OYST__ || {};
-            window.__OYST__.getOneClickURL = function (cb, opts) {
-                opts = opts || {};
-
-                ready(function () {
-                    var qty = $$("input[name='qty']")[0].value ? $$("input[name='qty']")[0].value : 1;
-
-                    var form = new FormData();
-                    form.append("productRef", <?php echo $product->getId(); ?>);
-                    form.append("quantity", qty);
-                    form.append("variationRef", getSimpleProductId());
-
-                    var settings = {
-                        async: true,
-                        cacheControl: "no-cache",
-                        data: form,
-                        method: "POST",
-                        mimeType: "multipart/form-data",
-                        url: "<?php echo $oneClickUrl ?>"
-                    };
-
-                    var xhr = new XMLHttpRequest();
-                    xhr.open(settings.method, settings.url, settings.async);
-                    xhr.setRequestHeader('cache-control', settings.cacheControl);
-                    xhr.onload = function () {
-                        if (200 === xhr.status) {
-                            var data = JSON.parse(xhr.responseText);
-                            var isErrorsInForm = null;
-                            // If not the preload of button run form validation to know if they are errors
-                            if (!opts.preload) {
-                                var isErrorsInForm = !isOystOneClickButtonFormValid('product_addtocart_form');
-                            }
-                            cb(isErrorsInForm, data.url);
-                        }
-                    };
-                    xhr.send(form);
-                });
-            };
+            if ("function" === typeof oystOneClick) {
+                oystOneClick(
+                    "<?php echo $product->getId(); ?>",
+                    <?php echo Zend_Json::encode($oneClickUrl); ?>
+                );
+            } else {
+                console.warn("Missing function oystOneClick");
+            }
         })();
     </script>
 <?php endif; ?>

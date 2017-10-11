@@ -15,7 +15,7 @@
 "API Key","Clé d'API"
 "API key length must be 64 characters","La longueur de la clé d'API doit être de 64 caractères"
 "API URL","URL API"
-"Warning: URL must finish by ""/""","Avertissement : l'URL doit se terminer par ""/"""
+"Please enter a valid URL. Protocol is required (http:// or https://), finishing by ""/""","Veuillez entrer une URL valide. Le protocole est requis (http: // ou https: //), en terminant par ""/"""
 "JavaScript CDN URL","URL CDN JavaScript"
 "Notification URL","URL de notification"
 "Shipments configuration","Configuration des frais de port"

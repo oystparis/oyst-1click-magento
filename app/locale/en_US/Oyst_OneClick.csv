@@ -15,7 +15,7 @@
 "API Key","API Key"
 "API key length must be 64 characters","API key length must be 64 characters"
 "API URL","API URL"
-"Warning: URL must finish by ""/""","Warning: URL must finish by ""/"""
+"Please enter a valid URL. Protocol is required (http:// or https://), finishing by ""/""","Please enter a valid URL. Protocol is required (http:// or https://), finishing by ""/"""
 "JavaScript CDN URL","JavaScript CDN URL"
 "Notification URL","Notification URL"
 "Shipments configuration","Shipments configuration"
