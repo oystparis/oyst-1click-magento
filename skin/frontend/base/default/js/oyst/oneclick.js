@@ -16,10 +16,11 @@
 /**
  * Main function to init 1-Click
  *
- * @param productId
- * @param oneClickUrl
+ * @param {String} productId
+ * @param {String} oneClickUrl
+ * @param {Boolean} isProductAddtocartFormValidate
  */
-function oystOneClick(productId, oneClickUrl) {
+function oystOneClick(productId, oneClickUrl, isProductAddtocartFormValidate) {
     window.__OYST__ = window.__OYST__ || {};
     window.__OYST__.getOneClickURL = function (cb, opts) {
         opts = opts || {};
@@ -50,7 +51,14 @@ function oystOneClick(productId, oneClickUrl) {
                     var isErrorsInForm = null;
                     // If not the preload of button run form validation to know if they are errors
                     if (!opts.preload) {
-                        var isErrorsInForm = !isOystOneClickButtonFormValid('product_addtocart_form');
+                        if (isProductAddtocartFormValidate) {
+                            isErrorsInForm = !isOystOneClickButtonFormValid('product_addtocart_form');
+                        }
+
+                        if ("function" === typeof isCustomProductAddtocartFormValid) {
+                            // this function should return a boolean
+                            isErrorsInForm = isCustomProductAddtocartFormValid();
+                        }
                     }
                     cb(isErrorsInForm, data.url);
                 }

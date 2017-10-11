@@ -23,6 +23,8 @@ $oneClickUrl = $this->getOneClickUrl();
 /** @var Oyst_OneClick_Helper_Catalog_Data $catalogHelper */
 $catalogHelper = Mage::helper('oyst_oneclick/catalog_data');
 
+$isProductAddtocartFormValidate = Mage::getStoreConfig("oyst/oneclick/product_addtocart_form_validate");
+
 if ($catalogHelper->isSupportedProduct($product)) :
 ?>
     <div id="oyst-1click-button"></div>
@@ -31,7 +33,8 @@ if ($catalogHelper->isSupportedProduct($product)) :
             if ("function" === typeof oystOneClick) {
                 oystOneClick(
                     "<?php echo $product->getId(); ?>",
-                    <?php echo Zend_Json::encode($oneClickUrl); ?>
+                    <?php echo Zend_Json::encode($oneClickUrl) ?>,
+                    <?php echo $isProductAddtocartFormValidate ?>
                 );
             } else {
                 console.warn("Missing function oystOneClick");

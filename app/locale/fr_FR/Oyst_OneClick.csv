@@ -15,12 +15,14 @@
 "API Key","Clé d'API"
 "API key length must be 64 characters","La longueur de la clé d'API doit être de 64 caractères"
 "API URL","URL API"
-"Please enter a valid URL. Protocol is required (http:// or https://), finishing by ""/""","Veuillez entrer une URL valide. Le protocole est requis (http: // ou https: //), en terminant par ""/"""
+"Please enter a valid URL finishing by ""/""","Veuillez entrer une URL valide en terminant par ""/"""
 "JavaScript CDN URL","URL CDN JavaScript"
 "Notification URL","URL de notification"
 "Shipments configuration","Configuration des frais de port"
 "Export select system attributes as custom options","Exporter les attributs select du système comme options personnalisées"
 "Color, size and all other custom attributes are exported by default.","La couleur, la taille et tous les autres attributs personnalisés sont exportés par défaut."
+"Enable native form validator to add to cart","Activer le validateur natif de formulaire d'ajout au panier"
+"To use a custom validator, disable and implement a javascript function isCustomProductAddtocartFormValid","Pour utiliser un validateur custom, désactiver et implémenter une fonction javascript isCustomProductAddtocartFormValid"
 
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","L'API Oyst 1-Click n'est pas configuré. Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
 
