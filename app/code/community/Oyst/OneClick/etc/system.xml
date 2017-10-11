@@ -227,6 +227,19 @@
                                 <enable>1</enable>
                             </depends>
                         </systemattributes>
+
+                        <!-- product addtocart form validate -->
+                        <product_addtocart_form_validate translate="label">
+                            <label>Enable native form validator to add to cart</label>
+                            <comment><![CDATA[To use a custom validator, disable and implement a javascript function isCustomProductAddtocartFormValid]]></comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/product_addtocart_form_validate</config_path>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </product_addtocart_form_validate>
                     </fields>
                 </oneclick>
             </groups>

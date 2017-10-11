@@ -167,6 +167,7 @@
     }
   ]
 }]]></shipments_config>
+                <product_addtocart_form_validate>1</product_addtocart_form_validate>
             </oneclick>
         </oyst>
         <oyst_oneclick>

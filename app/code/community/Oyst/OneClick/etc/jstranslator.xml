@@ -13,7 +13,7 @@
 <jstranslator>
     <!-- validation.js -->
     <validate-oyst-url translate="message" module="oyst_oneclick">
-        <message>Please enter a valid URL. Protocol is required (http:// or https://), finishing by "/"</message>
+        <message>Please enter a valid URL finishing by "/"</message>
     </validate-oyst-url>
     <!-- end validation.js -->
 </jstranslator>

@@ -15,12 +15,14 @@
 "API Key","API Key"
 "API key length must be 64 characters","API key length must be 64 characters"
 "API URL","API URL"
-"Please enter a valid URL. Protocol is required (http:// or https://), finishing by ""/""","Please enter a valid URL. Protocol is required (http:// or https://), finishing by ""/"""
+"Please enter a valid URL finishing by ""/""","Please enter a valid URL finishing by ""/"""
 "JavaScript CDN URL","JavaScript CDN URL"
 "Notification URL","Notification URL"
 "Shipments configuration","Shipments configuration"
 "Export select system attributes as custom options","Export select system attributes as custom options"
 "Color, size and all other custom attributes are exported by default.","Color, size and all other custom attributes are exported by default."
+"Enable native form validator to add to cart","Enable native form validator to add to cart"
+"To use a custom validator, disable and implement a javascript function isCustomProductAddtocartFormValid","To use a custom validator, disable and implement a javascript function isCustomProductAddtocartFormValid"
 
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings."
 
