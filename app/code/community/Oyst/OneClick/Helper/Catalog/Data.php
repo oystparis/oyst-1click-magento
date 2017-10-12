@@ -605,7 +605,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
      *
      * @param Mage_Catalog_Model_Product $product
      * @param OystProduct $oystProduct
-     * @param Array $userDefinedAttributeCode
+     * @param array $userDefinedAttributeCode
      */
     protected function _addCustomAttributesToInformation(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
@@ -649,7 +649,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     /**
      * Return a OystProduct
      *
-     * @param $productId
+     * @param int $productId
      *
      * @return OystProduct
      */
@@ -677,7 +677,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     /**
      * Count product collection
      *
-     * @param $param
+     * @param array $param
      *
      * @return mixed
      */
@@ -697,5 +697,26 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $productCollection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
 
         return $productCollection->getSize();
+    }
+
+    /**
+     * In case of a configurable has only one product return the child product id
+     *
+     * @param Mage_Catalog_Model_Product $product
+     *
+     * @return null|int
+     */
+    public function getConfigurableProductChildId($product)
+    {
+        if ($product->isConfigurable()) {
+            /** @var Mage_Catalog_Model_Product_Type_Configurable $childProducts */
+            $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProductIds($product);
+
+            if (1 === count($childProducts)) {
+                return $childProducts[0];
+            }
+        }
+
+        return null;
     }
 }
