@@ -51,8 +51,8 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
             Mage::throwException('Order has no OystOrderId');
         }
 
-        /** @var Oyst_OneClick_Helper_Order_Data $helper */
-        $helper = Mage::helper('oyst_oneclick/order_data');
+        /** @var Oyst_OneClick_Model_Order_Data $helper */
+        $model = Mage::getModel('oyst_oneclick/order');
 
         /** @var Oyst_OneClick_Model_Order_ApiWrapper $orderApi */
         $orderApi = Mage::getModel('oyst_oneclick/order_apiWrapper');
@@ -63,7 +63,7 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
             Mage::logException($e);
         }
 
-        $helper->cancelAndRefund($order);
+        $model->cancelAndRefund($order);
 
         //$this->_redirectReferer();
         Mage::app()->getResponse()->setRedirect($this->getRequest()->getServer('HTTP_REFERER'));

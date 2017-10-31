@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>0.1.1</version>
+            <version>0.2.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -106,7 +106,7 @@
         </translate>
         <layout>
             <updates>
-                <oyst_oneclick module="Oyst_OneClick">
+                <oyst_oneclick>
                     <file>oyst_oneclick.xml</file>
                 </oyst_oneclick>
             </updates>
@@ -141,33 +141,6 @@
                 <order_api_version>2</order_api_version>
                 <oneclickjs_preprod_url>//cdn.staging.oyst.eu/</oneclickjs_preprod_url>
                 <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
-                <catalog_sync_mode>notification</catalog_sync_mode><!-- notification | direct -->
-                <catalog_number_per_pack>1</catalog_number_per_pack>
-                <shipments_config><![CDATA[{
-  "shipments": [
-    {
-      "free_shipping": 100,
-      "primary": true,
-      "amount": {
-        "currency": "EUR",
-        "follower": 1,
-        "leader": 4.9
-      },
-      "carrier": {
-        "id": "flatrate_flatrate",
-        "name": "Flat Rate",
-        "type": "home_delivery"
-      },
-      "delay": 72,
-      "zones": [
-        "FR",
-        "EN",
-        "IE"
-      ]
-    }
-  ]
-}]]></shipments_config>
-                <product_addtocart_form_validate>1</product_addtocart_form_validate>
             </oneclick>
         </oyst>
         <oyst_oneclick>

@@ -11,11 +11,12 @@
 
 use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystOneClickApi;
+use Oyst\Classes\OneClickNotifications;
 
 /**
  * OneClick ApiWrapper Model
  */
-class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
+class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
 {
     /** @var Oyst_OneClick_Model_Api $_oystClient */
     protected $_oystClient;
@@ -32,17 +33,29 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Get config from Magento
+     *
+     * @param string $code
+     *
+     * @return mixed
+     */
+    protected function _getConfig($code)
+    {
+        return Mage::getStoreConfig("oyst/oneclick/$code");
+    }
+
+    /**
      * API send
      *
      * @param $dataFormated
      *
      * @return mixed
      */
-    public function send($dataFormated)
+    public function authorizeOrder($dataFormated)
     {
-        /** @var Oyst_OneClick_Helper_Catalog_Data $oystCatalogHelper */
-        $oystCatalogHelper = Mage::helper('oyst_oneclick/catalog_data');
-        $oystProduct = $oystCatalogHelper->getOystProduct($dataFormated['productRef']);
+        /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
+        $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
+        $oystProduct = $oystCatalog->getOystProduct($dataFormated['productRef']);
 
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');
@@ -56,6 +69,22 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
         Mage::helper('oyst_oneclick')->log('$dataFormated');
         Mage::helper('oyst_oneclick')->log($dataFormated);
 
+        $orderParams = null;
+
+        $context = array(
+            'id' => (string)$this->generateId(),
+            'remote_addr' => Mage::helper('core/http')->getRemoteAddr(),
+            'store_id' => (string)Mage::app()->getStore()->getStoreId(),
+        );
+
+        if (!is_null($userId = Mage::getSingleton('customer/session')->getCustomerId())) {
+            $context['user_id'] = $userId;
+        }
+
+        $notifications = new OneClickNotifications();
+        $notifications->setShouldAskShipments(true);
+        $notifications->setUrl($this->_getConfig('notification_url'));
+
         try {
             $response = $this->_oneClickApi->authorizeOrder(
                 $dataFormated['productRef'],
@@ -63,7 +92,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
                 $dataFormated['variationRef'],
                 $dataFormated['user'],
                 $dataFormated['version'],
-                $oystProduct
+                $oystProduct,
+                $orderParams,
+                $context,
+                $notifications
             );
             $this->_oystClient->validateResult($this->_oneClickApi);
         } catch (Exception $e) {
@@ -71,5 +103,25 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Mage_Core_Model_Abstract
         }
 
         return $response;
+    }
+
+    /**
+     * Generate unique identifier.
+     *
+     * Identifier is built as [custom string][current datetime][random part]
+     *
+     * @return string
+     */
+    public function generateId($string = null)
+    {
+        $randomPart = rand(10, 99);
+
+        list($usec, $sec) = explode(' ', microtime());
+
+        $microtime = explode('.', $usec);
+        $datetime = new DateTime();
+        $datetime = $datetime->format('YmdHis');
+
+        return $string . $datetime . $microtime[1] . $randomPart;
     }
 }

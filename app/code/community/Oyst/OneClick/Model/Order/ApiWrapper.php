@@ -17,11 +17,6 @@ use Oyst\Api\OystOrderApi;
  */
 class Oyst_OneClick_Model_Order_ApiWrapper extends Mage_Core_Model_Abstract
 {
-    const STATUS_WAITING = 'waiting';
-    const STATUS_PENDING = 'pending';
-    const STATUS_ACCEPTED = 'accepted';
-    const STATUS_SHIPPED = 'shipped';
-
     /** @var Oyst_OneClick_Model_Api $_oystClient */
     protected $_oystClient;
 

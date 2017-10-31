@@ -16,7 +16,7 @@ use Oyst\Classes\OystUserAgent;
 /**
  * API Model
  */
-class Oyst_OneClick_Model_Api
+class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
 {
     /*
      * API length
@@ -101,7 +101,7 @@ class Oyst_OneClick_Model_Api
      */
     protected function _getCustomApiUrl()
     {
-        if (Oyst_OneClick_Model_System_Source_Config_Mode::CUSTOM === $this->_getConfig('mode')) {
+        if (Oyst_OneClick_Model_System_Config_Source_Mode::CUSTOM === $this->_getConfig('mode')) {
             return $this->_getConfig('api_url');
         }
 

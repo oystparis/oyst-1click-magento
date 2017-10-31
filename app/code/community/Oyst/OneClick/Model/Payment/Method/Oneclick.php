@@ -26,4 +26,20 @@ class Oyst_OneClick_Model_Payment_Method_Oneclick extends Mage_Payment_Model_Met
     protected $_canUseCheckout = false;
     protected $_canUseForMultishipping = false;
     protected $_canManageRecurringProfiles = false;
+
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->_code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return self::PAYMENT_METHOD_NAME;
+    }
 }

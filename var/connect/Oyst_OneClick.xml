@@ -1,5 +1,5 @@
 <_>
-   <form_key>ZSohzU8dUil8HSyy</form_key>
+   <form_key>8osA7LUK4OmZgaCd</form_key>
    <name>Oyst_OneClick</name>
    <channel>community</channel>
    <version_ids>
@@ -19,7 +19,7 @@ Oyst 1-Click is powered by strong security technologies:&lt;br /&gt;
 &lt;/ul&gt;</description>
    <license>Apache</license>
    <license_uri>https://www.apache.org/licenses/LICENSE-2.0.txt</license_uri>
-   <version>0.1.1</version>
+   <version>0.1.2-beta-1</version>
    <stability>stable</stability>
    <notes>Check https://github.com/OystParis/oyst-1click-magento for details.</notes>
    <authors>
@@ -50,7 +50,7 @@ Oyst 1-Click is powered by strong security technologies:&lt;br /&gt;
             <max/>
          </max>
          <files>
-            <files>                                          </files>
+            <files>                                           </files>
          </files>
       </package>
       <extension>

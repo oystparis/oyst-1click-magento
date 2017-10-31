@@ -82,7 +82,7 @@
                 <oneclick translate="label">
                     <label>1-Click</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>1</sort_order>
+                    <sort_order>10</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -121,7 +121,7 @@
                             <tooltip><![CDATA[Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.]]></tooltip>
                             <frontend_type>select</frontend_type>
                             <frontend_model>oyst_oneclick/adminhtml_config_mode</frontend_model>
-                            <source_model>oyst_oneclick/system_source_config_mode</source_model>
+                            <source_model>oyst_oneclick/system_config_source_mode</source_model>
                             <config_path>oyst/oneclick/mode</config_path>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
@@ -195,28 +195,12 @@
                             </depends>
                         </notification_url>
 
-                        <!-- shipments config -->
-                        <shipments_config translate="label,comment">
-                            <label>Shipments configuration</label>
-                            <comment><![CDATA[Amount are in Euros.<br>Use "." as decimal separator.<br>Save configuration before sending.]]></comment>
-                            <frontend_model>oyst_oneclick/adminhtml_system_config_form_field_config</frontend_model>
-                            <frontend_type>textarea</frontend_type>
-                            <config_path>oyst/oneclick/shipments_config</config_path>
-                            <sort_order>7</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>1</enable>
-                            </depends>
-                        </shipments_config>
-
                         <!-- system attributes -->
                         <systemattributes translate="label,comment">
                             <label>Export select system attributes as custom options</label>
                             <comment><![CDATA[Color, size and all other custom attributes are exported by default.]]></comment>
                             <frontend_type>multiselect</frontend_type>
-                            <source_model>oyst_oneclick/system_source_config_systemattributes</source_model>
+                            <source_model>oyst_oneclick/system_config_source_systemattributes</source_model>
                             <config_path>oyst/oneclick/systemattributes</config_path>
                             <sort_order>8</sort_order>
                             <show_in_default>1</show_in_default>
@@ -242,6 +226,61 @@
                         </product_addtocart_form_validate>
                     </fields>
                 </oneclick>
+
+                <!--============================== Shipments Settings ================================ -->
+                <shipments translate="label">
+                    <label>Shipments configuration</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <default_carrier translate="label,comment">
+                            <label>Default carrier</label>
+                            <comment>As a minimum, this shipping method should be activated in the mapping below.</comment>
+                            <validate>validate-select</validate>
+                            <frontend_type>select</frontend_type>
+                            <config_path>oyst/oneclick/carrier_default</config_path>
+                            <source_model>oyst_oneclick/system_config_source_shipping_methods</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </default_carrier>
+                    </fields>
+                </shipments>
+
+                <!--============================== Dynamic Shipments Mapping Certified ================================ -->
+                <carrier_mapping_certified translate="label">
+                    <label>Certified Shipping method Mapping with 1-Click</label>
+                    <comment>This section lists all the active shipping method for the 1-Click payment. The default shipment method have to be activated here.</comment>
+                    <frontend_type>text</frontend_type>
+                    <frontend_model>oyst_oneclick/adminhtml_system_config_form_fieldset_carrier_certified</frontend_model>
+                    <sort_order>30</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </carrier_mapping_certified>
+
+                <!--============================== Dynamic Shipments Mapping Not Certified ================================ -->
+                <carrier_mapping_notcertified translate="label">
+                    <label>Not Certified Shipping method Mapping with 1-Click</label>
+                    <comment>This section lists all the active shipping method for the 1-Click shipping. The default shipment method have to be activated here.</comment>
+                    <frontend_type>text</frontend_type>
+                    <frontend_model>oyst_oneclick/adminhtml_system_config_form_fieldset_carrier_notcertified</frontend_model>
+                    <sort_order>40</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </carrier_mapping_notcertified>
+
             </groups>
         </oyst_oneclick>
     </sections>
