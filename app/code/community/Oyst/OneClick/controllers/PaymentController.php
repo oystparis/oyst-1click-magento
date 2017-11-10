@@ -21,6 +21,7 @@ class Oyst_OneClick_PaymentController extends Mage_Core_Controller_Front_Action
      */
     public function urlAction()
     {
+        /** @var Zend_Controller_Request_Http $rawData */
         $rawData = Mage::app()->getRequest()->getPost();
 
         /** @var Mage_Catalog_Model_Product $product */
@@ -31,7 +32,7 @@ class Oyst_OneClick_PaymentController extends Mage_Core_Controller_Front_Action
             throw Mage::exception(
                 'Oyst_OneClick',
                 Mage::helper('oyst_onelick')->__(
-                    sprintf("variationRef is null with for configurable product id %s", $rawData['productRef'])
+                    sprintf("variationRef is null for configurable product id %s", $rawData['productRef'])
                 )
             );
         }
@@ -40,10 +41,9 @@ class Oyst_OneClick_PaymentController extends Mage_Core_Controller_Front_Action
 
         /** @var Oyst_OneClick_Model_OneClick_ApiWrapper $oneclickApi */
         $oneclickApi = Mage::getModel('oyst_oneclick/oneClick_apiWrapper');
-
-        $jsonData = $oneclickApi->send($rawData);
+        $response = $oneclickApi->authorizeOrder($rawData);
 
         $this->getResponse()->setHeader('Content-type', 'application/json');
-        $this->getResponse()->setBody(Zend_Json::encode($jsonData));
+        $this->getResponse()->setBody(Zend_Json::encode($response));
     }
 }

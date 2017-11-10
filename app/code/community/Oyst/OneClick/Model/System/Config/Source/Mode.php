@@ -14,7 +14,7 @@ use Oyst\Api\OystApiClientFactory;
 /**
  * Mode Model
  */
-class Oyst_OneClick_Model_System_Source_Config_Mode
+class Oyst_OneClick_Model_System_Config_Source_Mode
 {
     const CUSTOM = 'custom';
     const PREPROD = OystApiClientFactory::ENV_PREPROD;

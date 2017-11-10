@@ -1,4 +1,13 @@
 <?php
+/**
+ * This file is part of Oyst_OneClick for Magento.
+ *
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @author Oyst <plugin@oyst.com> <@oyst>
+ * @category Oyst
+ * @package Oyst_OneClick
+ * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
+ */
 
 /** @var $installer Mage_Core_Model_Resource_Setup */
 $installer = $this;
@@ -44,12 +53,12 @@ $sales->startSetup();
 // Add attribute to order and quote for synchronisation
 $sales->addAttribute(
     'order', 'oyst_order_id', array(
-        'type' => 'varchar'
+        'type' => 'varchar',
     )
 );
 $sales->addAttribute(
     'quote', 'oyst_order_id', array(
-        'type' => 'varchar'
+        'type' => 'varchar',
     )
 );
 

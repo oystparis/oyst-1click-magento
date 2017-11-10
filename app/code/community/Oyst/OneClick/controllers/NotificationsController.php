@@ -17,7 +17,7 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
     /**
      * Get notification for order
      *
-     * @return null
+     * @return void
      */
     public function indexAction()
     {
@@ -45,32 +45,47 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
         }
 
         if (empty($post) || empty($data) || empty($event)) {
-            return $this->badRequest();
+            return $this->badRequest('No event or data');
         }
 
-        if ('order.v2.new' == $event) {
-            $helperName = 'oyst_oneclick/order_data';
+        switch ($event) {
+            case 'order.v2.new':
+                $modelName = 'oyst_oneclick/order';
+                break;
+            case 'order.shipments.get':
+                $modelName = 'oyst_oneclick/catalog';
+                break;
+            default:
+                return $this->badRequest('Event name ' . $event . ' is not allow.');
+                break;
         }
 
-        $helper = Mage::helper($helperName);
-        if (!$helper) {
-            return $this->badRequest();
+        try {
+            /** @var Oyst_OneClick_Model_Catalog|Oyst_OneClick_Model_Order $model */
+            $model = Mage::getModel($modelName);
+        } catch (\Exception $e) {
+            return $this->badRequest('Model name ' . $modelName . ' is missing. ' . $e->getMessage());
         }
 
-        /**
-         * @var Oyst_OneClick_Helper_Order_Data $result
-         */
-        $result = $helper->syncFromNotification($event, $data);
+        /** @var Oyst_OneClick_Model_Catalog|Oyst_OneClick_Model_Order $model */
+        $response = $model->processNotification($event, $data);
 
         $this->getResponse()->setHeader('Content-type', 'application/json');
-        $this->getResponse()->setBody(Zend_Json::encode($result));
+        $this->getResponse()->setBody($response);
     }
 
-    public function badRequest()
+    /**
+     * @param string $message
+     */
+    public function badRequest($message = null)
     {
+        if (isset($message)) {
+            $message = ': ' . (string)$message;
+        }
+
         $this->getResponse()
             ->clearHeaders()
             ->setHeader('HTTP/1.1', '400 Bad Request')
-            ->setBody('400 Bad Request');
+            ->setBody('400 Bad Request' . $message);
     }
 }

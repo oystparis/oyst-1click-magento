@@ -21,7 +21,7 @@ $product = $this->getProduct();
 $oneClickUrl = $this->getOneClickUrl();
 
 /** @var Oyst_OneClick_Helper_Catalog_Data $catalogHelper */
-$catalogHelper = Mage::helper('oyst_oneclick/catalog_data');
+$catalogHelper = Mage::helper('oyst_oneclick/magento_data');
 
 $configurableProductChildId = $catalogHelper->getConfigurableProductChildId($product);
 

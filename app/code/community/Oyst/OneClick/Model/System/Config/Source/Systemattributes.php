@@ -12,9 +12,8 @@
 /**
  * Mode Model
  */
-class Oyst_OneClick_Model_System_Source_Config_Systemattributes
+class Oyst_OneClick_Model_System_Config_Source_Systemattributes
 {
-
     public function toOptionArray()
     {
         $type = Mage::getModel('eav/entity_type');
@@ -26,11 +25,11 @@ class Oyst_OneClick_Model_System_Source_Config_Systemattributes
             ->addFieldToFilter('frontend_input', 'select');
 
         $array = array();
-        /* @var $attr Mage_Eav_Model_Entity_Attribute */
+        /** @var $attr Mage_Eav_Model_Entity_Attribute */
         foreach ($attrs as $id => $attr) {
             $array[$id] = array(
                 'value' => $attr->getId(),
-                'label' => $attr->getFrontendLabel()
+                'label' => $attr->getFrontendLabel(),
             );
         }
         return $array;

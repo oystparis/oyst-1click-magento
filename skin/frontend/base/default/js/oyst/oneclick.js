@@ -27,13 +27,16 @@ function oystOneClick(productId, configurableProductChildId, oneClickUrl, isProd
         opts = opts || {};
 
         ready(function () {
-            var qty = $$("input[name='qty']")[0].value || 1;
+            var qty = 1;
+            if ($$("input[name='qty']").length) {
+                qty = $$("input[name='qty']")[0].value;
+            }
 
             var form = new FormData();
             form.append("productRef", productId);
             form.append("quantity", qty);
-            var variationRef = configurableProductChildId;
-            "" === configurableProductChildId && (variationRef = getSimpleProductId());
+            var variationRef = getSimpleProductId();
+            null !== configurableProductChildId && (variationRef = configurableProductChildId);
             form.append("variationRef", variationRef);
 
             var settings = {
@@ -60,7 +63,7 @@ function oystOneClick(productId, configurableProductChildId, oneClickUrl, isProd
 
                         if ("function" === typeof isCustomProductAddtocartFormValid) {
                             // this function should return a boolean
-                            isErrorsInForm = isCustomProductAddtocartFormValid();
+                            isErrorsInForm = !isCustomProductAddtocartFormValid();
                         }
                     }
                     cb(isErrorsInForm, data.url);

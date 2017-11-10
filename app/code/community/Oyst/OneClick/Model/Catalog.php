@@ -9,14 +9,17 @@
  * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
  */
 
+use Oyst\Classes\OneClickShipmentCalculation;
+use Oyst\Classes\OneClickShipmentCatalogLess;
+use Oyst\Classes\OystCarrier;
 use Oyst\Classes\OystCategory;
 use Oyst\Classes\OystPrice;
 use Oyst\Classes\OystProduct;
 
 /**
- * Catalog Helper
+ * Catalog Model
  */
-class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
+class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 {
     /**
      * Supported type of product
@@ -41,7 +44,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         'entity_id' => array(
             'lib_method' => 'setRef',
             'type' => 'string',
-            'required' => true
+            'required' => true,
         ),
         'status' => array(
             'lib_method' => 'setActive',
@@ -50,7 +53,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         'name' => array(
             'lib_method' => 'setTitle',
             'type' => 'string',
-            'required' => true
+            'required' => true,
         ),
         'short_description' => array(
             'lib_method' => 'setShortDescription',
@@ -63,13 +66,12 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         'manufacturer' => array(
             'lib_method' => 'setManufacturer',
             'type' => 'string',
-            'required' => true
+            'required' => true,
         ),
         'weight' => array(
             'lib_method' => 'setWeight',
             'type' => 'string',
         ),
-
         'ean' => array(
             'lib_method' => 'setEan',
             'type' => 'string',
@@ -120,7 +122,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     public function __construct()
     {
         if (!$this->_getConfig('enable')) {
-            Mage::throwException($this->__('1-Click module is not enabled.'));
+            Mage::throwException(Mage::helper('oyst_oneclick')->__('1-Click module is not enabled.'));
         }
     }
 
@@ -134,6 +136,48 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     protected function _getConfig($code)
     {
         return Mage::getStoreConfig("oyst/oneclick/$code");
+    }
+
+    /**
+     * Catalog process from notification controller
+     *
+     * @param array $event
+     * @param array $apiData
+     *
+     * @return string
+     */
+    public function processNotification($event, $apiData)
+    {
+        // Create new notification in db with status 'start'
+        $notification = Mage::getModel('oyst_oneclick/notification');
+        $notification->setData(array(
+            'event' => $event,
+            'oyst_data' => Zend_Json::encode($apiData),
+            'status' => 'start',
+            'created_at' => Zend_Date::now(),
+            'executed_at' => Zend_Date::now(),
+        ));
+        $notification->save();
+        Mage::helper('oyst_oneclick')->log('Start processing notification: ' . $notification->getNotificationId());
+
+        // Do action for each event type
+        switch ($event) {
+            case 'order.shipments.get':
+                $response = $this->retrieveShippingMethods($apiData);
+                break;
+            default:
+                Mage::helper('oyst_oneclick')->log('No action defined for event ' . $event);
+                break;
+        }
+
+        // Save new status and result in db
+        $notification->setStatus('finished')
+            ->setMageResponse($response)
+            ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
+            ->save();
+        Mage::helper('oyst_oneclick')->log('End processing notification: ' . $notification->getNotificationId());
+
+        return $response;
     }
 
     /**
@@ -154,13 +198,13 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         if (!empty($params) && is_array($params)) {
             if (!empty($params['product_id_include_filter'])) {
                 $collection->addAttributeToFilter('entity_id', array(
-                    'in' => $params['product_id_include_filter']
+                    'in' => $params['product_id_include_filter'],
                 ));
             }
 
             if (!empty($params['product_id_exclude_filter'])) {
                 $collection->addAttributeToFilter('entity_id', array(
-                    'nin' => $params['product_id_exclude_filter']
+                    'nin' => $params['product_id_exclude_filter'],
                 ));
             }
 
@@ -177,7 +221,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $collection->joinField('qty', 'cataloginventory/stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
         $collection->joinField('backorders', 'cataloginventory/stock_item', 'backorders', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
         $collection->joinField('min_sale_qty', 'cataloginventory/stock_item', 'min_sale_qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
-        $collection->getSelect()->order('FIELD(type_id, ' . ('"'.implode('","', $this->_supportedProductTypes).'"') . ')');
+        $collection->getSelect()->order('FIELD(type_id, ' . ('"' . implode('","', $this->_supportedProductTypes) . '"') . ')');
 
         Mage::helper('oyst_oneclick')->log('The catalog product size is: ' . $collection->getSize());
 
@@ -240,14 +284,14 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $type = Mage::getModel('eav/entity_type');
         $type->loadByCode('catalog_product');
 
-        /* @var $attrs Mage_Eav_Model_Resource_Entity_Attribute_Collection */
+        /** @var $attrs Mage_Eav_Model_Resource_Entity_Attribute_Collection */
         $attrs = Mage::getResourceModel('eav/entity_attribute_collection')
             ->setEntityTypeFilter($type)
             ->addFieldToFilter('is_user_defined', true)
             ->addFieldToFilter('frontend_input', 'select');
 
         $userDefinedAttributeCode = array();
-        /* @var $attribute Mage_Eav_Model_Entity_Attribute */
+        /** @var $attribute Mage_Eav_Model_Entity_Attribute */
         foreach ($attrs as $attribute) {
             $userDefinedAttributeCode[] = $attribute->getAttributeCode();
         }
@@ -314,7 +358,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
             if ($data = $product->getData($attributeCode)) {
                 if ($simpleAttribute['type'] == 'jsonb') {
                     $data = Zend_Json::encode(array(
-                        'meta' => $data
+                        'meta' => $data,
                     ));
                 } else {
                     settype($data, $simpleAttribute['type']);
@@ -614,7 +658,7 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         Mage::helper('oyst_oneclick')->log('$attributeCodes');
         Mage::helper('oyst_oneclick')->log($attributeCodes);
 
-        foreach($attributeCodes as $attributeCode) {
+        foreach ($attributeCodes as $attributeCode) {
             $value = '';
             if (($attribute = $product->getResource()->getAttribute($attributeCode)) && !is_null($product->getData($attributeCode))) {
                 $value = $attribute->getFrontend()->getValue($product);
@@ -686,12 +730,12 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
         $productCollection = Mage::getModel('catalog/product')->getCollection();
         if (!empty($params['product_id_include_filter'])) {
             $productCollection->addAttributeToFilter('entity_id', array(
-                'in' => $params['product_id_include_filter']
+                'in' => $params['product_id_include_filter'],
             ));
         }
         if (!empty($params['product_id_exclude_filter'])) {
             $productCollection->addAttributeToFilter('entity_id', array(
-                'nin' => $params['product_id_exclude_filter']
+                'nin' => $params['product_id_exclude_filter'],
             ));
         }
         $productCollection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
@@ -700,23 +744,115 @@ class Oyst_OneClick_Helper_Catalog_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * In case of a configurable has only one product return the child product id
+     * Get the shipping methods
      *
-     * @param Mage_Catalog_Model_Product $product
+     * @param $data
      *
-     * @return null|int
+     * @return string
      */
-    public function getConfigurableProductChildId($product)
+    public function retrieveShippingMethods($apiData)
     {
-        if ($product->isConfigurable()) {
-            /** @var Mage_Catalog_Model_Product_Type_Configurable $childProducts */
-            $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProductIds($product);
+        // @TODO EndpointShipment: remove these bad hack for currency
+        $apiData['order_amount']['currency'] = 'EUR';
+        $apiData['created_at'] = Zend_Date::now();
+        $apiData['created_at'] = Zend_Date::now();
+        $apiData['id'] = null;
 
-            if (1 === count($childProducts)) {
-                return $childProducts[0];
+        /** @var Mage_Core_Model_Store $store */
+        $store = Mage::getModel('core/store')->load($apiData['context']['store_id']);
+
+        /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
+        $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $apiData);
+        $magentoQuoteBuilder->buildQuote();
+
+        // Object to format data of EndpointShipment
+        $oneClickShipmentCalculation = new OneClickShipmentCalculation();
+
+        /** @var Mage_Sales_Model_Quote_Address $address */
+        $address = $magentoQuoteBuilder->getQuote()->getShippingAddress();
+
+        $rates = $address
+            ->collectShippingRates()
+            ->getShippingRatesCollection();
+        $isPrimarySet = false;
+        $shippingPrices = array();
+        foreach ($rates as $rate) {
+            Mage::helper('oyst_oneclick')->log(
+                sprintf('%s (%s): %s',
+                    trim($this->_getConfigMappingName($rate->getCode())),
+                    $rate->getCode(),
+                    $rate->getPrice()
+                )
+            );
+
+            // This mean it's disable for 1-Click
+            if ("0" === ($carrierMapping = $this->_getConfigMappingDelay($rate->getCode()))) {
+                continue;
             }
+
+            $oystPrice = new OystPrice($rate->getPrice(), Mage::app()->getStore()->getCurrentCurrencyCode());
+
+            $oystCarrier = new OystCarrier(
+                $rate->getCode(),
+                trim($this->_getConfigMappingName($rate->getCode())),
+                $carrierMapping
+            );
+
+            $shipment = new OneClickShipmentCatalogLess();
+            $shipment->setAmount($oystPrice);
+            $shipment->setDelay($this->_getConfigCarrierDelay($rate->getCode()));
+            $shipment->setPrimary(false);
+            if ($rate->getCode() === $this->_getConfig('carrier_default')) {
+                $shipment->setPrimary(true);
+                $isPrimarySet = true;
+            }
+            $shipment->setCarrier($oystCarrier);
+
+            $oneClickShipmentCalculation->addShipment($shipment);
         }
 
-        return null;
+        if (!$isPrimarySet) {
+            $oneClickShipmentCalculation->setDefaultPrimaryShipmentByType();
+        }
+
+        $magentoQuoteBuilder->getQuote()->setIsActive(false)->save();
+
+        return $oneClickShipmentCalculation->toJson();
+    }
+
+    /**
+     * Get config for carrier delay from Magento
+     *
+     * @param string $code
+     *
+     * @return mixed
+     */
+    protected function _getConfigCarrierDelay($code)
+    {
+        return Mage::getStoreConfig("oyst_oneclick/carrier_delay/$code");
+    }
+
+    /**
+     * Get config for carrier mapping from Magento
+     *
+     * @param string $code
+     *
+     * @return mixed
+     */
+    protected function _getConfigMappingDelay($code)
+    {
+        return Mage::getStoreConfig("oyst_oneclick/carrier_mapping/$code");
+    }
+
+    /**
+     * Get config for carrier name from Magento
+     *
+     * @param string $code
+     *
+     * @return mixed
+     */
+    protected function _getConfigMappingName($code)
+    {
+        return Mage::getStoreConfig("oyst_oneclick/carrier_name/$code");
     }
 }
