@@ -254,13 +254,13 @@ class Oyst_OneClick_Model_Magento_Quote
         $helper = Mage::helper('oyst_oneclick');
 
         // Check if store include tax (Product and shipping cost)
-        $priceIncludeTax = Mage::helper('tax')->priceIncludesTax($this->quote->getStore());
+        $priceIncludesTax = Mage::helper('tax')->priceIncludesTax($this->quote->getStore());
         $shippingIncludeTax = Mage::helper('tax')->shippingPriceIncludesTax($this->quote->getStore());
 
         // Add product in quote
         $this->addOystProducts(
             $this->apiData['items'],
-            $priceIncludeTax
+            $priceIncludesTax
         );
 
         // @TODO EndpointShipment: improve this bad hack
@@ -308,7 +308,7 @@ class Oyst_OneClick_Model_Magento_Quote
         // Re-adjust cents for item quote
         // Conversion Tax Include > Tax Exclude > Tax Include maybe make 0.01 amount error
         // @TODO EndpointShipment: improve this bad hack
-        if (isset($this->apiData['shipment']) && !$priceIncludeTax && isset($this->apiData['order_amount']['value'])) {
+        if (isset($this->apiData['shipment']) && !$priceIncludesTax && isset($this->apiData['order_amount']['value'])) {
             if ($this->quote->getGrandTotal() != $helper->getHumanAmount($this->apiData['order_amount']['value'])) {
                 $quoteItems = $this->quote->getAllItems();
 
@@ -336,11 +336,11 @@ class Oyst_OneClick_Model_Magento_Quote
      * Add products from API to current quote
      *
      * @param $items product list to be added
-     * @param boolean $priceIncludeTax
+     * @param boolean $priceIncludesTax
      *
      * @return  Oyst_Sync_Model_Quote
      */
-    private function addOystProducts($items, $priceIncludeTax = true)
+    private function addOystProducts($items, $priceIncludesTax = true)
     {
         /** @var Oyst_OneClick_Helper_Data $helper */
         $helper = Mage::helper('oyst_oneclick');
@@ -379,7 +379,7 @@ class Oyst_OneClick_Model_Magento_Quote
                 }
 
                 // If price not include tax -> get shipping cost without tax
-                if (!$priceIncludeTax) {
+                if (!$priceIncludesTax) {
                     $basedOn = Mage::getStoreConfig(
                         Mage_Tax_Model_Config::CONFIG_XML_PATH_BASED_ON,
                         $this->quote->getStore()
