@@ -55,7 +55,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     {
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
-        $oystProduct = $oystCatalog->getOystProduct($dataFormated['productRef']);
+        $oystProduct = $oystCatalog->getOystProduct($dataFormated['productRef'], $dataFormated['variationRef']);
 
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');

@@ -115,6 +115,16 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     protected $_userDefinedAttributeCode = array();
 
     /**
+     * @var int
+     */
+    protected $_productId = null;
+
+    /**
+     * @var int
+     */
+    protected $_configurableProductChildId = null;
+
+    /**
      * Object construct
      *
      * @return null
@@ -181,6 +191,41 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Return a OystProduct
+     *
+     * @param int $productId
+     * @param int $configurableProductChildId
+     *
+     * @return OystProduct
+     */
+    public function getOystProduct($productId, $configurableProductChildId = null)
+    {
+        $this->_productId = $productId;
+
+        if (!is_null($configurableProductChildId)) {
+            $this->_configurableProductChildId = $configurableProductChildId;
+        }
+
+        // Params used to pass data in prepare collection ; allow to pass multiple product
+        $params['product_id_include_filter'] = array($this->_productId);
+
+        // Get list of product from params
+        $collection = $this->_prepareCollection($params);
+
+        /** @var Oyst_OneClick_Helper_Data $oystHelper */
+        $oystHelper = Mage::helper('oyst_oneclick');
+        $oystHelper->log('Catalog less product collection Sql : ' . $collection->getSelect()->__toString());
+
+        $this->_userDefinedAttributeCode = $this->_getUserDefinedAttributeCode();
+        $this->_systemSelectedAttributesCode = $this->_getSystemSelectedAttributeCode();
+
+        // Format list into OystProduct
+        $productsFormated = $this->_format($collection);
+
+        return $productsFormated[0];
+    }
+
+    /**
      * Prepare Database Request with filters
      *
      * @param array $params
@@ -216,8 +261,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         // do not use : that include 'catalog_product_index_price' with inner join
         // but this table is used only if product is active once.
         // we want ALL products so let's join manually
-        // Mage::getSingleton('cataloginventory/stock')->addItemsToProducts($collection);
-        // $collection->addPriceData();
+        Mage::getSingleton('cataloginventory/stock')->addItemsToProducts($collection);
+        $collection->addPriceData();
         $collection->joinField('qty', 'cataloginventory/stock_item', 'qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
         $collection->joinField('backorders', 'cataloginventory/stock_item', 'backorders', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
         $collection->joinField('min_sale_qty', 'cataloginventory/stock_item', 'min_sale_qty', 'product_id=entity_id', '{{table}}.stock_id=1', 'left');
@@ -237,9 +282,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function _format($products)
     {
-        $importedProductIds = $productsFormated = array();
+        $productsFormated = array();
         foreach ($products as $product) {
-            if (in_array($product->getId(), $importedProductIds)) {
+            // filter on required product and child product
+            if (!in_array($product->getId(), array($this->_productId, $this->_configurableProductChildId))) {
                 continue;
             }
 
@@ -258,7 +304,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             }
 
             // Add others attributes
-            $this->_addAmount($product, $oystProduct);
+            // Don't get price from child product
+            if ($product->getId() === $this->_productId) {
+                $this->_addAmount($product, $oystProduct);
+            }
             $this->_addComplexAttributes($product, $oystProduct);
             $this->_addCategories($product, $oystProduct);
             $this->_addImages($product, $oystProduct);
@@ -268,9 +317,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $productsFormated[] = $oystProduct;
         }
 
-        $importedProductIds = array_unique($importedProductIds);
-
-        return array($productsFormated, $importedProductIds);
+        return $productsFormated;
     }
 
     /**
@@ -408,7 +455,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         /** @var Mage_Catalog_Model_Product_Type_Configurable $childProducts */
         $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts($requiredAttributesIds, $product);
 
-        list($variationProductsFormated, $importedProductIds) = $this->_format($childProducts);
+        $variationProductsFormated = $this->_format($childProducts);
 
         $oystProduct->setVariations($variationProductsFormated);
     }
@@ -440,7 +487,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      *
      * @return array
      */
-    protected function _getPrices(Mage_Catalog_Model_Product $product, Mage_Catalog_Model_Product $configurable = null, $storeId = null)
+    protected function _getPrices(Mage_Catalog_Model_Product $product, $storeId = null)
     {
         $store = Mage::app()->getStore($storeId);
         $priceIncludesTax = Mage::helper('tax')->priceIncludesTax($store);
@@ -450,18 +497,23 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $request = $calculator->getRateRequest(null, null, null, $store);
         $taxPercent = $calculator->getRate($request->setProductClassId($taxClassId));
 
-        if ($configurable) {
-            $price = $configurable->getPrice();
-            $finalPrice = $configurable->getFinalPrice();
+        $price = $product->getPrice();
+        $finalPrice = $product->getFinalPrice();
+
+        if ($product->isConfigurable()) {
+            $price = $product->getPrice();
+            $finalPrice = $product->getFinalPrice();
             $configurablePrice = 0;
             $configurableOldPrice = 0;
-            $attributes = $configurable->getTypeInstance(true)->getConfigurableAttributes($configurable);
+
+            $attributes = $product->getTypeInstance(true)->getConfigurableAttributes($product);
             $attributes = Mage::helper('core')->decorateArray($attributes);
             if ($attributes) {
                 foreach ($attributes as $attribute) {
                     $productAttribute = $attribute->getProductAttribute();
                     $productAttributeId = $productAttribute->getId();
-                    $attributeValue = $product->getData($productAttribute->getAttributeCode());
+                    $configurableProductChild = Mage::getModel('catalog/product')->load($this->_configurableProductChildId);
+                    $attributeValue = $configurableProductChild->getData($productAttribute->getAttributeCode());
                     if (count($attribute->getPrices()) > 0) {
                         foreach ($attribute->getPrices() as $priceChange) {
                             if (is_array($price) && array_key_exists('value_index',
@@ -474,40 +526,37 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                     }
                 }
             }
-            $configurable->setConfigurablePrice($configurablePrice);
-            $configurable->setParentId(true);
+            $product->setConfigurablePrice($configurablePrice);
+            $product->setParentId(true);
             Mage::dispatchEvent(
                 'catalog_product_type_configurable_price',
-                array('product' => $configurable)
+                array('product' => $product)
             );
-            $configurablePrice = $configurable->getConfigurablePrice();
+            $configurablePrice = $product->getConfigurablePrice();
             $price = $product->getPrice() + $configurableOldPrice;
             $finalPrice = $product->getFinalPrice() + $configurablePrice;
-        } else {
-            if ($product->getTypeId() == 'grouped') {
-                $price = 0;
-                $finalPrice = 0;
-                $childs = Mage::getModel('catalog/product_type_grouped')->getChildrenIds($product->getId());
-                $childs = $childs[Mage_Catalog_Model_Product_Link::LINK_TYPE_GROUPED];
-                foreach ($childs as $value) {
-                    $product = Mage::getModel('catalog/product')->load($value);
-                    $price += $product->getPrice();
-                    $finalPrice += $product->getFinalPrice();
-                }
-                $priceIncludingTax = Mage::helper('tax')->getPrice(
-                    $product->setTaxPercent(null),
-                    $price,
-                    true
-                );
-                $finalPriceIncludingTax = Mage::helper('tax')->getPrice(
-                    $product->setTaxPercent(null),
-                    $finalPrice,
-                    true
-                );
-            } else {
-                $price = $product->getPrice();
-                $finalPrice = $product->getFinalPrice();
+        }
+
+        if ($product->isGrouped()) {
+            $price = 0;
+            $finalPrice = 0;
+            $childs = Mage::getModel('catalog/product_type_grouped')->getChildrenIds($product->getId());
+            $childs = $childs[Mage_Catalog_Model_Product_Link::LINK_TYPE_GROUPED];
+            foreach ($childs as $value) {
+                $product = Mage::getModel('catalog/product')->load($value);
+                $price += $product->getPrice();
+                $finalPrice += $product->getFinalPrice();
             }
+            $priceIncludingTax = Mage::helper('tax')->getPrice(
+                $product->setTaxPercent(null),
+                $price,
+                true
+            );
+            $finalPriceIncludingTax = Mage::helper('tax')->getPrice(
+                $product->setTaxPercent(null),
+                $finalPrice,
+                true
+            );
         }
 
         $priceIncludingTax = $price;
@@ -688,34 +737,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         }
 
         return $supported;
-    }
-
-    /**
-     * Return a OystProduct
-     *
-     * @param int $productId
-     *
-     * @return OystProduct
-     */
-    public function getOystProduct($productId)
-    {
-        // Params used to pass data in prepare collection
-        $params['product_id_include_filter'] = array($productId);
-
-        // Get list of product from params
-        $collection = $this->_prepareCollection($params);
-
-        /** @var Oyst_OneClick_Helper_Data $oystHelper */
-        $oystHelper = Mage::helper('oyst_oneclick');
-        $oystHelper->log('Catalog less product collection Sql : ' . $collection->getSelect()->__toString());
-
-        $this->_userDefinedAttributeCode = $this->_getUserDefinedAttributeCode();
-        $this->_systemSelectedAttributesCode = $this->_getSystemSelectedAttributeCode();
-
-        // Format list into OystProduct
-        list($productsFormated, $importedProductIds) = $this->_format($collection);
-
-        return $productsFormated[0];
     }
 
     /**
