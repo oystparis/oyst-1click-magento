@@ -223,6 +223,12 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
                         </product_addtocart_form_validate>
                     </fields>
                 </oneclick>
