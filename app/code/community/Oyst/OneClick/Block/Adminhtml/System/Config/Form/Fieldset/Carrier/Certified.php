@@ -17,7 +17,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Certifie
     public function _getAllCarrierCode()
     {
         /** @var Mage_Shipping_Model_Config $methods */
-        $methods = Mage::getSingleton('shipping/config')->getActiveCarriers();
+        $methods = Mage::getSingleton('shipping/config')->getActiveCarriers($this->_getStore());
         $options = array();
         $_methodOptions = array();
         foreach ($methods as $_ccode => $_carrier) {

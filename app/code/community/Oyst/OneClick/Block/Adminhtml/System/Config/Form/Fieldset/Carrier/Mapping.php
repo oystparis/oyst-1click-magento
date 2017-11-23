@@ -85,8 +85,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
     /**
      * Field heading
      *
-     * @param $fieldset
-     * @param $group
+     * @param $fieldset Varien_Data_Form_Element_Fieldset
+     * @param $group array
      *
      * @return string
      */
@@ -108,8 +108,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
     /**
      * Field mapping
      *
-     * @param $fieldset
-     * @param $group
+     * @param $fieldset Varien_Data_Form_Element_Fieldset
+     * @param $group array
      *
      * @return string
      */
@@ -148,8 +148,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
     /**
      * Field delay
      *
-     * @param $fieldset
-     * @param $group
+     * @param $fieldset Varien_Data_Form_Element_Fieldset
+     * @param $group array
      *
      * @return string
      */
@@ -189,8 +189,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
     /**
      * Field name
      *
-     * @param $fieldset
-     * @param $group
+     * @param $fieldset Varien_Data_Form_Element_Fieldset
+     * @param $group array
      *
      * @return string
      */
@@ -233,7 +233,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
      */
     protected function _getAllCarrierCode()
     {
-        $methods = Mage::getSingleton('shipping/config')->getActiveCarriers();
+        /** @var Mage_Shipping_Model_Config $methods */
+        $methods = Mage::getSingleton('shipping/config')->getActiveCarriers($this->_getStore());
         $options = array();
         $_methodOptions = array();
         foreach ($methods as $_ccode => $_carrier) {
@@ -249,5 +250,23 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
         }
 
         return $_methodOptions;
+    }
+
+    /**
+     * Get store
+     *
+     * @return Mage_Core_Model_Store|null
+     */
+    protected function _getStore()
+    {
+        $store = null;
+        $websiteCode = Mage::app()->getRequest()->getParam('website', false);
+        if ($websiteCode) {
+            /** @var Mage_Core_Model_Website $website */
+            $website = Mage::getModel('core/website')->load($websiteCode);
+            $store = $website->getDefaultStore();
+        }
+
+        return $store;
     }
 }
