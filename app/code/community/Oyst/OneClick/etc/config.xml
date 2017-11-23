@@ -141,6 +141,7 @@
                 <order_api_version>2</order_api_version>
                 <oneclickjs_preprod_url>//cdn.staging.oyst.eu/</oneclickjs_preprod_url>
                 <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
+                <product_addtocart_form_validate>1</product_addtocart_form_validate>
             </oneclick>
         </oyst>
         <oyst_oneclick>

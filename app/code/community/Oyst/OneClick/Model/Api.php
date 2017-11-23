@@ -73,7 +73,14 @@ class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
         $url = $this->_getCustomApiUrl();
 
         /** @var $type $oystClient */
-        $oystClient = OystApiClientFactory::getClient($type, $apiKey, $userAgent, $env, $url);
+        if (isset($env) && isset($url)) {
+            $oystClient = OystApiClientFactory::getClient($type, $apiKey, $userAgent, $env, $url);
+        } elseif (isset($env)) {
+            $oystClient = OystApiClientFactory::getClient($type, $apiKey, $userAgent, $env);
+        } else {
+            $oystClient = OystApiClientFactory::getClient($type, $apiKey, $userAgent);
+        }
+
         $oystClient->setNotifyUrl($this->_getConfig('notification_url'));
 
         return $oystClient;
