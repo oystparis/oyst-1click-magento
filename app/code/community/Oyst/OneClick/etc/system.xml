@@ -230,6 +230,24 @@
                                 </enable>
                             </depends>
                         </product_addtocart_form_validate>
+
+                        <!-- should ask stock for order -->
+                        <should_ask_stock translate="label">
+                            <label>Should ask stock</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/should_ask_stock</config_path>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </should_ask_stock>
                     </fields>
                 </oneclick>
 

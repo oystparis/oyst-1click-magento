@@ -83,6 +83,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
 
         $notifications = new OneClickNotifications();
         $notifications->setShouldAskShipments(true);
+        $notifications->setShouldAskStock($this->_getConfig('should_ask_stock'));
         $notifications->setUrl($this->_getConfig('notification_url'));
 
         try {
