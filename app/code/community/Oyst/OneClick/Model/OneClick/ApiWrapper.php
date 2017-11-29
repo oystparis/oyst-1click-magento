@@ -51,21 +51,76 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
      * @param $dataFormated
      *
      * @return mixed
+     *
+     * @throws Mage_Core_Exception
      */
     public function authorizeOrder($dataFormated)
     {
+        $dataFormated['version'] = Mage::getStoreConfig('oyst/oneclick/order_api_version');
+
+        /** @var Mage_Catalog_Model_Product $product */
+        $product = Mage::getModel('catalog/product')->load($dataFormated['productId']);
+
+        // Test if configurableProductChildId is set for configurable
+        if ($product->isConfigurable() && is_null(filter_var($dataFormated['configurableProductChildId'], FILTER_NULL_ON_FAILURE))) {
+            throw Mage::exception(
+                'Oyst_OneClick',
+                Mage::helper('oyst_onelick')->__(
+                    sprintf(
+                        "configurableProductChildId is null for configurable product id %s",
+                        $dataFormated['productId']
+                    )
+                )
+            );
+        } elseif ($product->isConfigurable()) {
+            /** @var Mage_Catalog_Model_Product $product */
+            $configurableProductChild = Mage::getModel('catalog/product')
+                ->load($dataFormated['configurableProductChildId']);
+        }
+
+        // Validate Qty
+        if ($product->isConfigurable()) {
+            /** @var Mage_CatalogInventory_Model_Stock_Item $stock */
+            $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($configurableProductChild);
+            $result = $stock->checkQuoteItemQty($dataFormated['quantity'], $configurableProductChild->getQty());
+        } else {
+            /** @var Mage_CatalogInventory_Model_Stock_Item $stock */
+            $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
+            $result = $stock->checkQuoteItemQty($dataFormated['quantity'], $product->getQty());
+        }
+
+        if ($result->getData('has_error')) {
+            $message = $result->getData('message');
+            $result->setData('message', str_replace('""', '"' . $product->getName() . '"', $message));
+
+            return array('has_error' => $result->getData('has_error'), 'message' => $result->getData('message'));
+        }
+
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
-        $oystProduct = $oystCatalog->getOystProduct($dataFormated['productRef'], $dataFormated['variationRef']);
+        $oystProduct = $oystCatalog->getOystProduct($dataFormated['productId'], $dataFormated['configurableProductChildId']);
 
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');
 
-        $oystHelper->defaultValue($dataFormated['productRef'], null);
+        $oystHelper->defaultValue($dataFormated['productId'], null);
         $oystHelper->defaultValue($dataFormated['quantity'], 1);
-        $oystHelper->defaultValue($dataFormated['variationRef'], null);
+        $oystHelper->defaultValue($dataFormated['configurableProductChildId'], null);
         $oystHelper->defaultValue($dataFormated['user'], null);
         $oystHelper->defaultValue($dataFormated['version'], 1);
+        $dataFormated['preload'] = filter_var($dataFormated['preload'], FILTER_VALIDATE_BOOLEAN);
+
+        $notifications = new OneClickNotifications();
+        $notifications->setShouldAskShipments(true);
+        $notifications->setShouldAskStock($this->_getConfig('should_ask_stock'));
+        $notifications->setUrl($this->_getConfig('notification_url'));
+
+        // Book initial quantity
+        if (!$dataFormated['preload']) {
+            $realPid = $product->isConfigurable() ? $dataFormated['configurableProductChildId'] : $product->getId();
+            $oystCatalog->stockItemToBook($realPid, $dataFormated['quantity']);
+            $notifications->addEvent('order.stock.released');
+        }
 
         Mage::helper('oyst_oneclick')->log('$dataFormated');
         Mage::helper('oyst_oneclick')->log($dataFormated);
@@ -74,25 +129,20 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         $orderParams->setManageQuantity($this->_getConfig('allow_quantity_change'));
 
         $context = array(
-            'id' => (string)$this->generateId(),
+            'id' => $this->generateId(),
             'remote_addr' => Mage::helper('core/http')->getRemoteAddr(),
-            'store_id' => (string)Mage::app()->getStore()->getStoreId(),
+            'store_id' => Mage::app()->getStore()->getStoreId(),
         );
 
         if (!is_null($userId = Mage::getSingleton('customer/session')->getCustomerId())) {
             $context['user_id'] = $userId;
         }
 
-        $notifications = new OneClickNotifications();
-        $notifications->setShouldAskShipments(true);
-        $notifications->setShouldAskStock($this->_getConfig('should_ask_stock'));
-        $notifications->setUrl($this->_getConfig('notification_url'));
-
         try {
             $response = $this->_oneClickApi->authorizeOrder(
-                $dataFormated['productRef'],
+                $dataFormated['productId'],
                 $dataFormated['quantity'],
-                $dataFormated['variationRef'],
+                $dataFormated['configurableProductChildId'],
                 $dataFormated['user'],
                 $dataFormated['version'],
                 $oystProduct,
@@ -120,6 +170,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         $randomPart = rand(10, 99);
 
         list($usec, $sec) = explode(' ', microtime());
+        unset($sec);
 
         $microtime = explode('.', $usec);
         $datetime = new DateTime();

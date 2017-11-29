@@ -47,7 +47,8 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
         /** @var Mage_Sales_Model_Order $order */
         $order = Mage::getModel('sales/order')->load($orderId);
 
-        if (empty($order->getOystOrderId())) {
+        $oystOrderId = $order->getOystOrderId();
+        if (empty($oystOrderId)) {
             Mage::throwException('Order has no OystOrderId');
         }
 

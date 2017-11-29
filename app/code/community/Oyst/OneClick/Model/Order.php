@@ -16,10 +16,11 @@ use Oyst\Classes\Enum\AbstractOrderState as OystOrderStatus;
  */
 class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 {
+    /** @var string Payment method name */
     protected $paymentMethod = null;
 
-    /** @var Mage_Sales_Model_Quote */
-    private $quote = null;
+    /** @var string API event notification */
+    private $eventNotification = null;
 
     /** @var string[] API order response */
     private $orderResponse = null;
@@ -40,6 +41,8 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
     public function processNotification($event, $apiData)
     {
         $oystOrderId = $apiData['order_id'];
+
+        $this->eventNotification = $event;
 
         // Get last notification
         /** @var Oyst_OneClick_Model_Notification $lastNotification */
@@ -62,7 +65,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         $notification = Mage::getModel('oyst_oneclick/notification');
         $notification->setData(
             array(
-                'event' => $event,
+                'event' => $this->eventNotification,
                 'oyst_data' => Zend_Json::encode($apiData),
                 'status' => 'start',
                 'created_at' => Zend_Date::now(),
@@ -74,6 +77,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         $params = array(
             'oyst_order_id' => $oystOrderId,
         );
+
         // Sync Order From Api
         $result = $this->sync($params);
 
@@ -114,6 +118,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
             Mage::logException($e);
         }
 
+        $this->orderResponse['event'] = $this->eventNotification;
         $order = $this->createMagentoOrder();
         $this->orderResponse['magento_order_id'] = $order->getId();
 

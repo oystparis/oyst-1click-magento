@@ -16,12 +16,12 @@
 /**
  * Main function to init 1-Click
  *
- * @param {String} productId
- * @param {null|String} configurableProductChildId
- * @param {String} oneClickUrl
- * @param {Boolean} isProductAddtocartFormValidate
+ * @param {String} productId Product Id
+ * @param {null|String} childId Configurable product child id passed when configurable has only one child
+ * @param {String} oneClickUrl  Backend conf oneclick payment url
+ * @param {Boolean} isProductAddtocartFormValidate  Backend conf to validate or not form data
  */
-function oystOneClick(productId, configurableProductChildId, oneClickUrl, isProductAddtocartFormValidate) {
+function oystOneClick(productId, childId, oneClickUrl, isProductAddtocartFormValidate) {
     window.__OYST__ = window.__OYST__ || {};
     window.__OYST__.getOneClickURL = function (cb, opts) {
         opts = opts || {};
@@ -33,11 +33,11 @@ function oystOneClick(productId, configurableProductChildId, oneClickUrl, isProd
             }
 
             var form = new FormData();
-            form.append("productRef", productId);
+            form.append("productId", productId);
             form.append("quantity", qty);
-            var variationRef = getSimpleProductId();
-            null !== configurableProductChildId && (variationRef = configurableProductChildId);
-            form.append("variationRef", variationRef);
+            var configurableProductChildId = (null !== childId) ? childId : getConfigurableProductChildId();
+            form.append("configurableProductChildId", configurableProductChildId);
+            form.append("preload", opts.preload);
 
             var settings = {
                 async: true,
@@ -58,12 +58,23 @@ function oystOneClick(productId, configurableProductChildId, oneClickUrl, isProd
                     // If not the preload of button run form validation to know if they are errors
                     if (!opts.preload) {
                         if (isProductAddtocartFormValidate) {
+                            // @TODO: Add backend conf to change form name
                             isErrorsInForm = !isOystOneClickButtonFormValid('product_addtocart_form');
                         }
 
                         if ("function" === typeof isCustomProductAddtocartFormValid) {
-                            // this function should return a boolean
+                            // This function allow anyone to use custom form validator, it should return a boolean
                             isErrorsInForm = !isCustomProductAddtocartFormValid();
+                        }
+
+                        if (data.has_error && data.message) {
+                            isErrorsInForm = true;
+                            if ("function" === typeof customMessagesProductView) {
+                                // This function allow anyone to display custom message
+                                customMessagesProductView(data);
+                            } else {
+                                jQuery('<div id="messages_product_view"><ul class="messages"><li class="error-msg"><ul><li><span>' + data.message + '</span></li></ul></li></ul></div>').insertBefore(".product-view");
+                            }
                         }
                     }
                     cb(isErrorsInForm, data.url);
@@ -92,7 +103,7 @@ function ready(fn) {
  *
  * @returns {null}
  */
-function getSimpleProductId() {
+function getConfigurableProductChildId() {
     if ('undefined' === typeof(spConfig)) {
         return null;
     }

@@ -403,6 +403,20 @@ class Oyst_OneClick_Model_Magento_Quote
 
                 $request = array('qty' => $item['quantity']);
 
+                // Increase stock with qty decrease when order made
+                $productForStock = isset($configurableProductChild) ? $configurableProductChild : $product;
+                $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productForStock->getId());
+                if (isset($this->apiData['event']) &&
+                    'order.v2.new' === $this->apiData['event'] &&
+                    $stockItem->getData('manage_stock') &&
+                    $item['quantity'] >= $stockItem->getData('min_sale_qty') &&
+                    $item['quantity'] <= $stockItem->getData('max_sale_qty'))
+                {
+                    $stockItem->setData('is_in_stock', 1); // Set the Product to InStock
+                    $stockItem->setData('qty', $stockItem->getQty() + $item['quantity']); // current stock + book qty
+                    $stockItem->save();
+                }
+
                 if (Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE == $product->getTypeId()) {
                     /** @var Mage_Downloadable_Model_Product_Type $links */
                     $links = Mage::getModel('downloadable/product_type')->getLinks($product);
