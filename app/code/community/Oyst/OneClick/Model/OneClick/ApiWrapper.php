@@ -12,6 +12,7 @@
 use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystOneClickApi;
 use Oyst\Classes\OneClickNotifications;
+use Oyst\Classes\OneClickOrderParams;
 
 /**
  * OneClick ApiWrapper Model
@@ -69,7 +70,8 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         Mage::helper('oyst_oneclick')->log('$dataFormated');
         Mage::helper('oyst_oneclick')->log($dataFormated);
 
-        $orderParams = null;
+        $orderParams = new OneClickOrderParams();
+        $orderParams->setManageQuantity($this->_getConfig('allow_quantity_change'));
 
         $context = array(
             'id' => (string)$this->generateId(),

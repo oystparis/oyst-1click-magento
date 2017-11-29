@@ -22,6 +22,7 @@
 "Color, size and all other custom attributes are exported by default.","Color, size and all other custom attributes are exported by default."
 "Enable native form validator to add to cart","Enable native form validator to add to cart"
 "To use a custom validator, disable and implement a javascript function isCustomProductAddtocartFormValid","To use a custom validator, disable and implement a javascript function isCustomProductAddtocartFormValid"
+"Allow the customer to change the quantity of purchases in the payment modal","Allow the customer to change the quantity of purchases in the payment modal"
 "Should ask stock","Should ask stock"
 
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings."

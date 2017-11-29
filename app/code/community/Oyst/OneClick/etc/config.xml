@@ -142,6 +142,7 @@
                 <oneclickjs_preprod_url>//cdn.staging.oyst.eu/</oneclickjs_preprod_url>
                 <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
                 <product_addtocart_form_validate>1</product_addtocart_form_validate>
+                <allow_quantity_change>1</allow_quantity_change>
                 <should_ask_stock>1</should_ask_stock>
             </oneclick>
         </oyst>
