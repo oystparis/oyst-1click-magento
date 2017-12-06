@@ -26,33 +26,36 @@ class Oyst_OneClick_Block_Adminhtml_Notifications extends Mage_Adminhtml_Block_T
     }
 
     /**
-     * Returns a value that indicates if some of the 1-Click settings have already been initialized.
+     * Returns a value that indicates if some of the payment method settings have already been initialized.
      *
-     * @return bool Flag if 1-Click is already initialized
+     * @param string $identifier Payment method identifier
+     * @return bool Flag if payment method is already initialized
      */
-    public function isInitialized()
+    public function isInitialized($identifier)
     {
-        return Mage::getStoreConfigFlag('oyst/oneclick/is_initialized');
+        return Mage::getStoreConfigFlag('oyst/' . $identifier . '/is_initialized');
     }
 
     /**
-     * Get 1-Click management url
+     * Get payment method management url
      *
-     * @return string URL for 1-Click form in payment method
+     * @param string $identifier Payment method identifier
+     * @return string URL for payment method form
      */
-    public function getManageUrl()
+    public function getManageUrl($identifier)
     {
-        return $this->getUrl('adminhtml/system_config/edit/section/oyst_oneclick');
+        return $this->getUrl('adminhtml/system_config/edit/section/' . $identifier);
     }
 
     /**
-     * Get 1-Click installation skip action
+     * Get payment method installation skip action
      *
+     * @param string $identifier Payment method identifier
      * @return string URL for skip action
      */
-    public function getSkipUrl()
+    public function getSkipUrl($identifier)
     {
-        return $this->getUrl('adminhtml/oneclick_actions/skip');
+        return $this->getUrl('adminhtml/oneclick_actions/skip', ['identifier' => $identifier]);
     }
 
     /**

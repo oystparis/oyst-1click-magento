@@ -13,7 +13,7 @@
 <layout version="0.1.0">
 
     <default>
-        <block type="oyst_oneclick/oneClick" name="oyst.oneclick.express.checkout" template="oyst/oneclick.phtml"/>
+        <block type="oyst_oneclick/oneClick" name="oyst.oneclick.express.checkout" template="oyst/oneclick/oneclick.phtml"/>
     </default>
 
     <catalog_product_view>

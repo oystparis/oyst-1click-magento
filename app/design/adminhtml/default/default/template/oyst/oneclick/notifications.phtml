@@ -13,21 +13,39 @@
  * @see Oyst_OneClick_Block_Adminhtml_Notifications Notifications
  */
 
+/** @var $this Oyst_OneClick_Block_Adminhtml_Notifications */
+
 /** @var Oyst_OneClick_Helper_Data $oystHelper */
 $oystHelper = Mage::helper('oyst_oneclick');
+?>
 
-/** @var Oyst_OneClick_Block_Adminhtml_Notifications $this */
-if (!$this->isInitialized()): ?>
+<!-- Notification for OneClick -->
+<?php if (!$this->isInitialized('oneclick')): ?>
     <div class="notification-global">
         <span class="f-right">
-            <a href="<?php echo $this->getSkipUrl() ?>">
+            <a href="<?php echo $this->getSkipUrl('oneclick') ?>">
                 <?php echo $oystHelper->__('Remove this message') ?></a>
         </span>
         <strong><?php echo $oystHelper->__('1-Click has been installed.') ?></strong>
         <?php
-        echo $this->helper('oyst_oneclick')->__(
+        echo $oystHelper->__(
                 'Click <a href="%s">here</a> to set up your settings.',
-                $this->getManageUrl()
+                $this->getManageUrl('oyst_oneclick')
+        ) ?>
+    </div>
+<?php endif; ?>
+
+<!-- Notification for Freepay -->
+<?php if (!$this->isInitialized('freepay')): ?>
+    <div class="notification-global">
+        <span class="f-right">
+            <a href="<?php echo $this->getSkipUrl('freepay') ?>">
+                <?php echo $oystHelper->__('Skip installation') ?></a>
+        </span>
+        <strong><?php echo $oystHelper->__('FreePay has been installed.') ?></strong>
+        <?php echo $oystHelper->__(
+            'Click <a href="%s">here</a> to set up your settings.',
+            $this->getManageUrl('payment')
         ) ?>
     </div>
 <?php endif;

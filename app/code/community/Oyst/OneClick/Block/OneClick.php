@@ -15,6 +15,19 @@
 class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
 {
     /**
+     * Check if the product is supported
+     *
+     * @return mixed
+     */
+    public function isSupportedProduct()
+    {
+        /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
+        $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
+
+        return $oystCatalog->isSupportedProduct($this->getProduct());
+    }
+
+    /**
      * Retrieve product
      *
      * @return Mage_Catalog_Model_Product
@@ -22,6 +35,21 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     public function getProduct()
     {
         return Mage::registry('product');
+    }
+
+    /**
+     * Get configurable product id or return null string
+     *
+     * @return string
+     */
+    public function getConfigurableProductChildIdIfExist()
+    {
+        /** @var Oyst_OneClick_Helper_Catalog_Data $catalogHelper */
+        $catalogHelper = Mage::helper('oyst_oneclick/magento_data');
+
+        $configurableProductChildId = $catalogHelper->getConfigurableProductChildId($this->getProduct());
+
+        return is_null($configurableProductChildId) ? 'null' : $configurableProductChildId;
     }
 
     /**
@@ -34,6 +62,17 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     {
         $store = Mage::getSingleton('adminhtml/session_quote')->getStore();
 
-        return Mage::getStoreConfig('oyst/oneclick/payment_url', $store->getId());
+        return Zend_Json::encode(Mage::getStoreConfig('oyst/oneclick/payment_url', $store->getId()));
     }
+
+    /**
+     * Is form validation enable
+     *
+     * @return mixed
+     */
+    public function isProductAddtocartFormValidate()
+    {
+        return Mage::getStoreConfig('oyst/oneclick/product_addtocart_form_validate');
+    }
+
 }
