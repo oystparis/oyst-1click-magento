@@ -23,7 +23,7 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return mixed
      */
-    protected function _getConfig($code)
+    public function _getConfig($code)
     {
         return Mage::getStoreConfig("oyst/oneclick/$code");
     }
