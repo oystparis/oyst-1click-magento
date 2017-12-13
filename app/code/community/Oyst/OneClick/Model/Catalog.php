@@ -910,6 +910,14 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 $qty = $product['quantity'];
 
                 $productId = $product['reference'];
+
+                // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
+                if (strpos($productId, ';')) {
+                    $p = explode(';', $productId);
+                    $productId['reference'] = $p[0];
+                    $product['variation_reference'] = $p[1];
+                }
+
                 if (isset($product['variation_reference'])) {
                     $productId = $product['variation_reference'];
                 }
@@ -945,6 +953,14 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 foreach ($apiData['items'] as $item) {
                     $qty = $item['quantity'];
                     $productId = $item['reference'];
+
+                    // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
+                    if (strpos($productId, ';')) {
+                        $p = explode(';', $productId);
+                        $productId['reference'] = $p[0];
+                        $item['variation_reference'] = $p[1];
+                    }
+
                     if (isset($item['variation_reference'])) {
                         $productId = $item['variation_reference'];
                     }
@@ -955,10 +971,22 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 $qty = $apiData['quantity'];
 
                 $productId = $apiData['product_reference'];
+
+                // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
+                if (strpos($productId, ';')) {
+                    $p = explode(';', $productId);
+                    $productId = $p[0];
+                    $apiData['variation_reference'] = $p[1];
+                }
+
+                if (isset($apiData['variation_reference'])) {
+                    $productId = $apiData['variation_reference'];
+                }
+
                 $stockItemToBook = $this->stockItemToBook($productId, $qty);
 
                 /** @var OneClickStock $stockBookResponse */
-                $stockBookResponse = new OneClickStock($stockItemToBook, $productId);
+                $stockBookResponse = new OneClickStock($stockItemToBook, $apiData['product_reference']);
 
                 return Zend_Json::encode($stockBookResponse->toArray());
             }

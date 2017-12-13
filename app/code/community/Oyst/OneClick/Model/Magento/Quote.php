@@ -353,6 +353,14 @@ class Oyst_OneClick_Model_Magento_Quote
             if (isset($item['reference'])) {
                 $productId = $item['reference'];
             }
+
+            // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
+            if (strpos($productId, ';')) {
+                $p = explode(';', $productId);
+                $productId = $p[0];
+                $item['variation_reference'] = $p[1];
+            }
+
             // @TODO EndpointShipment: to remove with AuthorizeV2 / order.cart.estimate
             if (isset($item['variation_reference'])) {
                 $configurableProductChildId = $item['variation_reference'];

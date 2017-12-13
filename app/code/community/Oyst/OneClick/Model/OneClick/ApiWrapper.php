@@ -89,6 +89,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             $result = $stock->checkQuoteItemQty($dataFormated['quantity'], $product->getQty());
         }
 
+        // Manage form error
         if ($result->getData('has_error')) {
             $message = $result->getData('message');
             $result->setData('message', str_replace('""', '"' . $product->getName() . '"', $message));
@@ -133,12 +134,21 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             'remote_addr' => Mage::helper('core/http')->getRemoteAddr(),
             'store_id' => Mage::app()->getStore()->getStoreId(),
         );
+        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+            $context['user_id'] = (string)Mage::getSingleton('customer/session')->getCustomer()->getId();
+        }
 
         if (!is_null($userId = Mage::getSingleton('customer/session')->getCustomerId())) {
             $context['user_id'] = $userId;
         }
 
         try {
+            // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
+            if ($product->isConfigurable()) {
+                $dataFormated['productId'] .= ';'. $dataFormated['configurableProductChildId'];
+                $oystProduct->__set('reference', $dataFormated['productId']);
+            }
+
             $response = $this->_oneClickApi->authorizeOrder(
                 $dataFormated['productId'],
                 $dataFormated['quantity'],
@@ -151,6 +161,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
                 $notifications
             );
             $this->_oystClient->validateResult($this->_oneClickApi);
+
         } catch (Exception $e) {
             Mage::logException($e);
         }
