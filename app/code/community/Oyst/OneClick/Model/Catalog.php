@@ -11,6 +11,7 @@
 
 use Oyst\Classes\OneClickShipmentCalculation;
 use Oyst\Classes\OneClickShipmentCatalogLess;
+use Oyst\Classes\OneClickStock;
 use Oyst\Classes\OystCarrier;
 use Oyst\Classes\OystCategory;
 use Oyst\Classes\OystPrice;
@@ -42,46 +43,46 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected $_productAttrTranslate = array(
         'entity_id' => array(
-            'lib_method' => 'setRef',
+            'lib_property' => 'reference',
             'type' => 'string',
             'required' => true,
         ),
         'status' => array(
-            'lib_method' => 'setActive',
+            'lib_property' => 'active',
             'type' => 'bool',
         ),
         'name' => array(
-            'lib_method' => 'setTitle',
+            'lib_property' => 'title',
             'type' => 'string',
             'required' => true,
         ),
         'short_description' => array(
-            'lib_method' => 'setShortDescription',
+            'lib_property' => 'shortDescription',
             'type' => 'string',
         ),
         'description' => array(
-            'lib_method' => 'setDescription',
+            'lib_property' => 'description',
             'type' => 'string',
         ),
         'manufacturer' => array(
-            'lib_method' => 'setManufacturer',
+            'lib_property' => 'manufacturer',
             'type' => 'string',
             'required' => true,
         ),
         'weight' => array(
-            'lib_method' => 'setWeight',
+            'lib_property' => 'weight',
             'type' => 'string',
         ),
         'ean' => array(
-            'lib_method' => 'setEan',
+            'lib_property' => 'ean',
             'type' => 'string',
         ),
         'isbn' => array(
-            'lib_method' => 'setEan',
+            'lib_property' => 'isbn',
             'type' => 'string',
         ),
         'upc' => array(
-            'lib_method' => 'setEan',
+            'lib_property' => 'upc',
             'type' => 'string',
         ),
     );
@@ -123,6 +124,11 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      * @var int
      */
     protected $_configurableProductChildId = null;
+
+    /**
+     * @var null|Mage_CatalogInventory_Model_Stock_Item
+     */
+    private $stockItem = null;
 
     /**
      * Object construct
@@ -175,6 +181,17 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             case 'order.shipments.get':
                 $response = $this->retrieveShippingMethods($apiData);
                 break;
+
+            // Reduce qty in order or cancel booking
+            case 'order.stock.released':
+                $response = $this->stockReleased($apiData);
+                break;
+
+            // Increase qty in order
+            case 'order.stock.book':
+                $response = $this->stockBook($apiData);
+                break;
+
             default:
                 Mage::helper('oyst_oneclick')->log('No action defined for event ' . $event);
                 break;
@@ -412,7 +429,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 }
 
                 if ($data !== null) {
-                    $oystProduct->{$simpleAttribute['lib_method']}($data);
+                    $oystProduct->__set($simpleAttribute['lib_property'], ($data));
                 }
             } elseif (array_key_exists('required', $simpleAttribute) && $simpleAttribute['required'] == true) {
                 if ('jsonb' == $simpleAttribute['type']) {
@@ -457,7 +474,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $variationProductsFormated = $this->_format($childProducts);
 
-        $oystProduct->setVariations($variationProductsFormated);
+        $oystProduct->__set('variations', ($variationProductsFormated));
     }
 
     /**
@@ -470,11 +487,11 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     {
         $prices = $this->_getPrices($product);
         $oystPriceIncludingTaxes = new OystPrice($prices['price-including-tax'], 'EUR');
-        $oystProduct->setAmountIncludingTax($oystPriceIncludingTaxes);
+        $oystProduct->__set('amountIncludingTax', $oystPriceIncludingTaxes);
 
         if (isset($prices['price-excluding-tax'])) {
             $oystPriceExcludingTaxes = new OystPrice($prices['price-excluding-tax'], 'EUR');
-            $oystProduct->setAmountExcludingTax($oystPriceExcludingTaxes);
+            $oystProduct->__set('amountExcludingTax', $oystPriceExcludingTaxes);
         }
     }
 
@@ -605,22 +622,22 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function _addComplexAttributes(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
-        $oystProduct->setUrl($product->getUrlModel()->getProductUrl($product));
+        $oystProduct->__set('url', $product->getUrlModel()->getProductUrl($product));
         $product->unsRequestPath();
-        $oystProduct->setUrl($product->getUrlInStore(array('_ignore_category' => true)));
-        $oystProduct->setMaterialized(!($product->isVirtual()) ? true : false);
+        $oystProduct->__set('url', $product->getUrlInStore(array('_ignore_category' => true)));
+        $oystProduct->__set('materialized', !($product->isVirtual()) ? true : false);
 
         $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
-        $oystProduct->setAvailableQuantity((int)$stock->getQty());
+        $oystProduct->__set('availableQuantity', (int)$stock->getQty());
 
         $productActive = ('1' === $product->getStatus()) ? true : false;
-        $oystProduct->setActive($productActive);
+        $oystProduct->__set('active', $productActive);
 
-        $oystProduct->setCondition('new');
+        $oystProduct->__set('condition', 'new');
 
         // @TODO add verification for discount price
         $isDiscounted = false;
-        $oystProduct->setDiscounted($isDiscounted);
+        $oystProduct->__set('discounted', $isDiscounted);
     }
 
     /**
@@ -650,7 +667,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $oystCategory[] = new OystCategory('none', 'none');
         }
 
-        $oystProduct->setCategories($oystCategory);
+        $oystProduct->__set('categories', $oystCategory);
     }
 
     /**
@@ -677,7 +694,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             );
         }
 
-        $oystProduct->setImages($images);
+        $oystProduct->__set('images', $images);
     }
 
     /**
@@ -689,7 +706,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     protected function _addRelatedProducts(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
         if ($relatedProducts = $product->getRelatedProductIds()) {
-            $oystProduct->setRelatedProducts($relatedProducts);
+            $oystProduct->__set('relatedProducts', $relatedProducts);
         }
     }
 
@@ -718,7 +735,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             }
             Mage::helper('oyst_oneclick')->log('$attributeCode: ' . $attributeCode . '  -  value: ' . $value);
 
-            $oystProduct->addInformation($attributeCode, $value);
+            $oystProduct->__set('addInformation', $attributeCode, $value);
         }
     }
 
@@ -875,5 +892,128 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     protected function _getConfigMappingName($code)
     {
         return Mage::getStoreConfig("oyst_oneclick/carrier_name/$code");
+    }
+
+    /**
+     *
+     *
+     * @return mixed
+     */
+    private function stockReleased($apiData)
+    {
+        try {
+            if (!isset($apiData['products'])) {
+                throw new \InvalidArgumentException(Mage::helper('oyst_oneclick')->__('Products info is missing'));
+            }
+
+            foreach ($apiData['products'] as $product) {
+                $qty = $product['quantity'];
+
+                $productId = $product['reference'];
+
+                // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
+                if (strpos($productId, ';')) {
+                    $p = explode(';', $productId);
+                    $productId['reference'] = $p[0];
+                    $product['variation_reference'] = $p[1];
+                }
+
+                if (isset($product['variation_reference'])) {
+                    $productId = $product['variation_reference'];
+                }
+
+                /** @var Mage_CatalogInventory_Model_Stock_Item stockItem */
+                $this->stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productId);
+
+                if (!$this->stockItem->getId()) {
+                    $this->stockItem->setProductId($productId);
+                    $this->stockItem->setStockId(1);
+                }
+
+                if ($this->stockItem->getManageStock()) {
+                    $this->stockItem->setQty($this->stockItem->getQty() + $qty);
+                    $this->stockItem->setIsInStock((int)($qty > 0)); // Set the Product to InStock
+                    $this->stockItem->save();
+                }
+            }
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+    }
+
+    /**
+     * Book stock item(s)
+     *
+     * @return string
+     */
+    private function stockBook($apiData)
+    {
+        try {
+            if (isset($apiData['items'])) {
+                foreach ($apiData['items'] as $item) {
+                    $qty = $item['quantity'];
+                    $productId = $item['reference'];
+
+                    // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
+                    if (strpos($productId, ';')) {
+                        $p = explode(';', $productId);
+                        $productId['reference'] = $p[0];
+                        $item['variation_reference'] = $p[1];
+                    }
+
+                    if (isset($item['variation_reference'])) {
+                        $productId = $item['variation_reference'];
+                    }
+
+                    $this->stockItemToBook($productId, $qty);
+                }
+            } else {
+                $qty = $apiData['quantity'];
+
+                $productId = $apiData['product_reference'];
+
+                // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
+                if (strpos($productId, ';')) {
+                    $p = explode(';', $productId);
+                    $productId = $p[0];
+                    $apiData['variation_reference'] = $p[1];
+                }
+
+                if (isset($apiData['variation_reference'])) {
+                    $productId = $apiData['variation_reference'];
+                }
+
+                $stockItemToBook = $this->stockItemToBook($productId, $qty);
+
+                /** @var OneClickStock $stockBookResponse */
+                $stockBookResponse = new OneClickStock($stockItemToBook, $apiData['product_reference']);
+
+                return Zend_Json::encode($stockBookResponse->toArray());
+            }
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+    }
+
+    /**
+     * Book a stock unit
+     *
+     * @return string
+     */
+    public function stockItemToBook($productId, $qty)
+    {
+        /** @var Mage_Catalog_Model_Product $product */
+        $product = Mage::getModel('catalog/product')->load($productId);
+
+        /** @var Mage_CatalogInventory_Model_Stock_Item stockItem */
+        $this->stockItem = $product->getStockItem();
+        $stockItemToBook = $this->stockItem->getQty() >= $qty ? $qty : 0;
+
+        if ($stockItemToBook) {
+            $this->stockItem->setData('qty', $this->stockItem->getQty() - $stockItemToBook);
+            $this->stockItem->save();
+        }
+
+        return $stockItemToBook;
     }
 }

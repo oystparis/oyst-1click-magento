@@ -52,9 +52,13 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
             case 'order.v2.new':
                 $modelName = 'oyst_oneclick/order';
                 break;
+
             case 'order.shipments.get':
+            case 'order.stock.book':
+            case 'order.stock.released':
                 $modelName = 'oyst_oneclick/catalog';
                 break;
+
             default:
                 return $this->badRequest('Event name ' . $event . ' is not allow.');
                 break;

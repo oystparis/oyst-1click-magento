@@ -353,6 +353,14 @@ class Oyst_OneClick_Model_Magento_Quote
             if (isset($item['reference'])) {
                 $productId = $item['reference'];
             }
+
+            // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
+            if (strpos($productId, ';')) {
+                $p = explode(';', $productId);
+                $productId = $p[0];
+                $item['variation_reference'] = $p[1];
+            }
+
             // @TODO EndpointShipment: to remove with AuthorizeV2 / order.cart.estimate
             if (isset($item['variation_reference'])) {
                 $configurableProductChildId = $item['variation_reference'];
@@ -402,6 +410,20 @@ class Oyst_OneClick_Model_Magento_Quote
 //                $product->setFinalPrice($price);
 
                 $request = array('qty' => $item['quantity']);
+
+                // Increase stock with qty decrease when order made
+                $productForStock = isset($configurableProductChild) ? $configurableProductChild : $product;
+                $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productForStock->getId());
+                if (isset($this->apiData['event']) &&
+                    'order.v2.new' === $this->apiData['event'] &&
+                    $stockItem->getData('manage_stock') &&
+                    $item['quantity'] >= $stockItem->getData('min_sale_qty') &&
+                    $item['quantity'] <= $stockItem->getData('max_sale_qty'))
+                {
+                    $stockItem->setData('is_in_stock', 1); // Set the Product to InStock
+                    $stockItem->setData('qty', $stockItem->getQty() + $item['quantity']); // current stock + book qty
+                    $stockItem->save();
+                }
 
                 if (Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE == $product->getTypeId()) {
                     /** @var Mage_Downloadable_Model_Product_Type $links */
