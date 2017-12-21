@@ -225,7 +225,10 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         $payment->setPreparedMessage(Mage::helper('oyst_oneclick')->__('%s', $this->paymentMethod));
         $payment->setShouldCloseParentTransaction(true);
         $payment->setIsTransactionClosed(1);
-        $payment->registerCaptureNotification($helper->getHumanAmount($this->orderResponse['order_amount']['value']));
+
+        if (Mage::helper('oyst_oneclick')->_getConfig('enable_invoice_auto_generation')) {
+            $payment->registerCaptureNotification($helper->getHumanAmount($this->orderResponse['order_amount']['value']));
+        }
 
         $order->save();
     }

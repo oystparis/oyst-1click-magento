@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>0.3.0</version>
+            <version>0.4.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -144,6 +144,7 @@
                 <product_addtocart_form_validate>1</product_addtocart_form_validate>
                 <allow_quantity_change>1</allow_quantity_change>
                 <should_ask_stock>1</should_ask_stock>
+                <enable_invoice_auto_generation>1</enable_invoice_auto_generation>
             </oneclick>
         </oyst>
         <oyst_oneclick>
