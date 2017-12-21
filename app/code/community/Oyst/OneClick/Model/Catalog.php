@@ -749,6 +749,11 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     public function isSupportedProduct($product)
     {
         $supported = false;
+
+        if ($product->getIsOneclickActiveOnProduct()) {
+            return $supported;
+        }
+
         if (in_array($product->getTypeId(), $this->_supportedProductTypes)) {
             $supported = true;
         }

@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>0.4.0</version>
+            <version>0.5.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -113,6 +113,17 @@
         </layout>
     </frontend>
     <adminhtml>
+        <events>
+            <!-- Show/Hide the Button 1-Click Tab -->
+            <core_block_abstract_prepare_layout_after>
+                <observers>
+                    <oyst_payment>
+                        <class>Oyst_OneClick_Model_Adminhtml_Observer</class>
+                        <method>removeTab</method>
+                    </oyst_payment>
+                </observers>
+            </core_block_abstract_prepare_layout_after>
+        </events>
         <layout>
             <updates>
                 <oyst_oneclick>
