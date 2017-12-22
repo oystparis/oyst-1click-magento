@@ -29,7 +29,7 @@ class Oyst_OneClick_Adminhtml_OneClick_CatalogController extends Mage_Adminhtml_
     /**
      * Magento method for init layout, menu and breadcrumbs
      *
-     * @return Oyst_OneClick_Adminhtml_OneClick_ActionsController
+     * @return Oyst_OneClick_Adminhtml_OneClick_CatalogController
      */
     protected function _initAction()
     {
@@ -41,7 +41,7 @@ class Oyst_OneClick_Adminhtml_OneClick_CatalogController extends Mage_Adminhtml_
     /**
      * Active menu
      *
-     * @return Oyst_OneClick_Adminhtml_OneClick_ActionsController
+     * @return Oyst_OneClick_Adminhtml_OneClick_CatalogController
      */
     protected function _activeMenu()
     {
@@ -52,6 +52,37 @@ class Oyst_OneClick_Adminhtml_OneClick_CatalogController extends Mage_Adminhtml_
                 Mage::helper('oyst_oneclick')->__('Catalog'),
                 Mage::helper('oyst_oneclick')->__('Catalog')
             );
+
+        return $this;
+    }
+
+    /**
+     * Synchronize product from Magento to Oyst
+     *
+     * @return Oyst_OneClick_Adminhtml_OneClick_CatalogController
+     */
+    public function syncAction()
+    {
+        /** @var Oyst_OneClick_Helper_Data $oystHelper */
+        $oystHelper = Mage::helper('oyst_oneclick');
+
+        //get list of product
+        $product = Mage::app()->getRequest()->getParam('product');
+        $params = array('product_id_include_filter' => $product);
+        $oystHelper->log('Start of sending product id : ' . var_export($product, true));
+
+        //sync product to Oyst
+        $result = Mage::helper('oyst_oneclick/catalog_data')->sync($params);
+        $oystHelper->log('End of sending product id : ' . var_export($product, true));
+
+        //if api response is success
+        if ($result && array_key_exists('success', $result) && $result['success'] == true) {
+            $this->_getSession()->addSuccess($oystHelper->__('The sync was successfully done'));
+        } else {
+            $this->_getSession()->addError($oystHelper->__('An error was occured'));
+        }
+
+        $this->getResponse()->setRedirect($this->getRequest()->getServer('HTTP_REFERER'));
 
         return $this;
     }

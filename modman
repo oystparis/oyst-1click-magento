@@ -1,7 +1,7 @@
 ## Modman Module Oyst 1-Click
 app/code/community/Oyst/OneClick                                app/code/community/Oyst/OneClick
 app/design/adminhtml/default/default/layout/oyst_oneclick.xml   app/design/adminhtml/default/default/layout/oyst_oneclick.xml
-app/design/adminhtml/default/default/template/oyst/oneclick     app/design/adminhtml/default/default/template/oyst/oneclick
+app/design/adminhtml/default/default/template/oyst              app/design/adminhtml/default/default/template/oyst
 app/design/frontend/base/default/layout/oyst_oneclick.xml       app/design/frontend/base/default/layout/oyst_oneclick.xml
 app/design/frontend/base/default/template/oyst                  app/design/frontend/base/default/template/oyst
 app/etc/modules/Oyst_OneClick.xml                               app/etc/modules/Oyst_OneClick.xml

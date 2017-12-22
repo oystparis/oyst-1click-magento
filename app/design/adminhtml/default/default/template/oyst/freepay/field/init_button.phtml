@@ -1,0 +1,20 @@
+<?php
+/**
+ * This file is part of Oyst_Oyst for Magento.
+ *
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @author Oyst <plugin@oyst.com> <@oyst>
+ * @category Oyst
+ * @package Oyst_Oyst
+ * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
+ */
+?>
+<table>
+    <tr>
+        <td>
+            <button onclick="javascript:window.location='<?php echo $this->getButtonUrl()?>'; return false;" class="scalable" type="button" id="<?php echo $this->getHtmlId() ?>_button">
+                <span><span><?php echo $this->escapeHtml($this->getButtonLabel()); ?></span></span>
+            </button>
+        </td>
+    </tr>
+</table>

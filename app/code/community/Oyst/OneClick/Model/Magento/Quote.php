@@ -478,7 +478,12 @@ class Oyst_OneClick_Model_Magento_Quote
 
                     $options = array();
                     foreach ($productAttributeOptions as $productAttribute) {
-                        $allValues = array_column($productAttribute['values'], 'value_index');
+                        //$allValues = array_column($productAttribute['values'], 'value_index');
+                        // Alternative way for PHP array_column method which is available only on (PHP 5 >= 5.5.0, PHP 7)
+                        $allValues = array_map(function ($element) {
+                            return $element['value_index'];
+                        }, $productAttribute['values']);
+
                         $currentProductValue = $configurableProductChild->getData($productAttribute['attribute_code']);
                         if (in_array($currentProductValue, $allValues)) {
                             $options[$productAttribute['attribute_id']] = $currentProductValue;

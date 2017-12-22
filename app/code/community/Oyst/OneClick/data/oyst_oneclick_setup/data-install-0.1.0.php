@@ -23,6 +23,10 @@ $count = preg_match($pattern, $url, $params);
 if ($count) {
     Mage::getConfig()->saveConfig('oyst/oneclick/notification_url', $url . 'oyst_oneclick/notifications/index/');
     Mage::getConfig()->saveConfig('oyst/oneclick/payment_url', $url . 'oyst_oneclick/payment/url/');
+    Mage::getConfig()->saveConfig('payment/oyst_abstract/cancel_url', $url . 'oyst_oneclick/payment/cancel/');
+    Mage::getConfig()->saveConfig('payment/oyst_abstract/error_url', $url . 'oyst_oneclick/payment/error/');
+    Mage::getConfig()->saveConfig('payment/oyst_abstract/return_url', $url . 'oyst_oneclick/payment/return/');
+    Mage::getConfig()->saveConfig('payment/oyst_abstract/notification_url', $url . 'oyst_oneclick/notifications/index/');
 }
 
 $installer->endSetup();

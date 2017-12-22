@@ -1,0 +1,29 @@
+<?php
+/**
+ * This file is part of Oyst_Oyst for Magento.
+ *
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @author Oyst <plugin@oyst.com> <@oyst>
+ * @category Oyst
+ * @package Oyst_Oyst
+ * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
+ */
+?>
+<?php
+/**
+ * @see Oyst_Oyst_Block_Info_Freepay
+ */
+?>
+<p><b><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?></b></p>
+
+<?php
+if ($specificInfo = $this->getSpecificInformation()): ?>
+    <table>
+        <?php foreach ($specificInfo as $label => $value): ?>
+            <tr>
+                <td><?php echo $this->escapeHtml($label) ?>:</td>
+                <td><?php echo nl2br(implode($this->getValueAsArray($value, true), "\n")) ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif;

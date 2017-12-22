@@ -21,7 +21,7 @@ class Oyst_OneClick_Block_Adminhtml_Actions extends Mage_Adminhtml_Block_Templat
     {
         /** @var Oyst_OneClick_Helper_Data $helper */
         $helper = Mage::helper('oyst_oneclick');
-        $helper->setIsInitialized();
+        $helper->setIsInitialized('oneclick');
         $this->_redirectReferer();
     }
 }

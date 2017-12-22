@@ -78,12 +78,14 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Set initialization status config flag and refresh config cache.
      *
+     * @param string $identifier Identifier for payment method
      * @param bool $isInitialized Flag for initialization
      */
-    public function setIsInitialized($isInitialized = true)
+    public function setIsInitialized($identifier, $isInitialized = true)
     {
         $isInitialized = (bool)$isInitialized ? '1' : '0';
-        Mage::getModel('eav/entity_setup', 'core_setup')->setConfigData('oyst/oneclick/is_initialized', $isInitialized);
+        Mage::getModel('eav/entity_setup', 'core_setup')
+            ->setConfigData('oyst/' . $identifier . '/is_initialized', $isInitialized);
         Mage::app()->getCacheInstance()->cleanType('config');
         Mage::dispatchEvent('adminhtml_cache_refresh_type', array('type' => 'config'));
     }
@@ -154,5 +156,20 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     public function getHumanAmount($value)
     {
         return (float) $value / 100;
+    }
+
+    /**
+     * Determine if the payment method is oyst
+     *
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return boolean
+     */
+    public function isPaymentMethodOyst(Mage_Sales_Model_Order $order)
+    {
+        /** @var Oyst_OneClick_Model_Payment_Method_Freepay $paymentMethod */
+        $freepayPaymentMethod = Mage::getModel('oyst_oneclick/payment_method_freepay');
+
+        return strpos($order->getPayment()->getMethod(), $freepayPaymentMethod->getCode()) !== false;
     }
 }

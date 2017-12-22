@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>0.5.0</version>
+            <version>1.0.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -123,6 +123,26 @@
                     </oyst_payment>
                 </observers>
             </core_block_abstract_prepare_layout_after>
+
+            <!-- Change the cancel button action -->
+            <sales_order_payment_cancel>
+                <observers>
+                    <oyst_payment>
+                        <class>Oyst_OneClick_Model_Observer</class>
+                        <method>salesOrderPaymentCancel</method>
+                    </oyst_payment>
+                </observers>
+            </sales_order_payment_cancel>
+
+            <!-- Change the refund button action -->
+            <sales_order_payment_refund>
+                <observers>
+                    <oyst_payment>
+                        <class>Oyst_OneClick_Model_Observer</class>
+                        <method>salesOrderPaymentRefund</method>
+                    </oyst_payment>
+                </observers>
+            </sales_order_payment_refund>
         </events>
         <layout>
             <updates>
@@ -157,6 +177,9 @@
                 <should_ask_stock>1</should_ask_stock>
                 <enable_invoice_auto_generation>1</enable_invoice_auto_generation>
             </oneclick>
+            <order_settings>
+                <enable>0</enable>
+            </order_settings>
         </oyst>
         <oyst_oneclick>
             <dev>
@@ -178,6 +201,24 @@
                 <show_outside_of_checkout>0</show_outside_of_checkout>
                 <allow_billing_agreement_wizard>0</allow_billing_agreement_wizard>
             </oyst_oneclick>
+            <oyst_abstract>
+                <developed_by>Oyst</developed_by>
+                <contact_email>plugin@oyst.com</contact_email>
+                <enable_logs>1</enable_logs>
+                <mode>prod</mode>
+                <invoice_label>FreePay</invoice_label>
+            </oyst_abstract>
+            <oyst_freepay translate="title" module="oyst_oneclick">
+                <active>1</active>
+                <title>Payer par carte bancaire</title>
+                <model>oyst_oneclick/payment_method_freepay</model>
+                <order_status>pending</order_status>
+                <payment_cancelled>holded</payment_cancelled>
+                <refund_authorized>closed</refund_authorized>
+                <payment_action>authorize_capture</payment_action>
+                <allowspecific>0</allowspecific>
+                <sort_order>0</sort_order>
+            </oyst_freepay>
         </payment>
     </default>
     <phpunit>

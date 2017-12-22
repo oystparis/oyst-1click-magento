@@ -51,6 +51,14 @@ class Oyst_OneClick_Model_Resource_Notification_Collection extends Mage_Core_Mod
                     )
                 );
             }
+            if ($type == 'payment') {
+                $this->addFieldToFilter(
+                    'oyst_data',
+                    array(
+                        'like' => '%payment_id":"' . $dataId . '"%',
+                    )
+                );
+            }
         }
 
         $this->setOrder('notification_id');

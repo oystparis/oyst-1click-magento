@@ -19,6 +19,7 @@
                 <Mage_Catalog />
                 <Mage_CatalogInventory />
                 <Mage_Sales />
+                <Mage_Payment />
             </depends>
         </Oyst_OneClick>
     </modules>
