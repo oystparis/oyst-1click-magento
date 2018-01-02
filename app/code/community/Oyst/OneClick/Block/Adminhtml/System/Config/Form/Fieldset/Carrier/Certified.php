@@ -14,26 +14,25 @@
  */
 class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Certified extends Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
 {
-    public function _getAllCarrierCode()
+    public function getAllCarrierCode()
     {
         /** @var Mage_Shipping_Model_Config $methods */
-        $methods = Mage::getSingleton('shipping/config')->getActiveCarriers($this->_getStore());
-        $options = array();
-        $_methodOptions = array();
-        foreach ($methods as $_ccode => $_carrier) {
-            if (in_array($_ccode, $this->_certified)) {
-                if ($_methods = $_carrier->getAllowedMethods()) {
-                    foreach ($_methods as $_mcode => $_method) {
-                        $_code = $_ccode . '_' . $_mcode;
-                        $_methodOptions[] = array(
-                            'value' => $_code,
-                            'label' => $_method,
+        $methods = Mage::getSingleton('shipping/config')->getActiveCarriers($this->getStore());
+        $methodOptions = array();
+        foreach ($methods as $ccode => $carrier) {
+            if (in_array($ccode, $this->certified)) {
+                if ($_methods = $carrier->getAllowedMethods()) {
+                    foreach ($_methods as $mcode => $method) {
+                        $code = $ccode . '_' . $mcode;
+                        $methodOptions[] = array(
+                            'value' => $code,
+                            'label' => $method,
                         );
                     }
                 }
             }
         }
 
-        return $_methodOptions;
+        return $methodOptions;
     }
 }

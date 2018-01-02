@@ -59,16 +59,16 @@ class Oyst_OneClick_Model_Magento_Quote_Item extends Mage_Sales_Model_Quote_Item
      */
     public function getProduct()
     {
-        if (!is_null($this->product)) {
+        if (!(null === $this->product)) {
             return $this->product;
         }
 
-        if (!is_null($this->apiData['product_reference'])) {
+        if (!(null === $this->apiData['product_reference'])) {
             $productId = $this->apiData['product_reference'];
         }
 
         // @TODO API EndpointShipment: need improvement change reference to product_reference
-        if (!is_null($this->apiData['reference'])) {
+        if (!(null === $this->apiData['reference'])) {
             $productId = $this->apiData['reference'];
         }
 
@@ -78,7 +78,7 @@ class Oyst_OneClick_Model_Magento_Quote_Item extends Mage_Sales_Model_Quote_Item
         if ($product->isGroupedType()) {
             $this->product = $this->getAssociatedGroupedProduct();
 
-            if (is_null($this->product)) {
+            if (null === $this->product) {
                 throw new Oyst_OneClick_Model_Exception('There is no associated Products found for Grouped Product.');
             }
         } else {
@@ -206,14 +206,14 @@ class Oyst_OneClick_Model_Magento_Quote_Item extends Mage_Sales_Model_Quote_Item
 
     public function getGiftMessage()
     {
-        if (!is_null($this->giftMessage)) {
+        if (!(null === $this->giftMessage)) {
             return $this->giftMessage;
         }
 
         $giftMessageData = $this->proxyItem->getGiftMessage();
 
         if (!is_array($giftMessageData)) {
-            return NULL;
+            return null;
         }
 
         $giftMessageData['customer_id'] = (int)$this->quote->getCustomerId();
@@ -221,7 +221,7 @@ class Oyst_OneClick_Model_Magento_Quote_Item extends Mage_Sales_Model_Quote_Item
         $giftMessage = Mage::getModel('giftmessage/message')->addData($giftMessageData);
 
         if ($giftMessage->isMessageEmpty()) {
-            return NULL;
+            return null;
         }
 
         $this->giftMessage = $giftMessage->save();

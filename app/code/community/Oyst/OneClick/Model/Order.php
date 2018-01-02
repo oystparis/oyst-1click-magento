@@ -68,8 +68,8 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
                 'event' => $this->eventNotification,
                 'oyst_data' => Zend_Json::encode($apiData),
                 'status' => 'start',
-                'created_at' => Zend_Date::now(),
-                'executed_at' => Zend_Date::now(),
+                'created_at' => Mage::getModel('core/date')->gmtDate(),
+                'executed_at' => Mage::getModel('core/date')->gmtDate(),
             )
         );
         $notification->save();
@@ -185,6 +185,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
                         $invIncrementIDs[] = $inv->getIncrementId();
                     }
                 }
+
                 if ($order->getInvoiceCollection()->getSize()) {
                     $order->addStatusHistoryComment(
                         Mage::helper('oyst_oneclick')->__('%s generate invoice: "%s".',

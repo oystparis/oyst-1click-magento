@@ -38,7 +38,6 @@ class Oyst_OneClick_Helper_Autoloader
     {
         static $registered = false;
         if (!$registered) {
-            // @codingStandardsIgnoreLine
             require_once $libBaseDir . DS . 'vendor' . DS . 'autoload.php';
             $registered = true;
         }

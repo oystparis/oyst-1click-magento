@@ -40,7 +40,6 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
             ->setCurPage(1)
             ->load();
 
-        // @codingStandardsIgnoreLine
         return $collection->getFirstItem();
     }
 
@@ -61,7 +60,6 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
             ->setCurPage(1)
             ->load();
 
-        // @codingStandardsIgnoreLine
         return $collection->getFirstItem();
     }
 
@@ -85,7 +83,6 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
             ->setCurPage(1)
             ->load();
 
-        // @codingStandardsIgnoreLine
         return $collection->getFirstItem();
     }
 }

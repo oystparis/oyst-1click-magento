@@ -141,7 +141,8 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
      * @param string $var
      * @param string $value
      */
-    public function defaultValue(&$var, $value) {
+    public function defaultValue(&$var, $value)
+    {
         $var = !isset($var) ? $value : $var;
     }
 
@@ -170,6 +171,6 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
         /** @var Oyst_OneClick_Model_Payment_Method_Freepay $paymentMethod */
         $freepayPaymentMethod = Mage::getModel('oyst_oneclick/payment_method_freepay');
 
-        return strpos($order->getPayment()->getMethod(), $freepayPaymentMethod->getCode()) !== false;
+        return false !== strpos($order->getPayment()->getMethod(), $freepayPaymentMethod->getCode());
     }
 }
