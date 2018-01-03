@@ -1,7 +1,7 @@
 # Oyst 1-Click plugin for Magento
 
 [![Build Status](https://travis-ci.org/oystparis/oyst-1click-magento.svg?branch=master)](https://travis-ci.org/oystparis/oyst-1click-magento)
-[![Latest Stable Version](https://img.shields.io/badge/latest-1.0.0-green.svg)](https://github.com/oystparis/oyst-1click-magento/releases)
+[![Latest Stable Version](https://img.shields.io/badge/latest-1.0.1-green.svg)](https://github.com/oystparis/oyst-1click-magento/releases)
 [![Magento = 1.7.x.x](https://img.shields.io/badge/magento-1.7-blue.svg)](#)
 [![Magento = 1.8.x.x](https://img.shields.io/badge/magento-1.8-blue.svg)](#)
 [![Magento = 1.9.x.x](https://img.shields.io/badge/magento-1.9-blue.svg)](#)
@@ -84,4 +84,4 @@ $ ./lib/Oyst/get-sdk.sh
 
 ## Support
 
-You can create issues on our Magento Repository or if you have some specific problems for your account you can contact <a href="mailto:plugin@oyst.com">plugin@oyst.com</a> as well.
+You can create issues on our repository or if you have some specific problems for your account you can contact <a href="mailto:plugin@oyst.com">plugin@oyst.com</a> as well.
