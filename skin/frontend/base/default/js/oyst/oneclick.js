@@ -35,7 +35,14 @@ function oystOneClick(productId, childId, oneClickUrl, isProductAddtocartFormVal
             var form = new FormData();
             form.append("productId", productId);
             form.append("quantity", qty);
-            var configurableProductChildId = (null !== childId) ? childId : getConfigurableProductChildId();
+
+            if ("function" === typeof customGetConfigurableProductChildId) {
+                // [Hook] This function allow anyone to use custom function to retrieve configurable product child id
+                var configurableProductChildId = customGetConfigurableProductChildId();
+            } else {
+                var configurableProductChildId = (null !== childId) ? childId : getConfigurableProductChildId();
+            }
+
             form.append("configurableProductChildId", configurableProductChildId);
             form.append("preload", opts.preload);
 
@@ -63,7 +70,7 @@ function oystOneClick(productId, childId, oneClickUrl, isProductAddtocartFormVal
                         }
 
                         if ("function" === typeof isCustomProductAddtocartFormValid) {
-                            // This function allow anyone to use custom form validator, it should return a boolean
+                            // [Hook] This function allow anyone to use custom form validator, return as to be a boolean
                             isErrorsInForm = !isCustomProductAddtocartFormValid();
                         }
 
