@@ -35,11 +35,14 @@ class Oyst_OneClick_Model_Adminhtml_Observer extends Mage_Core_Model_Abstract
                     array('order_id' => $order->getId())
                 );
 
-                $block->addButton('cancelAndRefund_submit', array(
-                    'label' => Mage::helper('oyst_oneclick')->__('Cancel and Refund'),
-                    'onclick' => "setLocation('" . $url . "')",
-                    'class' => '',
-                ));
+                $block->addButton(
+                    'cancelAndRefund_submit',
+                    array(
+                        'label' => Mage::helper('oyst_oneclick')->__('Cancel and Refund'),
+                        'onclick' => "setLocation('" . $url . "')",
+                        'class' => '',
+                    )
+                );
             }
         }
     }

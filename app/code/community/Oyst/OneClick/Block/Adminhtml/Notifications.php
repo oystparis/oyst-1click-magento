@@ -55,7 +55,7 @@ class Oyst_OneClick_Block_Adminhtml_Notifications extends Mage_Adminhtml_Block_T
      */
     public function getSkipUrl($identifier)
     {
-        return $this->getUrl('adminhtml/oneclick_actions/skip', ['identifier' => $identifier]);
+        return $this->getUrl('adminhtml/oneclick_actions/skip', array('identifier' => $identifier));
     }
 
     /**

@@ -49,7 +49,7 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
 
         $configurableProductChildId = $catalogHelper->getConfigurableProductChildId($this->getProduct());
 
-        return is_null($configurableProductChildId) ? 'null' : $configurableProductChildId;
+        return null === $configurableProductChildId ? 'null' : $configurableProductChildId;
     }
 
     /**

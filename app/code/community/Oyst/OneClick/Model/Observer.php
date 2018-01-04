@@ -159,7 +159,6 @@ class Oyst_OneClick_Model_Observer
         /** @var Mage_Sales_Model_Order_Payment $payment */
         $payment = $observer->getPayment();
 
-        Mage::log(get_class($payment));
         /** @var Mage_Sales_Model_Order $order */
         $order = $payment->getOrder();
 

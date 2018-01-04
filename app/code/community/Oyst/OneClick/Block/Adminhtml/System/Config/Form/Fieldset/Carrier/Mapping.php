@@ -16,13 +16,11 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
     extends Mage_Adminhtml_Block_System_Config_Form_Fieldset
 {
     //Default code : 'flatrate','freeshipping','fedex','ups','usps','dhlint'
-    protected $_certified = array('flatrate', 'freeshipping', 'owebiashipping1', 'owebiashipping2', 'owebiashipping3');
+    protected $certified = array('flatrate', 'freeshipping', 'owebiashipping1', 'owebiashipping2', 'owebiashipping3');
 
-    protected $_dummyElement;
+    protected $dummyElement;
 
-    protected $_fieldRenderer;
-
-    protected $_values;
+    protected $fieldRenderer;
 
     /**
      * Specific render for shipment mapping
@@ -34,18 +32,20 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
         $html = $this->_getHeaderHtml($element);
-        $val = $this->_getAllCarrierCode();
+        $val = $this->getAllCarrierCode();
         if (isset($val) && !empty($val)) {
             foreach ($val as $v) {
-                if (strpos($v['value'], '_about') !== false) {
+                if (false !== strpos($v['value'], '_about')) {
                     continue;
                 }
-                $html .= $this->_getHeadingFieldHtml($element, $v);
-                $html .= $this->_getMappingFieldHtml($element, $v);
-                $html .= $this->_getDelayFieldHtml($element, $v);
-                $html .= $this->_getNameFieldHtml($element, $v);
+
+                $html .= $this->getHeadingFieldHtml($element, $v);
+                $html .= $this->getMappingFieldHtml($element, $v);
+                $html .= $this->getDelayFieldHtml($element, $v);
+                $html .= $this->getNameFieldHtml($element, $v);
             }
         }
+
         $html .= $this->_getFooterHtml($element);
 
         return $html;
@@ -56,16 +56,18 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
      *
      * @return Varien_Object
      */
-    protected function _getDummyElement()
+    protected function getDummyElement()
     {
-        if (empty($this->_dummyElement)) {
-            $this->_dummyElement = new Varien_Object(array(
-                'show_in_default' => 1,
-                'show_in_website' => 1,
-            ));
+        if (empty($this->dummyElement)) {
+            $this->dummyElement = new Varien_Object(
+                array(
+                    'show_in_default' => 1,
+                    'show_in_website' => 1,
+                )
+            );
         }
 
-        return $this->_dummyElement;
+        return $this->dummyElement;
     }
 
     /**
@@ -73,13 +75,13 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
      *
      * @return object
      */
-    protected function _getFieldRenderer()
+    protected function getFieldRenderer()
     {
-        if (empty($this->_fieldRenderer)) {
-            $this->_fieldRenderer = Mage::getBlockSingleton('adminhtml/system_config_form_field');
+        if (empty($this->fieldRenderer)) {
+            $this->fieldRenderer = Mage::getBlockSingleton('adminhtml/system_config_form_field');
         }
 
-        return $this->_fieldRenderer;
+        return $this->fieldRenderer;
     }
 
     /**
@@ -90,9 +92,11 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
      *
      * @return string
      */
-    protected function _getHeadingFieldHtml($fieldset, $group)
+    protected function getHeadingFieldHtml($fieldset, $group)
     {
-        $field = $fieldset->addField('content_heading_' . $group['value'], 'text',
+        $field = $fieldset->addField(
+            'content_heading_' . $group['value'],
+            'text',
             array(
                 'name' => 'content_heading',
                 'label' => Mage::helper('oyst_oneclick')->__($group['label']) .
@@ -113,7 +117,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
      *
      * @return string
      */
-    protected function _getMappingFieldHtml($fieldset, $group)
+    protected function getMappingFieldHtml($fieldset, $group)
     {
         $configData = $this->getConfigData();
         $path = sprintf('oyst_oneclick/carrier_mapping/%s', $group['value']);
@@ -125,7 +129,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
             $inherit = false;
         }
 
-        $e = $this->_getDummyElement();
+        $dummyElement = $this->getDummyElement();
 
         $field = $fieldset->addField('oyst_oneclick_carrier_mapping_' . $group['value'], 'select',
             array(
@@ -137,10 +141,10 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
                 'values' => Mage::getSingleton('oyst_oneclick/system_config_source_shipmentTypesList')
                     ->toOptionArray(),
                 'comment' => Mage::helper('oyst_oneclick')->__('To remove switch to disabled'),
-                'can_use_default_value' => $this->getForm()->canUseDefaultValue($e),
-                'can_use_website_value' => $this->getForm()->canUseWebsiteValue($e),
+                'can_use_default_value' => $this->getForm()->canUseDefaultValue($dummyElement),
+                'can_use_website_value' => $this->getForm()->canUseWebsiteValue($dummyElement),
             ))
-            ->setRenderer($this->_getFieldRenderer());
+            ->setRenderer($this->getFieldRenderer());
 
         return $field->toHtml();
     }
@@ -153,7 +157,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
      *
      * @return string
      */
-    protected function _getDelayFieldHtml($fieldset, $group)
+    protected function getDelayFieldHtml($fieldset, $group)
     {
         $configData = $this->getConfigData();
         $path = sprintf('oyst_oneclick/carrier_delay/%s', $group['value']);
@@ -165,7 +169,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
             $inherit = false;
         }
 
-        $e = $this->_getDummyElement();
+        $e = $this->getDummyElement();
 
         $field = $fieldset
             ->addField('oyst_oneclick_carrier_delay_' . $group['value'], 'text',
@@ -181,7 +185,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
                     'can_use_website_value' => $this->getForm()->canUseWebsiteValue($e),
                 )
             )
-            ->setRenderer($this->_getFieldRenderer());
+            ->setRenderer($this->getFieldRenderer());
 
         return $field->toHtml();
     }
@@ -194,7 +198,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
      *
      * @return string
      */
-    protected function _getNameFieldHtml($fieldset, $group)
+    protected function getNameFieldHtml($fieldset, $group)
     {
         $configData = $this->getConfigData();
         $path = sprintf('oyst_oneclick/carrier_name/%s', $group['value']);
@@ -206,7 +210,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
             $inherit = false;
         }
 
-        $e = $this->_getDummyElement();
+        $e = $this->getDummyElement();
 
         $field = $fieldset
             ->addField('oyst_oneclick_carrier_name_' . $group['value'], 'text',
@@ -221,7 +225,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
                     'can_use_website_value' => $this->getForm()->canUseWebsiteValue($e),
                 )
             )
-            ->setRenderer($this->_getFieldRenderer());
+            ->setRenderer($this->getFieldRenderer());
 
         return $field->toHtml();
     }
@@ -231,25 +235,24 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
      *
      * @return array
      */
-    protected function _getAllCarrierCode()
+    protected function getAllCarrierCode()
     {
         /** @var Mage_Shipping_Model_Config $methods */
-        $methods = Mage::getSingleton('shipping/config')->getActiveCarriers($this->_getStore());
-        $options = array();
-        $_methodOptions = array();
-        foreach ($methods as $_ccode => $_carrier) {
-            if ($_methods = $_carrier->getAllowedMethods()) {
-                foreach ($_methods as $_mcode => $_method) {
-                    $_code = $_ccode . '_' . $_mcode;
-                    $_methodOptions[] = array(
-                        'value' => $_code,
-                        'label' => $_method,
+        $methods = Mage::getSingleton('shipping/config')->getActiveCarriers($this->getStore());
+        $methodOptions = array();
+        foreach ($methods as $ccode => $carrier) {
+            if ($_methods = $carrier->getAllowedMethods()) {
+                foreach ($_methods as $mcode => $method) {
+                    $code = $ccode . '_' . $mcode;
+                    $methodOptions[] = array(
+                        'value' => $code,
+                        'label' => $method,
                     );
                 }
             }
         }
 
-        return $_methodOptions;
+        return $methodOptions;
     }
 
     /**
@@ -257,7 +260,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
      *
      * @return Mage_Core_Model_Store|null
      */
-    protected function _getStore()
+    protected function getStore()
     {
         $store = null;
         $websiteCode = Mage::app()->getRequest()->getParam('website', false);

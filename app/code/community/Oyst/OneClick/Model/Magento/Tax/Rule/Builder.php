@@ -21,7 +21,7 @@ class Oyst_OneClick_Model_Magento_Tax_Rule_Builder
     const TAX_RULE_CODE = 'M2E Pro Tax Rule';
 
     /** @var $rule Mage_Tax_Model_Calculation_Rule */
-    private $rule = NULL;
+    private $rule = null;
 
     //########################################
 
@@ -32,7 +32,7 @@ class Oyst_OneClick_Model_Magento_Tax_Rule_Builder
 
     //########################################
 
-    public function buildTaxRule($rate = 0, $countryId, $customerTaxClassId = NULL)
+    public function buildTaxRule($rate = 0, $countryId, $customerTaxClassId = null)
     {
         // Init product tax class
         // ---------------------------------------
@@ -41,7 +41,7 @@ class Oyst_OneClick_Model_Magento_Tax_Rule_Builder
             ->addFieldToFilter('class_type', Mage_Tax_Model_Class::TAX_CLASS_TYPE_PRODUCT)
             ->getFirstItem();
 
-        if (is_null($productTaxClass->getId())) {
+        if (null === $productTaxClass->getId()) {
             $productTaxClass->setClassName(self::TAX_CLASS_NAME_PRODUCT)
                 ->setClassType(Mage_Tax_Model_Class::TAX_CLASS_TYPE_PRODUCT);
             $productTaxClass->save();
@@ -50,13 +50,13 @@ class Oyst_OneClick_Model_Magento_Tax_Rule_Builder
 
         // Init customer tax class
         // ---------------------------------------
-        if (is_null($customerTaxClassId)) {
+        if (null === $customerTaxClassId) {
             $customerTaxClass = Mage::getModel('tax/class')->getCollection()
                 ->addFieldToFilter('class_name', self::TAX_CLASS_NAME_CUSTOMER)
                 ->addFieldToFilter('class_type', Mage_Tax_Model_Class::TAX_CLASS_TYPE_CUSTOMER)
                 ->getFirstItem();
 
-            if (is_null($customerTaxClass->getId())) {
+            if (null === $customerTaxClass->getId()) {
                 $customerTaxClass->setClassName(self::TAX_CLASS_NAME_CUSTOMER)
                     ->setClassType(Mage_Tax_Model_Class::TAX_CLASS_TYPE_CUSTOMER);
                 $customerTaxClass->save();

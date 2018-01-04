@@ -355,7 +355,7 @@ class Oyst_OneClick_Model_Magento_Quote
             }
 
             // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
-            if (strpos($productId, ';')) {
+            if (false !== strpos($productId, ';')) {
                 $p = explode(';', $productId);
                 $productId = $p[0];
                 $item['variation_reference'] = $p[1];
@@ -365,10 +365,12 @@ class Oyst_OneClick_Model_Magento_Quote
             if (isset($item['variation_reference'])) {
                 $configurableProductChildId = $item['variation_reference'];
                 /** @var Mage_Catalog_Model_Product $product */
+                // @codingStandardsIgnoreLine
                 $configurableProductChild = Mage::getModel('catalog/product')->load($configurableProductChildId);
             }
 
             /** @var Mage_Catalog_Model_Product $product */
+            // @codingStandardsIgnoreLine
             if ($product = Mage::getModel('catalog/product')->load($productId)) {
                 // Get unit price with tax for order.v2.new
                 if (isset($item['product_reference'])) {
@@ -422,6 +424,7 @@ class Oyst_OneClick_Model_Magento_Quote
                 {
                     $stockItem->setData('is_in_stock', 1); // Set the Product to InStock
                     $stockItem->setData('qty', $stockItem->getQty() + $item['quantity']); // current stock + book qty
+                    // @codingStandardsIgnoreLine
                     $stockItem->save();
                 }
 
@@ -447,7 +450,7 @@ class Oyst_OneClick_Model_Magento_Quote
                 // For configurable on order.v2.new
                 if (isset($item['product']) && isset($item['product']['variations']) &&
                     isset($item['product']['variations']['informations']) &&
-                    !is_null($item['product']['variations']['informations'])
+                    !(null === $item['product']['variations']['informations'])
                 ) {
                     $options = array();
                     $titleAttributes = array();
@@ -455,8 +458,8 @@ class Oyst_OneClick_Model_Magento_Quote
                         $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $attributeCode);
 
                         $attributeCodeId = $attribute->getId();
-                        if (!is_null($attributeCodeId) &&
-                            !is_null($optionId = $attribute->getSource()->getOptionId($attributeValue))
+                        if (!(null === $attributeCodeId) &&
+                            !(null === ($optionId = $attribute->getSource()->getOptionId($attributeValue)))
                         ) {
                             $options[$attributeCodeId] = $optionId;
                         }
@@ -474,6 +477,7 @@ class Oyst_OneClick_Model_Magento_Quote
 */
                 if (isset($item['variation_reference'])) {
                     // Collect options applicable to the configurable product
+                    // @codingStandardsIgnoreLine
                     $productAttributeOptions = $product->getTypeInstance(true)->getConfigurableAttributesAsArray($product);
 
                     $options = array();

@@ -2,7 +2,7 @@
     "name": "oyst/oyst-1click-magento",
     "description": "Official Magento Plugin to use the 1-Click payment.",
     "type": "magento-module",
-    "homepage": "https://github.com/OystParis/oyst-1click-magento/",
+    "homepage": "https://github.com/oystparis/oyst-1click-magento/",
     "keywords": ["magento", "oyst", "api", "php", "payment", "1-click", "catalog", "order", "module"],
     "authors": [
         {
@@ -14,11 +14,11 @@
         "php": ">=5.3",
         "magento-hackathon/magento-composer-installer": "*"
     },
-    "require-dev":  {
+    "require-dev": {
         "phpunit/phpunit": "4.1.*@dev",
-        "firegento/mage-ci": "master-dev",
-        "squizlabs/php_codesniffer": "2.6.*",
-        "magento-ecg/coding-standard": "dev-php-5.3-compatible|2.*",
+        "firegento/mage-ci": "dev-master",
+        "squizlabs/php_codesniffer": "^2.2 || ^3.0",
+        "magento-ecg/coding-standard": "dev-php-5.3-compatible || ^3.1",
         "sebastian/phpdcd": "*",
         "sebastian/phpcpd": "*",
         "phpmd/phpmd": "*",
@@ -26,12 +26,16 @@
         "wimg/php-compatibility": "*",
         "simplyadmire/composer-plugins": "@dev"
     },
-    "repositories": [
-        {
+    "repositories": {
+        "firegento": {
             "type": "composer",
-            "url":  "https://packages.firegento.com"
+            "url": "https://packages.firegento.com"
+        },
+        "magento-eqp": {
+            "type": "git",
+            "url": "https://github.com/magento/marketplace-eqp"
         }
-    ],
+    },
     "scripts": {
         "post-install-cmd": [
             "./lib/Oyst/get-sdk.sh"
@@ -41,8 +45,8 @@
         ]
     },
     "support": {
-        "issues": "https://github.com/OystParis/oyst-1click-magento/issues",
-        "source": "https://github.com/OystParis/oyst-1click-magento",
-        "build": "https://travis-ci.com/oystparis/oyst-1click-magento"
+        "issues": "https://github.com/oystparis/oyst-1click-magento/issues",
+        "source": "https://github.com/oystparis/oyst-1click-magento",
+        "build": "https://travis-ci.org/oystparis/oyst-1click-magento"
     }
 }

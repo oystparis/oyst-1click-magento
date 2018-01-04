@@ -62,7 +62,8 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         $product = Mage::getModel('catalog/product')->load($dataFormated['productId']);
 
         // Test if configurableProductChildId is set for configurable
-        if ($product->isConfigurable() && is_null(filter_var($dataFormated['configurableProductChildId'], FILTER_NULL_ON_FAILURE))) {
+        if ($product->isConfigurable()
+            && null === filter_var($dataFormated['configurableProductChildId'], FILTER_NULL_ON_FAILURE)) {
             throw Mage::exception(
                 'Oyst_OneClick',
                 Mage::helper('oyst_onelick')->__(
@@ -138,7 +139,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             $context['user_id'] = (string)Mage::getSingleton('customer/session')->getCustomer()->getId();
         }
 
-        if (!is_null($userId = Mage::getSingleton('customer/session')->getCustomerId())) {
+        if (!(null === ($userId = Mage::getSingleton('customer/session')->getCustomerId()))) {
             $context['user_id'] = $userId;
         }
 

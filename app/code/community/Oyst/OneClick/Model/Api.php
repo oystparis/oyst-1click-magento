@@ -224,7 +224,7 @@ class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
             $oystClient = OystApiClientFactory::getClient($type, $apiKey, $userAgent);
         }
 
-        if (!is_null($amount)) {
+        if (!(null === $amount)) {
             $amount = new OystPrice($amount, self::CURRENCY);
         }
 

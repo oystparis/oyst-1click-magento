@@ -170,8 +170,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             'event' => $event,
             'oyst_data' => Zend_Json::encode($apiData),
             'status' => 'start',
-            'created_at' => Zend_Date::now(),
-            'executed_at' => Zend_Date::now(),
+            'created_at' => Mage::getModel('core/date')->gmtDate(),
+            'executed_at' => Mage::getModel('core/date')->gmtDate(),
         ));
         $notification->save();
         Mage::helper('oyst_oneclick')->log('Start processing notification: ' . $notification->getNotificationId());
@@ -219,7 +219,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     {
         $this->_productId = $productId;
 
-        if (!is_null($configurableProductChildId)) {
+        if (!(null === $configurableProductChildId)) {
             $this->_configurableProductChildId = $configurableProductChildId;
         }
 
@@ -309,13 +309,13 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $oystProduct = new OystProduct();
 
             if (is_array($products)) {
-                // This need to be improved
+                // @TODO This need to be improved
+                // @codingStandardsIgnoreLine
                 $product = Mage::getModel('catalog/product')->load($product->getId());
             }
 
             // Get product attributes
             $this->_getAttributes($product, $this->_productAttrTranslate, $oystProduct);
-            $importedProductIds[] = $product->getId();
             if ($product->isConfigurable()) {
                 $this->_addVariations($product, $oystProduct);
             }
@@ -375,6 +375,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $systempSelectedAttributeCode = array();
         foreach ($attrsIds as $attributeId) {
+            // @codingStandardsIgnoreLine
             $attribute = Mage::getModel('eav/entity_attribute')->load($attributeId);
             $systempSelectedAttributeCode[] = $attribute->getAttributeCode();
         }
@@ -529,8 +530,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 foreach ($attributes as $attribute) {
                     $productAttribute = $attribute->getProductAttribute();
                     $productAttributeId = $productAttribute->getId();
+                    // @codingStandardsIgnoreLine
                     $configurableProductChild = Mage::getModel('catalog/product')->load($this->_configurableProductChildId);
                     $attributeValue = $configurableProductChild->getData($productAttribute->getAttributeCode());
+                    // @codingStandardsIgnoreLine
                     if (count($attribute->getPrices()) > 0) {
                         foreach ($attribute->getPrices() as $priceChange) {
                             if (is_array($price) && array_key_exists('value_index',
@@ -560,6 +563,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $childs = Mage::getModel('catalog/product_type_grouped')->getChildrenIds($product->getId());
             $childs = $childs[Mage_Catalog_Model_Product_Link::LINK_TYPE_GROUPED];
             foreach ($childs as $value) {
+                // @codingStandardsIgnoreLine
                 $product = Mage::getModel('catalog/product')->load($value);
                 $price += $product->getPrice();
                 $finalPrice += $product->getFinalPrice();
@@ -608,7 +612,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $to = isset($promo['to_time']) ? $promo['to_time'] : $promo['to_date'];
 
             $data['start-date-discount'] = date('Y-m-d H:i:s', strtotime($from));
-            $data['end-date-discount'] = is_null($to) ? '' : date('Y-m-d H:i:s', strtotime($to));
+            $data['end-date-discount'] = null === $to ? '' : date('Y-m-d H:i:s', strtotime($to));
         }
 
         return $data;
@@ -726,7 +730,9 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         foreach ($attributeCodes as $attributeCode) {
             $value = '';
-            if (($attribute = $product->getResource()->getAttribute($attributeCode)) && !is_null($product->getData($attributeCode))) {
+
+            if (($attribute = $product->getResource()->getAttribute($attributeCode))
+                && !(null === $product->getData($attributeCode))) {
                 $value = $attribute->getFrontend()->getValue($product);
             }
 
@@ -776,11 +782,13 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 'in' => $params['product_id_include_filter'],
             ));
         }
+
         if (!empty($params['product_id_exclude_filter'])) {
             $productCollection->addAttributeToFilter('entity_id', array(
                 'nin' => $params['product_id_exclude_filter'],
             ));
         }
+
         $productCollection->addAttributeToFilter('type_id', array('in' => $this->_supportedProductTypes));
 
         return $productCollection->getSize();
@@ -797,8 +805,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     {
         // @TODO EndpointShipment: remove these bad hack for currency
         $apiData['order_amount']['currency'] = 'EUR';
-        $apiData['created_at'] = Zend_Date::now();
-        $apiData['created_at'] = Zend_Date::now();
+        $apiData['created_at'] = Mage::getModel('core/date')->gmtDate();
+        $apiData['created_at'] = Mage::getModel('core/date')->gmtDate();
         $apiData['id'] = null;
 
         /** @var Mage_Core_Model_Store $store */
@@ -849,6 +857,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 $shipment->setPrimary(true);
                 $isPrimarySet = true;
             }
+
             $shipment->setCarrier($oystCarrier);
 
             $oneClickShipmentCalculation->addShipment($shipment);
@@ -917,7 +926,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 $productId = $product['reference'];
 
                 // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
-                if (strpos($productId, ';')) {
+                if (false  !== strpos($productId, ';')) {
                     $p = explode(';', $productId);
                     $productId['reference'] = $p[0];
                     $product['variation_reference'] = $p[1];
@@ -938,6 +947,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 if ($this->stockItem->getManageStock()) {
                     $this->stockItem->setQty($this->stockItem->getQty() + $qty);
                     $this->stockItem->setIsInStock((int)($qty > 0)); // Set the Product to InStock
+                    // @codingStandardsIgnoreLine
                     $this->stockItem->save();
                 }
             }
@@ -960,7 +970,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                     $productId = $item['reference'];
 
                     // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
-                    if (strpos($productId, ';')) {
+                    if (false  !== strpos($productId, ';')) {
                         $p = explode(';', $productId);
                         $productId['reference'] = $p[0];
                         $item['variation_reference'] = $p[1];
@@ -978,7 +988,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 $productId = $apiData['product_reference'];
 
                 // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
-                if (strpos($productId, ';')) {
+                if (false  !== strpos($productId, ';')) {
                     $p = explode(';', $productId);
                     $productId = $p[0];
                     $apiData['variation_reference'] = $p[1];
