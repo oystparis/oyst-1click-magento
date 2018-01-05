@@ -153,3 +153,13 @@ function isOystOneClickButtonFormValid(formName) {
 
     return form.validator.validate();
 }
+
+/**
+ * Move dom element as first child
+ *
+ * @param {HTMLElement} parentElement
+ * @param {HTMLElement} newFirstChildElement
+ */
+function prependChild(parentElement, newFirstChildElement) {
+    parentElement.insertBefore(newFirstChildElement, parentElement.firstChild);
+}

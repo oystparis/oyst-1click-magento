@@ -267,7 +267,7 @@
                             </depends>
                         </should_ask_stock>
 
-                        <!-- Enable invoice auto generation -->
+                        <!-- enable invoice auto generation -->
                         <enable_invoice_auto_generation translate="label">
                             <label>Enable invoice auto-generation</label>
                             <tooltip><![CDATA[<b>Yes</b> creation of the invoice when the order is created, the "Due amount" will be 0.<br/><b>No</b> the order remains with a "Due amount" and the invoice is not created.]]></tooltip>
@@ -285,6 +285,98 @@
                                 </enable>
                             </depends>
                         </enable_invoice_auto_generation>
+
+                        <!-- button theme -->
+                        <button_theme translate="label">
+                            <label>Button theme</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>oyst_oneclick/system_config_source_button_theme</source_model>
+                            <config_path>oyst/oneclick/button_theme</config_path>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_theme>
+
+                        <!-- button color -->
+                        <button_color translate="label">
+                            <label>Button color</label>
+                            <comment>Please Click the text box to select color</comment>
+                            <frontend_type>text</frontend_type>
+                            <frontend_class>color {required:false, hash:true, pickerPosition: 'right'}</frontend_class>
+                            <config_path>oyst/oneclick/button_color</config_path>
+                            <sort_order>14</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>color</validate>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_color>
+
+                        <!-- button width -->
+                        <button_width translate="label">
+                            <label>Button width</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/button_width</config_path>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_width>
+
+                        <!-- button height -->
+                        <button_height translate="label">
+                            <label>Button height</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/button_height</config_path>
+                            <sort_order>16</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_height>
+
+                        <!-- button before addtocart button -->
+                        <button_before_addtocart translate="label">
+                            <label>Button position</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>oyst_oneclick/system_config_source_button_position</source_model>
+                            <config_path>oyst/oneclick/button_before_addtocart</config_path>
+                            <sort_order>17</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_before_addtocart>
                     </fields>
                 </oneclick>
 
