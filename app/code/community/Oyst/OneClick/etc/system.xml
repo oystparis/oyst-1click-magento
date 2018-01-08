@@ -63,6 +63,7 @@
                         <!-- module version -->
                         <module_version translate="label">
                             <label>Module version</label>
+                            <comment><![CDATA[<a href="https://github.com/oystparis/oyst-1click-magento" target="_blank">oystparis/oyst-1click-magento</a>]]></comment>
                             <frontend_type>label</frontend_type>
                             <frontend_model>oyst_oneclick/adminhtml_version_module</frontend_model>
                             <sort_order>13</sort_order>
@@ -74,7 +75,7 @@
                         <!-- sdk version -->
                         <gateway_version translate="label">
                             <label>Oyst SDK version</label>
-                            <comment><![CDATA[<a href="https://github.com/OystParis/oyst-php" target="_blank">OystParis/oyst-php</a>]]></comment>
+                            <comment><![CDATA[<a href="https://github.com/oystparis/oyst-php" target="_blank">oystparis/oyst-php</a>]]></comment>
                             <frontend_type>label</frontend_type>
                             <frontend_model>oyst_oneclick/adminhtml_version_sdk</frontend_model>
                             <sort_order>14</sort_order>
@@ -640,6 +641,7 @@
                         <!-- module version -->
                         <module_version translate="label">
                             <label>Module version</label>
+                            <comment><![CDATA[<a href="https://github.com/oystparis/oyst-1click-magento" target="_blank">oystparis/oyst-1click-magento</a>]]></comment>
                             <frontend_type>label</frontend_type>
                             <frontend_model>oyst_oneclick/adminhtml_version_module</frontend_model>
                             <sort_order>13</sort_order>
@@ -651,7 +653,7 @@
                         <!-- sdk version -->
                         <gateway_version translate="label">
                             <label>Oyst SDK version</label>
-                            <comment><![CDATA[<a href="https://github.com/OystParis/oyst-php" target="_blank">OystParis/oyst-php</a>]]></comment>
+                            <comment><![CDATA[<a href="https://github.com/oystparis/oyst-php" target="_blank">oystparis/oyst-php</a>]]></comment>
                             <frontend_type>label</frontend_type>
                             <frontend_model>oyst_oneclick/adminhtml_version_sdk</frontend_model>
                             <sort_order>14</sort_order>

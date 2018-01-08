@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>1.4.2</version>
+            <version>1.5.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -178,7 +178,6 @@
                 <contact_email>plugin@oyst.com</contact_email>
             </abstract>
             <oneclick>
-                <order_api_version>2</order_api_version>
                 <oneclickjs_sandbox_url>//cdn.sandbox.oyst.eu/</oneclickjs_sandbox_url>
                 <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
                 <product_addtocart_form_validate>1</product_addtocart_form_validate>
