@@ -26,6 +26,17 @@
 "Should ask stock","Should ask stock"
 "Enable invoice auto-generation","Enable invoice auto-generation"
 "<b>Yes</b> creation of the invoice when the order is created, the ""Due amount"" will be 0.<br/><b>No</b> the order remains with a ""Due amount"" and the invoice is not created.","<b>Yes</b> creation of the invoice when the order is created, the ""Due amount"" will be 0.<br/><b>No</b> the order remains with a ""Due amount"" and the invoice is not created."
+"Button theme","Button theme"
+"Normal","Normal"
+"Inversed","Inversed"
+"Button color","Button color"
+"Please Click the text box to select color","Please Click the text box to select color"
+"Button width","Button width"
+"In <i>%</i> or <i>px</i>","In <i>%</i> or <i>px</i>"
+"Button height","Button height"
+"Button position","Button position"
+"1-Click button before add to cart button","1-Click button before add to cart button"
+"1-Click button after add to cart button","1-Click button after add to cart button"
 
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings."
 
@@ -123,4 +134,3 @@
 
 "FreePay has been installed.","FreePay has been installed."
 "Click <a href=""%s"">here</a> to set up your settings.","Click <a href=""%s"">here</a> to set up your settings."
-"Skip installation","Skip installation"

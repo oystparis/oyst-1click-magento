@@ -176,6 +176,8 @@
                 <allow_quantity_change>1</allow_quantity_change>
                 <should_ask_stock>1</should_ask_stock>
                 <enable_invoice_auto_generation>1</enable_invoice_auto_generation>
+                <button_theme>normal</button_theme>
+                <button_before_addtocart>after</button_before_addtocart>
             </oneclick>
             <order_settings>
                 <enable>0</enable>

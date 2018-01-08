@@ -16,8 +16,10 @@
 <?php
 if ($this->isSupportedProduct()) :
     ?>
-    <div id="oyst-1click-button"></div>
+    <div id="oyst-1click-button" <?php echo $this->getButtonCustomization(); ?>></div>
     <script>
+        <?php echo $this->buttonPosition(); ?>
+
         (function () {
             if ("function" === typeof oystOneClick) {
                 oystOneClick(
