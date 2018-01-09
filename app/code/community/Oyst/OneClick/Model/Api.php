@@ -35,11 +35,6 @@ class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
     const TYPE_PAYMENT = OystApiClientFactory::ENTITY_PAYMENT;
 
     /**
-     * Hard coded currency
-     */
-    const CURRENCY = 'EUR';
-
-    /**
      * Validate API key
      *
      * @return bool
@@ -70,9 +65,9 @@ class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
         $oystHelper->isApiKeyValid();
 
         $apiKey = Mage::getStoreConfig('oyst/oneclick/api_login');
-        $userAgent = $this->_getUserAgent();
+        $userAgent = $this->getUserAgent();
         $env = Mage::getStoreConfig('oyst/oneclick/mode');
-        $url = $this->_getCustomApiUrl('oyst/oneclick/');
+        $url = $this->getCustomApiUrl('oyst/oneclick/');
 
         /** @var $type $oystClient */
         if (isset($env) && isset($url)) {
@@ -93,7 +88,7 @@ class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
      *
      * @return string
      */
-    protected function _getUserAgent()
+    public function getUserAgent()
     {
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');
@@ -110,7 +105,7 @@ class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
      *
      * @return string|null
      */
-    protected function _getCustomApiUrl($path)
+    public function getCustomApiUrl($path)
     {
         if (Oyst_OneClick_Model_System_Config_Source_Mode::CUSTOM === Mage::getStoreConfig($path . 'mode')) {
             return Mage::getStoreConfig($path . 'api_url');
@@ -149,100 +144,5 @@ class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
     public function getSdkVersion()
     {
         return (string)OystApiClientFactory::getVersion();
-    }
-
-    /**
-     * Validade API key
-     *
-     * @param string $apiKey
-     *
-     * @return array
-     */
-    public function validateApikey($apiKey)
-    {
-        if (strlen($apiKey) === self::API_KEY_LENGTH) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * API call to Oyst Payment
-     *
-     * @param string $type
-     * @param array $dataFormated
-     *
-     * @return OystPaymentAPI
-     */
-    public function sendPayment($type, $dataFormated)
-    {
-        $apiKey = Mage::getStoreConfig('payment/oyst_abstract/api_login');
-        $userAgent = $this->_getUserAgent();
-        $env = Mage::getStoreConfig('payment/oyst_abstract/mode');
-        $url = $this->_getCustomApiUrl('payment/oyst_abstract/');
-
-        /** @var OystPaymentAPI $oystClient */
-        $oystClient = OystApiClientFactory::getClient($type, $apiKey, $userAgent, $env, $url);
-
-        $oystClient->$type(
-            $dataFormated['amount']['value'],
-            $dataFormated['amount']['currency'],
-            $dataFormated['order_id'],
-            $dataFormated['urls'],
-            false,
-            $dataFormated['user']
-        );
-
-        return $oystClient;
-    }
-
-    /**
-     * API call to Oyst Payment
-     *
-     * @param string $type
-     * @param string $paymentId
-     * @param int $amount
-     *
-     * @return OystPaymentApi
-     *
-     * @internal param array $dataFormated
-     */
-    public function sendCancelOrRefund($type, $paymentId, $amount = null)
-    {
-        $apiKey = Mage::getStoreConfig('payment/oyst_abstract/api_login');
-        $userAgent = $this->_getUserAgent();
-        $env = Mage::getStoreConfig('payment/oyst_abstract/mode');
-        $url = $this->_getCustomApiUrl('payment/oyst_abstract/');
-
-        /** @var OystPaymentApi $oystClient */
-        if (isset($env) && isset($url)) {
-            $oystClient = OystApiClientFactory::getClient($type, $apiKey, $userAgent, $env, $url);
-        } elseif (isset($env)) {
-            $oystClient = OystApiClientFactory::getClient($type, $apiKey, $userAgent, $env);
-        } else {
-            $oystClient = OystApiClientFactory::getClient($type, $apiKey, $userAgent);
-        }
-
-        if (!(null === $amount)) {
-            $amount = new OystPrice($amount, self::CURRENCY);
-        }
-
-        $oystClient->cancelOrRefund($paymentId, $amount);
-
-        if (200 !== $oystClient->getLastHttpCode()) {
-            /** @var Oyst_OneClick_Helper_Data $oystHelper */
-            $oystHelper = Mage::helper('oyst_oneclick');
-
-            $oystHelper->log($oystClient->getLastHttpCode());
-            $oystHelper->log($oystClient->getLastError());
-            $oystHelper->log($oystClient->getNotifyUrl());
-            $oystHelper->log($oystClient->getBody());
-            $oystHelper->log($oystClient->getResponse());
-
-            Mage::throwException($oystHelper->__('Bad FreePay API HttpCode. Check oyst.log.'));
-        }
-
-        return $oystClient;
     }
 }

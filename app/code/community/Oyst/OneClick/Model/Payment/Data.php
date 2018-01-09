@@ -111,13 +111,6 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
             $result = $this->cancel($order, $paymentId);
         }
 
-        if (Oyst_OneClick_Model_Payment_Method_Freepay::EVENT_CODE_REFUND == $data['event_code'] && $data['success']) {
-            $result = $this->refund($order, $data);
-
-            // Refund completed
-            $this->_setRefundAuthorized($order, $data);
-        }
-
         if (!$data['success']) {
             $this->addNotificationHistoryComment(
                 sprintf(
@@ -206,97 +199,6 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
         return array(
             'order_id' => $order->getId(),
         );
-    }
-
-    /**
-     * Refund Order
-     *
-     * @param Mage_Sales_Model_Order $order
-     * @param array $transactionData
-     *
-     * @return array
-     */
-    private function refund(Mage_Sales_Model_Order $order, $transactionData)
-    {
-        if ($order->canUnhold()) {
-            $order->unhold()->save();
-        }
-
-        /** @var Oyst_OneClick_Helper_Data $oystHelper */
-        $oystHelper = Mage::helper('oyst_oneclick');
-
-        if ($order->canCreditmemo()) {
-            /** @var Mage_Sales_Model_Service_Order $service */
-            $service = Mage::getModel('sales/service_order', $order);
-            $creditmemo = $service->prepareCreditmemo();
-            $creditmemo->getOrder()->setIsInProcess(true);
-
-            $amount = $this->getFormatAmount($transactionData);
-
-            //set refund data on the order
-            $creditmemo->setGrandTotal($amount);
-            $creditmemo->setBaseGrandTotal($amount);
-            $creditmemo->save();
-
-            try {
-                Mage::getModel('core/resource_transaction')
-                    ->addObject($creditmemo)
-                    ->addObject($creditmemo->getOrder())
-                    ->save();
-                //refund
-                $creditmemo->refund();
-                $transactionSave = Mage::getModel('core/resource_transaction')
-                    ->addObject($creditmemo)
-                    ->addObject($creditmemo->getOrder());
-                if ($creditmemo->getInvoice()) {
-                    $transactionSave->addObject($creditmemo->getInvoice());
-                }
-
-                $transactionSave->save();
-            } catch (Exception $e) {
-                $oystHelper->log('Error creating credit memo error message is: ' . $e->getMessage());
-
-                Mage::logException($e);
-            }
-        } else {
-            $oystHelper->log('Order can not be refunded');
-        }
-
-        return array(
-            'order_id' => $order->getId(),
-        );
-    }
-
-    /**
-     * @param Mage_Sales_Model_Order $order
-     * @param $transactionData
-     */
-    protected function _setRefundAuthorized(Mage_Sales_Model_Order $order, $transactionData)
-    {
-        /** @var Oyst_OneClick_Helper_Data $oystHelper */
-        $oystHelper = Mage::helper('oyst_oneclick');
-
-        // check if it is a full or partial refund
-        $amount = $this->getFormatAmount($transactionData);
-
-        $currency = $order->getOrderCurrencyCode();
-        $orderAmount = (int) $order->getGrandTotal();
-
-        $status = $this->_getConfig('refund_partial_authorized', 'oyst_freepay', $order->getStoreId());
-        $message = $oystHelper->__('FreePay Partial Refund Successfully completed.');
-
-        if ($amount == $orderAmount) {
-            $status = $this->_getConfig('refund_authorized', 'oyst_freepay', $order->getStoreId());
-            $message = $oystHelper->__('FreePay Complete Refund Successfully completed.');
-        }
-
-        // if no status is selected don't change the status and use current status
-        $status = (!empty($status)) ? $status : $order->getStatus();
-        $order->addStatusHistoryComment($message, $status);
-        /**
-         * save the order this is needed for older magento version so that status is not reverted to state NEW
-         */
-        $order->save();
     }
 
     /**

@@ -71,7 +71,6 @@
                     </custom_void>
                 </observers>
             </core_block_abstract_prepare_layout_before>
-
         </events>
     </global>
     <admin>
@@ -113,6 +112,22 @@
         </layout>
     </frontend>
     <adminhtml>
+        <layout>
+            <updates>
+                <oyst_oneclick>
+                    <file>oyst_oneclick.xml</file>
+                </oyst_oneclick>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Oyst_OneClick>
+                    <files>
+                        <default>Oyst_OneClick.csv</default>
+                    </files>
+                </Oyst_OneClick>
+            </modules>
+        </translate>
         <events>
             <!-- Show/Hide the Button 1-Click Tab -->
             <core_block_abstract_prepare_layout_after>
@@ -134,32 +149,16 @@
                 </observers>
             </sales_order_payment_cancel>
 
-            <!-- Change the refund button action -->
+            <!-- Change order status after partial refund -->
             <sales_order_payment_refund>
                 <observers>
                     <oyst_payment>
                         <class>Oyst_OneClick_Model_Observer</class>
-                        <method>salesOrderPaymentRefund</method>
+                        <method>setStatusAfterRefund</method>
                     </oyst_payment>
                 </observers>
             </sales_order_payment_refund>
         </events>
-        <layout>
-            <updates>
-                <oyst_oneclick>
-                    <file>oyst_oneclick.xml</file>
-                </oyst_oneclick>
-            </updates>
-        </layout>
-        <translate>
-            <modules>
-                <Oyst_OneClick>
-                    <files>
-                        <default>Oyst_OneClick.csv</default>
-                    </files>
-                </Oyst_OneClick>
-            </modules>
-        </translate>
     </adminhtml>
     <!-- Default configuration values -->
     <default>

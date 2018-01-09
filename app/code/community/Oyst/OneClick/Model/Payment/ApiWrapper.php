@@ -9,11 +9,34 @@
  * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
  */
 
+use Oyst\Api\OystApiClientFactory;
+use Oyst\Classes\OystPrice;
+use Oyst\Api\OystOneClickApi;
+
 /**
  * Payment_ApiWrapper Model
  */
 class Oyst_OneClick_Model_Payment_ApiWrapper extends Mage_Core_Model_Abstract
 {
+    /**
+     * Hard coded currency
+     */
+    const CURRENCY = 'EUR';
+
+    const TYPE = OystApiClientFactory::ENTITY_PAYMENT;
+
+    /** @var Oyst_OneClick_Model_Api $_oystClient */
+    protected $_oystClient;
+
+    /** @var OystOneClickApi $_oneClickApi */
+    protected $_oneClickApi;
+
+    public function __construct()
+    {
+        $this->_oystClient = Mage::getModel('oyst_oneclick/api');
+        $this->_oneClickApi = $this->_oystClient->getClient(self::TYPE);
+    }
+
     /**
      * Make API call for retrieve Oyst url
      *
@@ -23,9 +46,15 @@ class Oyst_OneClick_Model_Payment_ApiWrapper extends Mage_Core_Model_Abstract
      */
     public function getPaymentUrl($params)
     {
-        /** @var Oyst_OneClick_Model_Api $paymentApi */
-        $paymentApi = Mage::getModel('oyst_oneclick/api');
-        $response = $paymentApi->sendPayment(Oyst_OneClick_Model_Api::TYPE_PAYMENT, $params)->getResponse();
+        $this->_oneClickApi->payment(
+            $params['amount']['value'],
+            $params['amount']['currency'],
+            $params['order_id'],
+            $params['urls'],
+            false,
+            $params['user']
+        );
+        $response = $this->_oneClickApi->getResponse();
 
         return $response['url'];
     }
@@ -37,11 +66,14 @@ class Oyst_OneClick_Model_Payment_ApiWrapper extends Mage_Core_Model_Abstract
      */
     public function cancelOrRefund($lastTransId, $amount = null)
     {
-        /** @var Oyst_OneClick_Model_Api $paymentApi */
-        $paymentApi = Mage::getModel('oyst_oneclick/api');
+        if (!(null === $amount)) {
+            $amount = new OystPrice($amount, self::CURRENCY);
+        }
 
-        $response = $paymentApi->sendCancelOrRefund(Oyst_OneClick_Model_Api::TYPE_PAYMENT, $lastTransId, $amount)->getResponse();
+        $this->_oneClickApi->cancelOrRefund($lastTransId, $amount);
 
-        return $response;
+        $this->_oystClient->validateResult($this->_oneClickApi);
+
+        return $this->_oneClickApi->getResponse();
     }
 }
