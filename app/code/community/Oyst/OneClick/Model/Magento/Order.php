@@ -96,7 +96,7 @@ class Oyst_OneClick_Model_Magento_Order
         $items = $this->quote->getShippingAddress()->getAllItems();
 
         foreach ($items as $item) {
-            //@var $item Mage_Sales_Model_Quote_Item
+            /** @var Mage_Sales_Model_Quote_Item $item */
             $orderItem = $quoteConverter->itemToOrderItem($item);
             if ($item->getParentItem()) {
                 $orderItem->setParentItem($orderObj->getItemByQuoteItemId($item->getParentItem()->getId()));
