@@ -59,9 +59,6 @@ class Oyst_OneClick_Model_Magento_Quote
             $this->initializePaymentMethodData();
 
             $this->quote->collectTotals()->save();
-
-            // Not managed by API
-            //$this->prepareOrderNumber();
         } catch (Exception $e) {
             $this->quote->setIsActive(false)->save();
             Mage::helper('oyst_oneclick')->log('Error build quote: ' . $e->getMessage());
@@ -407,9 +404,6 @@ class Oyst_OneClick_Model_Magento_Quote
                     $tax = (float)$taxCalculator->calcTaxAmount($price, $taxRate, true);
                     $price = $price - $tax;
                 }
-//                $product->setPrice($price);
-//                $product->setSpecialPrice($price);
-//                $product->setFinalPrice($price);
 
                 $request = array('qty' => $item['quantity']);
 
@@ -446,35 +440,6 @@ class Oyst_OneClick_Model_Magento_Quote
                     );
                 }
 
-/* REMOVE to work only with variation_reference
-                // For configurable on order.v2.new
-                if (isset($item['product']) && isset($item['product']['variations']) &&
-                    isset($item['product']['variations']['informations']) &&
-                    !(null === $item['product']['variations']['informations'])
-                ) {
-                    $options = array();
-                    $titleAttributes = array();
-                    foreach ($item['product']['variations']['informations'] as $attributeCode => $attributeValue) {
-                        $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $attributeCode);
-
-                        $attributeCodeId = $attribute->getId();
-                        if (!(null === $attributeCodeId) &&
-                            !(null === ($optionId = $attribute->getSource()->getOptionId($attributeValue)))
-                        ) {
-                            $options[$attributeCodeId] = $optionId;
-                        }
-
-                        $titleAttributes[] = $attributeValue;
-                    }
-
-                    // Option "import with product's title from Oyst seen in modal"
-                    if (Mage::getStoreConfig('oyst/oneclick/orders/title', $this->quote->getStore())) {
-                        $product->setName($item['product']['title'] . ' - ' . implode(' - ', $titleAttributes));
-                    }
-
-                    $request = array_merge($request, array('super_attribute' => $options));
-                }
-*/
                 if (isset($item['variation_reference'])) {
                     // Collect options applicable to the configurable product
                     // @codingStandardsIgnoreLine
@@ -525,83 +490,6 @@ class Oyst_OneClick_Model_Magento_Quote
             $address->unsetData('cached_items_all');
             $address->unsetData('cached_items_nominal');
             $address->unsetData('cached_items_nonominal');
-        }
-    }
-
-    private function prepareOrderNumber()
-    {
-        $orderNumber = $this->quote->getReservedOrderId();
-        if (empty($orderNumber)) {
-            $orderNumber = $this->quote->getResource()->getReservedOrderId($this->quote);
-        }
-
-        if ($this->quote->getResource()->isOrderIncrementIdUsed($orderNumber)) {
-            $orderNumber = $this->quote->getResource()->getReservedOrderId($this->quote);
-        }
-
-        $this->quote->setReservedOrderId($orderNumber);
-        $this->quote->save();
-    }
-
-    /**
-     * WIP
-     */
-    private function initializeQuoteItemsV2()
-    {
-        foreach ($this->apiData['items'] as $item) {
-
-            $this->clearQuoteItemsCache();
-
-            /** @var $quoteItemBuilder Oyst_OneClick_Model_Magento_Quote_Item */
-            $quoteItemBuilder = Mage::getModel('oyst_oneclick/magento_quote_item');
-            $quoteItemBuilder->init($this->quote, $item);
-
-            $product = $quoteItemBuilder->getProduct();
-            $request = $quoteItemBuilder->getRequest();
-
-            // ---------------------------------------
-            $productOriginalPrice = (float)$product->getPrice();
-
-            $price = $item->getBasePrice();
-            $product->setPrice($price);
-            $product->setSpecialPrice($price);
-            // ---------------------------------------
-
-            // see Mage_Sales_Model_Observer::substractQtyFromQuotes
-            $this->quote->setItemsCount($this->quote->getItemsCount() + 1);
-            $this->quote->setItemsQty((float)$this->quote->getItemsQty() + $request->getQty());
-
-            $result = $this->quote->addProduct($product, $request);
-            if (is_string($result)) {
-                throw new Oyst_OneClick_Model_Exception($result);
-            }
-
-            $quoteItem = $this->quote->getItemByProduct($product);
-
-            if ($quoteItem !== false) {
-                $weight = $product->getTypeInstance()->getWeight();
-                if ($product->isConfigurable()) {
-                    // hack: for child product weight was not load
-                    $simpleProductId = $product->getCustomOption('simple_product')->getProductId();
-                    $weight = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
-                        $simpleProductId, 'weight', 0
-                    );
-                }
-
-                $quoteItem->setStoreId($this->quote->getStoreId());
-                $quoteItem->setOriginalCustomPrice($item->getPrice());
-                $quoteItem->setOriginalPrice($productOriginalPrice);
-                $quoteItem->setBaseOriginalPrice($productOriginalPrice);
-                $quoteItem->setWeight($weight);
-                $quoteItem->setNoDiscount(1);
-
-                $giftMessageId = $quoteItemBuilder->getGiftMessageId();
-                if (!empty($giftMessageId)) {
-                    $quoteItem->setGiftMessageId($giftMessageId);
-                }
-
-                $quoteItem->setAdditionalData($quoteItemBuilder->getAdditionalData($quoteItem));
-            }
         }
     }
 }
