@@ -438,7 +438,7 @@
         </oyst_oneclick>
         <payment>
             <groups>
-                <oyst translate="label comment" module="oyst_oneclick">
+                <freepay translate="label comment" module="oyst_oneclick">
                     <label>FreePay</label>
                     <sort_order>100</sort_order>
                     <show_in_default>1</show_in_default>
@@ -528,18 +528,6 @@
                             <show_in_store>1</show_in_store>
                         </global_settings>
 
-                        <!-- enable -->
-                        <enable_global_settings translate="label">
-                            <label>Enabled</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>payment/oyst_abstract/enable</config_path>
-                            <sort_order>31</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </enable_global_settings>
-
                         <!-- enable module logs -->
                         <log_enable translate="label">
                             <label>Enable module logs</label>
@@ -550,9 +538,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                            </depends>
                         </log_enable>
 
                         <!-- mode -->
@@ -568,9 +553,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                            </depends>
                         </mode>
 
                         <!-- api url -->
@@ -584,7 +566,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
                                 <mode>custom</mode>
                             </depends>
                         </api_url>
@@ -599,9 +580,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                            </depends>
                         </api_login>
 
                         <!-- notification url -->
@@ -615,9 +593,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                            </depends>
                         </notification_url>
 
                         <!--============================== FreePay Settings ================================ -->
@@ -632,7 +607,7 @@
                         </freepay_settings>
 
                         <!-- freepay active url -->
-                        <freepay_active translate="label">
+                        <active translate="label">
                             <label>Enabled</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
@@ -641,10 +616,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                            </depends>
-                        </freepay_active>
+                        </active>
 
                         <!-- freepay title -->
                         <freepay_title translate="label">
@@ -656,8 +628,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </freepay_title>
 
@@ -673,8 +644,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </freepay_order_status>
 
@@ -705,8 +675,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </freepay_payment_cancelled>
 
@@ -722,8 +691,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </freepay_refund_authorized>
 
@@ -738,8 +706,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </freepay_refund_partial_authorized>
 
@@ -754,8 +721,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </freepay_allowspecific>
 
@@ -770,7 +736,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
                                 <freepay_allowspecific>1</freepay_allowspecific>
                             </depends>
                         </freepay_specificcountry>
@@ -786,8 +751,7 @@
                             <show_in_store>1</show_in_store>
                             <frontend_class>validate-number</frontend_class>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </freepay_sort_order>
 
@@ -801,8 +765,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </invoice_label>
 
@@ -817,8 +780,7 @@
                             <show_in_store>1</show_in_store>
                             <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </cancel_url>
 
@@ -833,8 +795,7 @@
                             <show_in_store>1</show_in_store>
                             <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </error_url>
 
@@ -849,12 +810,11 @@
                             <show_in_store>1</show_in_store>
                             <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
                             <depends>
-                                <enable_global_settings>1</enable_global_settings>
-                                <freepay_active>1</freepay_active>
+                                <active>1</active>
                             </depends>
                         </return_url>
                     </fields>
-                </oyst>
+                </freepay>
             </groups>
         </payment>
     </sections>
