@@ -24,6 +24,10 @@
                                 <title>Actions</title>
                                 <sort_order>10</sort_order>
                             </actions>
+                            <reset translate="title" module="oyst_oneclick">
+                                <title>Reset Button</title>
+                                <sort_order>10</sort_order>
+                            </reset>
                         </children>
                     </oyst>
                     <system>

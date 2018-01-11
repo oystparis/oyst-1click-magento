@@ -134,3 +134,6 @@
 
 "FreePay has been installed.","FreePay a été correctement installé."
 "Click <a href=""%s"">here</a> to set up your settings.","Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
+"Resetting the module","Réinitialisation du module"
+"OneClick module was reinstalled successfully.","Le module OneClick a été réinstallé avec succès."
+"OneClick module was unable to reinstall successfully.","Le module OneClick n'a pas pu être réinstallé correctement."

@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>1.1.1</version>
+            <version>1.2.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -210,7 +210,7 @@
                 <invoice_label>FreePay</invoice_label>
             </oyst_abstract>
             <oyst_freepay translate="title" module="oyst_oneclick">
-                <active>1</active>
+                <active>0</active>
                 <title>Payer par carte bancaire</title>
                 <model>oyst_oneclick/payment_method_freepay</model>
                 <order_status>pending</order_status>
