@@ -30,10 +30,6 @@
         "firegento": {
             "type": "composer",
             "url": "https://packages.firegento.com"
-        },
-        "magento-eqp": {
-            "type": "git",
-            "url": "https://github.com/magento/marketplace-eqp"
         }
     },
     "scripts": {

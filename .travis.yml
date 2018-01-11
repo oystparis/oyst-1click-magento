@@ -86,6 +86,7 @@ script:
   ## Magento EQP Code Sniffer Coding Standard
   - if [[ "$TRAVIS_PHP_VERSION" == "5.6" ]] || [[ "$TRAVIS_PHP_VERSION" == "7.0" ]]; then
       composer config http-basic.repo.magento.com $MAGENTO_REPO_PUBLIC_KEY $MAGENTO_REPO_PRIVATE_KEY &&
+      composer config repositories.magento-eqp git https://github.com/magento/marketplace-eqp &&
       composer require "magento/marketplace-eqp:dev-master" &&
       cp -a vendor/magento/marketplace-eqp/MEQP vendor/squizlabs/php_codesniffer/src/Standards/ &&
       cp -a vendor/magento/marketplace-eqp/MEQP1 vendor/squizlabs/php_codesniffer/src/Standards/ &&
