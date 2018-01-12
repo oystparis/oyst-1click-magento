@@ -39,40 +39,6 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
     }
 
     /**
-     * Cancel and refund order
-     */
-    public function cancelAndRefundAction()
-    {
-        $orderId = $this->getRequest()->getParam('order_id');
-
-        /** @var Mage_Sales_Model_Order $order */
-        $order = Mage::getModel('sales/order')->load($orderId);
-
-        $oystOrderId = $order->getOystOrderId();
-        if (empty($oystOrderId)) {
-            Mage::throwException('Order has no OystOrderId');
-        }
-
-        /** @var Oyst_OneClick_Model_Order_Data $helper */
-        $model = Mage::getModel('oyst_oneclick/order');
-
-        /** @var Oyst_OneClick_Model_Order_ApiWrapper $orderApi */
-        $orderApi = Mage::getModel('oyst_oneclick/order_apiWrapper');
-
-        try {
-            $response = $orderApi->updateOrder($order->getOystOrderId(), 'refunded');
-        } catch (Exception $e) {
-            Mage::logException($e);
-        }
-
-        $model->cancelAndRefund($order);
-
-        //$this->_redirectReferer();
-        Mage::app()->getResponse()->setRedirect($this->getRequest()->getServer('HTTP_REFERER'));
-        Mage::app()->getResponse()->sendResponse();
-    }
-
-    /**
      * Magento method for init layout, menu and breadcrumbs
      *
      * @return Oyst_OneClick_Adminhtml_OneClick_ActionsController
