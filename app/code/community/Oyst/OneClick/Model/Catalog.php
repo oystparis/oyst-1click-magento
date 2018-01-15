@@ -475,7 +475,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $variationProductsFormated = $this->_format($childProducts);
 
-        $oystProduct->__set('variations', ($variationProductsFormated));
+        $oystProduct->__set('variations', $variationProductsFormated);
     }
 
     /**
@@ -728,6 +728,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         Mage::helper('oyst_oneclick')->log('$attributeCodes');
         Mage::helper('oyst_oneclick')->log($attributeCodes);
 
+        $informations = array();
+
         foreach ($attributeCodes as $attributeCode) {
             $value = '';
 
@@ -741,8 +743,9 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             }
             Mage::helper('oyst_oneclick')->log('$attributeCode: ' . $attributeCode . '  -  value: ' . $value);
 
-            $oystProduct->__set('addInformation', $attributeCode, $value);
+            $informations[$attributeCode] = $value;
         }
+        $oystProduct->__set('information', $informations);
     }
 
     /**
