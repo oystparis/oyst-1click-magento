@@ -14,10 +14,10 @@
  */
 class Oyst_OneClick_Model_Magento_Order
 {
-    /** @var $quote Mage_Sales_Model_Quote */
+    /** @var Mage_Sales_Model_Quote|null $quote */
     private $quote = null;
 
-    /** @var $order Mage_Sales_Model_Order */
+    /** @var Mage_Sales_Model_Order $order */
     private $order = null;
 
     private $additionalData = array();
@@ -56,24 +56,20 @@ class Oyst_OneClick_Model_Magento_Order
             $this->order = $this->placeOrder();
         } catch (Exception $e) {
             // Remove ordered items from customer cart
-            // ---------------------------------------
             $this->quote->setIsActive(false)->save();
-            // ---------------------------------------
             Mage::helper('oyst_oneclick')->log('Error create order: ' . $e->getMessage());
             throw $e;
 
         }
 
         // Remove ordered items from customer cart
-        // ---------------------------------------
         $this->quote->setIsActive(false)->save();
-        // ---------------------------------------
     }
 
     private function placeOrder()
     {
         if (version_compare(Mage::getVersion(), '1.4.1', '>=')) {
-            /** @var $service Mage_Sales_Model_Service_Quote */
+            /** @var Mage_Sales_Model_Service_Quote $service */
             $service = Mage::getModel('sales/service_quote', $this->quote);
             $service->setOrderData($this->additionalData);
             $service->submitAll();
@@ -83,10 +79,10 @@ class Oyst_OneClick_Model_Magento_Order
 
         // Magento version 1.4.0 backward compatibility code
 
-        /** @var $quoteConverter Mage_Sales_Model_Convert_Quote */
+        /** @var Mage_Sales_Model_Convert_Quote $quoteConverter */
         $quoteConverter = Mage::getSingleton('sales/convert_quote');
 
-        /** @var $orderObj Mage_Sales_Model_Order */
+        /** @var Mage_Sales_Model_Order $orderObj */
         $orderObj = $quoteConverter->addressToOrder($this->quote->getShippingAddress());
 
         $orderObj->setBillingAddress($quoteConverter->addressToOrderAddress($this->quote->getBillingAddress()));
@@ -96,7 +92,7 @@ class Oyst_OneClick_Model_Magento_Order
         $items = $this->quote->getShippingAddress()->getAllItems();
 
         foreach ($items as $item) {
-            /** @var Mage_Sales_Model_Quote_Item $item */
+            /** @var Mage_Sales_Model_Quote_Item $orderItem */
             $orderItem = $quoteConverter->itemToOrderItem($item);
             if ($item->getParentItem()) {
                 $orderItem->setParentItem($orderObj->getItemByQuoteItemId($item->getParentItem()->getId()));
