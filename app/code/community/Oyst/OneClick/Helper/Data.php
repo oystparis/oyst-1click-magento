@@ -173,4 +173,26 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
 
         return false !== strpos($order->getPayment()->getMethod(), $freepayPaymentMethod->getCode());
     }
+
+    /**
+     * Get metadata string.
+     *
+     * @return null|string
+     */
+    public function getTrackingMeta()
+    {
+        return '<script src="https://trk.10ru.pt"></script>' . PHP_EOL
+            . '<meta name="oyst_tracker_info_freepay_activated" content="'
+            . (int)Mage::getStoreConfigFlag('payment/oyst_freepay/active') . '">' . PHP_EOL
+            . '<meta name="oyst_tracker_info_freepay_apikey" content="'
+            . (int)Mage::getStoreConfigFlag('payment/oyst_abstract/api_login') . '">' . PHP_EOL
+            . '<meta name="oyst_tracker_environnement_freepay" content="'
+            . Mage::getStoreConfig('payment/oyst_abstract/mode') . '">' . PHP_EOL
+            . '<meta name="oyst_tracker_info_oneclick_activated" content="'
+            . (int)Mage::getStoreConfigFlag('oyst/oneclick/enable') . '">' . PHP_EOL
+            . '<meta name="oyst_tracker_info_oneclick_apikey" content="'
+            . (int)Mage::getStoreConfigFlag('oyst/oneclick/api_login') . '">' . PHP_EOL
+            . '<meta name="oyst_tracker_environnement_1click" content="'
+            . Mage::getStoreConfig('oyst/oneclick/mode') . '">' . PHP_EOL;
+    }
 }
