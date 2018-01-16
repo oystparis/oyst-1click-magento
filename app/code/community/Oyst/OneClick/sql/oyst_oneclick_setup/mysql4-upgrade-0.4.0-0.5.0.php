@@ -30,7 +30,7 @@ $setup->addAttribute($entityType, $attributeCode, array(
     'filterable'       => false,
     'comparable'       => false,
     'visible_on_front' => false,
-    'default'          => '1',
+    'default'          => '0',
     'global'           => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL,
     'source'           => 'eav/entity_attribute_source_boolean',
 ));
