@@ -380,6 +380,29 @@
                     </fields>
                 </oneclick>
 
+                <!-- reset -->
+                <reset translate="label">
+                    <label>Resetting the module</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <init_module translate="label,button_label,comment">
+                            <label>Reset the module</label>
+                            <comment>Click this button to remove all previous parameters and/or reset the current module parameters.</comment>
+                            <button_label>Reset</button_label>
+                            <button_url><![CDATA[adminhtml/oyst_config/reset]]></button_url>
+                            <frontend_model>oyst_oneclick/adminhtml_field_initButton</frontend_model>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </init_module>
+                    </fields>
+                </reset>
+
                 <!--============================== Shipments Settings ================================ -->
                 <shipments translate="label">
                     <label>Shipments configuration</label>
@@ -502,20 +525,18 @@
                             <show_in_store>1</show_in_store>
                         </gateway_version>
 
-                        <!-- reset -->
-                        <!--<init_module translate="label,button_label,comment">-->
-                        <!--<label>Reset the module</label>-->
-                        <!--<comment>Click this button to remove all previous parameters and/or reset the current module parameters.</comment>-->
-                        <!--<button_label>Reset</button_label>-->
-                        <!--<button_url><![CDATA[adminhtml/oyst_config/reset]]></button_url>-->
-                        <!--<frontend_model>oyst_oyst/adminhtml_field_initButton</frontend_model>-->
-                        <!--<sort_order>15</sort_order>-->
-                        <!--<show_in_default>1</show_in_default>-->
-                        <!--<show_in_website>1</show_in_website>-->
-                        <!--<show_in_store>1</show_in_store>-->
-                        <!--</init_module>-->
-
-
+                         <!-- reset -->
+                        <init_module translate="label,button_label,comment">
+                            <label>Reset the module</label>
+                            <comment>Click this button to remove all previous parameters and/or reset the current module parameters.</comment>
+                            <button_label>Reset</button_label>
+                            <button_url><![CDATA[adminhtml/oyst_config/reset]]></button_url>
+                            <frontend_model>oyst_oneclick/adminhtml_field_initButton</frontend_model>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </init_module>
 
                         <!--============================== Global Settings ================================ -->
                         <global_settings translate="label">
