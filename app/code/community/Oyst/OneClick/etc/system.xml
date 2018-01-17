@@ -360,13 +360,30 @@
                             </depends>
                         </button_height>
 
+                        <button_right_position translate="label">
+                            <label>Button right position</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/button_right_position</config_path>
+                            <sort_order>17</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_right_position>
+
                         <!-- button before addtocart button -->
                         <button_before_addtocart translate="label">
                             <label>Button position</label>
                             <frontend_type>select</frontend_type>
                             <source_model>oyst_oneclick/system_config_source_button_position</source_model>
                             <config_path>oyst/oneclick/button_before_addtocart</config_path>
-                            <sort_order>17</sort_order>
+                            <sort_order>18</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

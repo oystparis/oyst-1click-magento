@@ -163,3 +163,24 @@ function isOystOneClickButtonFormValid(formName) {
 function prependChild(parentElement, newFirstChildElement) {
     parentElement.insertBefore(newFirstChildElement, parentElement.firstChild);
 }
+
+function getOneclickButton(productId, childId, oneClickUrl, isProductAddtocartFormValidate, position, isWrapper) {
+    var oystOneClickButton = document.getElementById('oyst-1click-button');
+    if (isWrapper) {
+        var wrapper = document.getElementById("oyst-1click-button-wrapper");
+        prependChild(wrapper, oystOneClickButton);
+    }
+
+    if('before' === position) {
+        var addToCartBtns = document.getElementsByClassName('add-to-cart-buttons')[0];
+        prependChild(addToCartBtns, wrapper);
+    }
+
+    (function () {
+        if ("function" === typeof oystOneClick) {
+            oystOneClick(productId, childId, oneClickUrl, isProductAddtocartFormValidate);
+        } else {
+            console.warn("Missing function oystOneClick");
+        }
+    })();
+}
