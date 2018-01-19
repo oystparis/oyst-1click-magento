@@ -29,7 +29,9 @@ class Oyst_OneClick_PaymentController extends Mage_Core_Controller_Front_Action
         $response = $oneclickApi->authorizeOrder($rawData);
 
         $this->getResponse()->setHttpResponseCode(200);
-        $this->getResponse()->setHeader('Content-type', 'application/json');
+        if ('cgi-fcgi' === php_sapi_name()) {
+            $this->getResponse()->setHeader('Content-type', 'application/json');
+        }
         $this->getResponse()->setBody(Zend_Json::encode($response));
     }
 

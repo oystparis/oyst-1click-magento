@@ -82,7 +82,9 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
         /** @var Oyst_OneClick_Model_Catalog|Oyst_OneClick_Model_Order $model */
         $response = $model->processNotification($event, $data);
 
-        $this->getResponse()->setHeader('Content-type', 'application/json');
+        if ('cgi-fcgi' === php_sapi_name()) {
+            $this->getResponse()->setHeader('Content-type', 'application/json');
+        }
         $this->getResponse()->setBody($response);
     }
 
