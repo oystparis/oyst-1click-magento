@@ -25,3 +25,16 @@ if (Validation) {
         return v.endsWith("/");
     });
 }
+
+function getUrl(url) {
+    var fields = ["name", "rows"];
+
+    fields.forEach(function (element) {
+        var fieldValue = document.getElementById("oyst-log-file-" + element).value;
+        if (fieldValue) {
+            url += element + "/" + fieldValue + "/";
+        }
+    });
+
+    window.location = url;
+}

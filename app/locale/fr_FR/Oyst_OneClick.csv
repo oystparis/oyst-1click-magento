@@ -135,3 +135,14 @@
 "Enabling this option will make it easier to track fraudulent payments.","Activer cette option permet de repérer plus facilement les paiements frauduleux."
 
 "Do you want to proceed with the re-installation of the module?","Êtes-vous sûr de vouloir procéder à la réinitialisation du module ?"
+
+"File ""%s"" does not exist.","Le fichier ""%s"" n'existe pas."
+"Cannot delete ""%s"" file.","Impossible de supprimer le fichier ""%s""."
+"Successfully deleted ""%s"".","Supprimé avec succès ""%s""."
+"Download/Delete log files","Télécharger / Supprimer les fichiers de log"
+"Log Actions","Actions de journal"
+"Log file","Fichier de log"
+"Log rows from EOF","Nombre de lignes depuis la fin du fichier"
+"Actions","Actions"
+"Delete","Effacer"
+"Download","Télécharger"

@@ -21,6 +21,7 @@
         <reference name="head">
             <action method="addJs"><script>oyst/oneclick.js</script></action>
             <action method="addJs"><file>jscolor/jscolor.js</file></action>
+            <action method="addCss"><stylesheet>oyst/css/oneclick.css</stylesheet></action>
         </reference>
     </adminhtml_system_config_edit>
 
