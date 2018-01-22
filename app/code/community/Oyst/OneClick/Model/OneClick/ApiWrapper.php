@@ -118,7 +118,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         $notifications->setUrl($this->_getConfig('notification_url'));
 
         // Book initial quantity
-        if (!$dataFormated['preload']) {
+        if (!$dataFormated['preload'] && $this->_getConfig('should_ask_stock')) {
             $realPid = $product->isConfigurable() ? $dataFormated['configurableProductChildId'] : $product->getId();
             $oystCatalog->stockItemToBook($realPid, $dataFormated['quantity']);
             $notifications->addEvent('order.stock.released');
