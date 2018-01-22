@@ -95,15 +95,32 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
         return $buttonCustomization;
     }
 
-    public function getWrapperCustomization()
+    /**
+     * Move OneClick button in first position in add to cart buttons list
+     *
+     * @return mixed
+     */
+    public function oneClickButtonPickToFirstAddToCartButtons()
     {
-        $style = "";
-        $buttonRightPosition = Mage::getStoreConfig('oyst/oneclick/button_right_position');
+        if ('before' === Mage::getStoreConfig('oyst/oneclick/button_before_addtocart')) {
+            return 'oneClickButtonPickToFirstAddToCartButtons();';
+        }
+    }
+
+    /**
+     * Change
+     *
+     * @return stringw
+     */
+    public function getButtonWrapperPosition()
+    {
+        $style = '';
         if ($buttonWidth = Mage::getStoreConfig('oyst/oneclick/button_width')) {
-            $style .= "width: $buttonWidth;";
+            $style .= sprintf('width: %s;', $buttonWidth);
         }
 
-        $style .= " left: $buttonRightPosition; position: relative; overflow: hidden;";
+        $buttonLeftMargin = Mage::getStoreConfig('oyst/oneclick/button_left_margin');
+        $style .= sprintf(' left: %s; position: relative;', $buttonLeftMargin);
 
         return $style;
     }

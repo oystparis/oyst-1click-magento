@@ -14,23 +14,25 @@
  */
 ?>
 <?php
-$isWrapper = Mage::getStoreConfigFlag('oyst/oneclick/button_right_position');
-$before = Mage::getStoreConfig('oyst/oneclick/button_before_addtocart');
-?>
-<?php if ($this->isSupportedProduct()) :?>
-    <?php if ($isWrapper): ?>
-        <div id="oyst-1click-button-wrapper" style="<?php echo $this->getWrapperCustomization(); ?>"></div>
-    <?php endif; ?>
-    <div id="oyst-1click-button" <?php echo $this->getButtonCustomization(); ?>></div>
-
+if ($this->isSupportedProduct()) :
+    ?>
+    <div id="oyst-1click-button-wrapper" style="<?php echo $this->getButtonWrapperPosition(); ?>">
+        <div id="oyst-1click-button" <?php echo $this->getButtonCustomization(); ?>></div>
+    </div>
     <script>
-        getOneclickButton(
-            <?php echo $this->getProduct()->getId(); ?>,
-            <?php echo $this->getConfigurableProductChildIdIfExist(); ?>,
-            <?php echo $this->getOneClickUrl(); ?>,
-            <?php echo $this->isProductAddtocartFormValidate(); ?>,
-            '<?php echo $before; ?>',
-            <?php echo $isWrapper; ?>
-        );
+        <?php echo $this->oneClickButtonPickToFirstAddToCartButtons(); ?>
+
+        (function () {
+            if ("function" === typeof oystOneClick) {
+                oystOneClick(
+                    <?php echo $this->getProduct()->getId(); ?>,
+                    <?php echo $this->getConfigurableProductChildIdIfExist(); ?>,
+                    <?php echo $this->getOneClickUrl(); ?>,
+                    <?php echo $this->isProductAddtocartFormValidate(); ?>
+                );
+            } else {
+                console.warn("Missing function oystOneClick");
+            }
+        })();
     </script>
-<?php endif; ?>
+<?php endif;

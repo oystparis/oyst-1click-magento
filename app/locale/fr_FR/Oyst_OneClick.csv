@@ -1,23 +1,36 @@
-"Catalog Synchronization","Synchronisation du catalogue"
 "Settings","Paramètres"
 
+"Click <a href=""%s"">here</a> to set up your settings.","Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
+
+"MODULE INFORMATION","INFORMATIONS SUR LE MODULE"
+"GLOBAL SETTINGS","PARAMÈTRES GLOBAUX"
 "Developed by","Développé par"
 "Contact email","Courriel de contact"
 "Module version","Version du module"
 "Oyst SDK version","Compatible avec le SDK Oyst"
 
+"Reset the module","Réinitialiser le module"
+"Reset","Réinitialiser"
+"Click this button to remove all previous parameters and/or reset the current module parameters.","Cliquer sur ce bouton pour supprimer toutes les configurations précédentes et/ou réinitialiser les paramètres actuels du module."
+"The configuration of the Oyst module has been successfully reset.","La configuration du module Oyst a été réinitialisée avec succès."
+"Resetting the module","Réinitialisation du module"
+"OneClick module was reinstalled successfully.","Le module OneClick a été réinstallé avec succès."
+"OneClick module was unable to reinstall successfully.","Le module OneClick n'a pas pu être réinstallé correctement."
+
 "Enabled","Activé"
 "Enable module logs","Activer les logs du module"
 "Mode","Environnement"
-"<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Veuillez noter que, après avoir changé cette valeur, vous devrez peut-être mettre à jour le champ Clé d'API.</p>"
 "custom","personnalisé"
-"Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.","En fonction de la sélection, l'extension communiquera avec le service 1-Click de test / pré-production / production. Choisissez personnalisé, si vous devez utiliser des URL spéciales pour la gateway."
+
 "API Key","Clé d'API"
 "API key length must be 64 characters","La longueur de la clé d'API doit être de 64 caractères"
 "API URL","URL API"
+"Notification URL","URL de notification"
+
+"<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Veuillez noter que, après avoir changé cette valeur, vous devrez peut-être mettre à jour le champ Clé d'API.</p>"
+"Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.","En fonction de la sélection, l'extension communiquera avec le service 1-Click de test / pré-production / production. Choisissez personnalisé, si vous devez utiliser des URL spéciales pour la gateway."
 "Please enter a valid URL finishing by ""/""","Veuillez entrer une URL valide en terminant par ""/"""
 "JavaScript CDN URL","URL CDN JavaScript"
-"Notification URL","URL de notification"
 "Export select system attributes as custom options","Exporter les attributs select du système comme options personnalisées"
 "Color, size and all other custom attributes are exported by default.","La couleur, la taille et tous les autres attributs personnalisés sont exportés par défaut."
 "Enable native form validator to add to cart","Activer le validateur natif de formulaire d'ajout au panier"
@@ -34,6 +47,7 @@
 "Button width","Largeur du bouton"
 "In <i>%</i> or <i>px</i>","En <i>%</i> ou <i>px</i>"
 "Button height","Hauteur du bouton"
+"Left margin of the button","Marge gauche du bouton"
 "Button position","Position du bouton"
 "1-Click button before add to cart button","Bouton 1-Click avant le bouton d'ajout au panier"
 "1-Click button after add to cart button","Bouton 1-Click après le bouton d'ajout au panier"
@@ -41,7 +55,6 @@
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","L'API Oyst 1-Click n'est pas configuré. Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
 
 "1-Click has been installed.","1-Click a été correctement installé."
-"Click <a href=""%s"">here</a> to set up your settings.","Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
 "Remove this message","Retirer ce message"
 
 "Cancel and Refund","Annulation et Remboursement"
@@ -70,30 +83,11 @@
 "Disable 1-Click button","Désactiver le bouton 1-Click"
 
 
-"MODULE INFORMATION","INFORMATIONS SUR LE MODULE"
-"Developed by","Développé par"
-"Contact email","Courriel de contact"
-"Module version","Version du module"
-"Oyst SDK version","Compatible avec le SDK Oyst"
-"Reset the module","Réinitialiser le module"
-"Click this button to remove all previous parameters and/or reset the current module parameters.","Cliquer sur ce bouton pour supprimer toutes les configurations précédentes et/ou réinitialiser les paramètres actuels du module."
-"Reset","Réinitialiser"
-"The configuration of the Oyst module has been successfully reset.","La configuration du module Oyst a été réinitialisée avec succès."
-
-"GLOBAL SETTINGS","PARAMÈTRES GLOBAUX"
-"Enabled","Activé"
-"Enable module logs","Activer les logs du module"
-"Mode","Environnement"
-"custom","personnalisé"
-"<p id=""freepay_mode_comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""freepay_mode_comment"" style=""color:red; display:none;"">Veuillez noter que, après avoir changé cette valeur, vous devrez peut-être mettre à jour le champ Clé d'API.</p>"
+"<p id=""freepay-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""freepay-mode-comment"" style=""color:red; display:none;"">Veuillez noter que, après avoir changé cette valeur, vous devrez peut-être mettre à jour le champ Clé d'API.</p>"
 "Depending on the selection the extension will communicate with the FreePay test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.","En fonction de la sélection, l'extension communiquera avec le service FreePay de test / pré-production / production. Choisissez personnalisé, si vous devez utiliser des URL spéciales pour la gateway."
-"API URL","URL API"
-"API Key","Clé d'API"
-"Notification URL","URL de notification"
 "Warning: URL must finish by ""/""","Avertissement : l'URL doit se terminer par ""/"""
 
 "FREEPAY SETTINGS","PARAMÈTRES DE FREEPAY"
-"Enabled","Activé"
 "Title","Titre"
 "Card Payment","Payer par carte bancaire"
 "You will be redirected to the FreePay website when you place an order.","Vous serez redirigé vers le site de FreePay à l'issue de votre commande."
@@ -101,7 +95,6 @@
 "Status given to newly created orders before payment result confirmation via server notifications from FreePay.","Statut attribué aux commandes nouvellement créées avant la confirmation des résultats de paiement via les notifications du serveur de FreePay."
 "Order status: order cancellation","Statut de commande : annulation de commande"
 "Transition status assigned to orders after cancellation and waiting for FreePay notification (CANCEL_OR_REFUND). If orders are already invoiced, they cannot be cancelled, but will be refunded instead.","Statut transitoire attribué aux commandes après l'annulation et pendant l'attente de la notification de FreePay (CANCEL_OR_REFUND). Si les commandes sont déjà facturées, elles ne peuvent pas être annulées, mais elles seront remboursées à la place."
-
 
 "Order status: full refunded","Statut de commande : remboursement total"
 "Status given to order after a refund has been made on the order. This is triggered when the REFUND notification is received.","Statut attribué à une commande après un remboursement effectué. Ceci est déclenché lorsque la notification REFUND est reçue."
@@ -125,7 +118,6 @@
 "Payment Service Providers","Prestataire de services de paiement"
 "Transaction Type","Type de transaction"
 "Amount","Montant"
-"Transaction Number","Numéro de transaction"
 "Transaction Status","Statut de la transaction"
 
 "Cancel Order asked. Waiting for FreePay notification. Payment Id: ""%s"".","Annulation de la commande prise en compte. En attente de la notification FreePay. Référence de paiement : ""%s""."
@@ -133,8 +125,3 @@
 "Success Cancel Order. Payment Id: ""%s"".","Success Annulation de la commande. Référence de paiement : ""%s""."
 
 "FreePay has been installed.","FreePay a été correctement installé."
-"Click <a href=""%s"">here</a> to set up your settings.","Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
-"Resetting the module","Réinitialisation du module"
-"OneClick module was reinstalled successfully.","Le module OneClick a été réinstallé avec succès."
-"OneClick module was unable to reinstall successfully.","Le module OneClick n'a pas pu être réinstallé correctement."
-"Button right position","Bouton à la position droite"
