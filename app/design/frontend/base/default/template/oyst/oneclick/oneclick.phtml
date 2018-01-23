@@ -16,9 +16,11 @@
 <?php
 if ($this->isSupportedProduct()) :
     ?>
-    <div id="oyst-1click-button" <?php echo $this->getButtonCustomization(); ?>></div>
+    <div id="oyst-1click-button-wrapper" style="<?php echo $this->getButtonWrapperPosition(); ?>">
+        <div id="oyst-1click-button" <?php echo $this->getButtonCustomization(); ?>></div>
+    </div>
     <script>
-        <?php echo $this->buttonPosition(); ?>
+        <?php echo $this->oneClickButtonPickToFirstAddToCartButtons(); ?>
 
         (function () {
             if ("function" === typeof oystOneClick) {

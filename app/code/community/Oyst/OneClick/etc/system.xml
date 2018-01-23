@@ -360,13 +360,30 @@
                             </depends>
                         </button_height>
 
+                        <button_left_margin translate="label">
+                            <label>Left margin of the button</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/button_left_margin</config_path>
+                            <sort_order>17</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_left_margin>
+
                         <!-- button before addtocart button -->
                         <button_before_addtocart translate="label">
                             <label>Button position</label>
                             <frontend_type>select</frontend_type>
                             <source_model>oyst_oneclick/system_config_source_button_position</source_model>
                             <config_path>oyst/oneclick/button_before_addtocart</config_path>
-                            <sort_order>17</sort_order>
+                            <sort_order>18</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -379,29 +396,6 @@
                         </button_before_addtocart>
                     </fields>
                 </oneclick>
-
-                <!-- reset -->
-                <reset translate="label">
-                    <label>Resetting the module</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>20</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <init_module translate="label,button_label,comment">
-                            <label>Reset the module</label>
-                            <comment>Click this button to remove all previous parameters and/or reset the current module parameters.</comment>
-                            <button_label>Reset</button_label>
-                            <button_url><![CDATA[adminhtml/oyst_config/reset]]></button_url>
-                            <frontend_model>oyst_oneclick/adminhtml_field_initButton</frontend_model>
-                            <sort_order>15</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </init_module>
-                    </fields>
-                </reset>
 
                 <!--============================== Shipments Settings ================================ -->
                 <shipments translate="label">
@@ -456,6 +450,30 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                 </carrier_mapping_notcertified>
+
+
+                <!--============================== Reset ================================ -->
+                <reset translate="label">
+                    <label>Resetting the module</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>50</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <init_module translate="label,button_label,comment">
+                            <label>Reset the module</label>
+                            <comment>Click this button to remove all previous parameters and/or reset the current module parameters.</comment>
+                            <button_label>Reset</button_label>
+                            <button_url><![CDATA[adminhtml/oyst_config/reset]]></button_url>
+                            <frontend_model>oyst_oneclick/adminhtml_field_initButton</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </init_module>
+                    </fields>
+                </reset>
 
             </groups>
         </oyst_oneclick>
@@ -564,7 +582,7 @@
                         <!-- mode -->
                         <mode translate="label,comment,tooltip">
                             <label>Mode</label>
-                            <comment><![CDATA[<p id="freepay_mode_comment" style="color:red; display:none;">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>]]></comment>
+                            <comment><![CDATA[<p id="freepay-mode-comment" style="color:red; display:none;">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>]]></comment>
                             <tooltip><![CDATA[Depending on the selection the extension will communicate with the FreePay test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.]]></tooltip>
                             <frontend_type>select</frontend_type>
                             <frontend_model>oyst_oneclick/adminhtml_config_mode</frontend_model>
