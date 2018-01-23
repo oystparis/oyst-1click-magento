@@ -361,7 +361,7 @@ class Oyst_OneClick_Model_Magento_Quote
             // @TODO EndpointShipment: to remove with AuthorizeV2 / order.cart.estimate
             if (isset($item['variation_reference'])) {
                 $configurableProductChildId = $item['variation_reference'];
-                /** @var Mage_Catalog_Model_Product $product */
+                /** @var Mage_Catalog_Model_Product $configurableProductChild */
                 // @codingStandardsIgnoreLine
                 $configurableProductChild = Mage::getModel('catalog/product')->load($configurableProductChildId);
             }
@@ -407,19 +407,26 @@ class Oyst_OneClick_Model_Magento_Quote
 
                 $request = array('qty' => $item['quantity']);
 
-                // Increase stock with qty decrease when order made
-                $productForStock = isset($configurableProductChild) ? $configurableProductChild : $product;
-                $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productForStock->getId());
-                if (isset($this->apiData['event']) &&
-                    'order.v2.new' === $this->apiData['event'] &&
-                    $stockItem->getData('manage_stock') &&
-                    $item['quantity'] >= $stockItem->getData('min_sale_qty') &&
-                    $item['quantity'] <= $stockItem->getData('max_sale_qty'))
+                // Increase stock with qty decrease when order made if should_ask_stock is enabled
+                if (Mage::getStoreConfig('oyst/oneclick/should_ask_stock') &&
+                    isset($this->apiData['event']) &&
+                    'order.v2.new' === $this->apiData['event'])
                 {
-                    $stockItem->setData('is_in_stock', 1); // Set the Product to InStock
-                    $stockItem->setData('qty', $stockItem->getQty() + $item['quantity']); // current stock + book qty
-                    // @codingStandardsIgnoreLine
-                    $stockItem->save();
+                    $productForStock = isset($configurableProductChild) ? $configurableProductChild : $product;
+
+                    /** @var Mage_CatalogInventory_Model_Stock_Item $stockItem */
+                    $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productForStock->getId());
+
+                    $isStockManaged = $stockItem->getData('use_config_manage_stock') ?
+                        Mage::getStoreConfig('cataloginventory/item_options/manage_stock') :
+                        $stockItem->getData('manage_stock');
+
+                    if ($isStockManaged) {
+                        $stockItem->setData('is_in_stock', 1); // Set the Product to InStock
+                        $stockItem->addQty($item['quantity']);
+                        // @codingStandardsIgnoreLine
+                        $stockItem->save();
+                    }
                 }
 
                 if (Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE == $product->getTypeId()) {

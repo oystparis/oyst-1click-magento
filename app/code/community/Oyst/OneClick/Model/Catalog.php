@@ -934,9 +934,9 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 $productId = $product['reference'];
 
                 // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
-                if (false  !== strpos($productId, ';')) {
+                if (false !== strpos($productId, ';')) {
                     $p = explode(';', $productId);
-                    $productId['reference'] = $p[0];
+                    $product['reference'] = $p[0];
                     $product['variation_reference'] = $p[1];
                 }
 
