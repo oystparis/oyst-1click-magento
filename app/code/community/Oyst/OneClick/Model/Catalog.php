@@ -536,8 +536,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                     // @codingStandardsIgnoreLine
                     if (count($attribute->getPrices()) > 0) {
                         foreach ($attribute->getPrices() as $priceChange) {
-                            if (is_array($price) && array_key_exists('value_index',
-                                    $price) && $price['value_index'] == $attributeValue
+                            if (is_array($priceChange) && array_key_exists('value_index',
+                                    $priceChange) && $priceChange['value_index'] == $attributeValue
                             ) {
                                 $configurableOldPrice += (float)($priceChange['is_percent'] ? (((float)$priceChange['pricing_value']) * $price / 100) : $priceChange['pricing_value']);
                                 $configurablePrice += (float)($priceChange['is_percent'] ? (((float)$priceChange['pricing_value']) * $finalPrice / 100) : $priceChange['pricing_value']);
