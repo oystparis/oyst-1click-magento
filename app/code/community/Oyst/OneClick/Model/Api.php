@@ -145,4 +145,14 @@ class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
     {
         return (string)OystApiClientFactory::getVersion();
     }
+
+    /**
+     * Server environments
+     *
+     * @return array
+     */
+    public function getEnvironments()
+    {
+        return OystApiClientFactory::getEnvironments();
+    }
 }
