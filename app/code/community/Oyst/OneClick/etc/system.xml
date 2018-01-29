@@ -195,6 +195,21 @@
                             </depends>
                         </notification_url>
 
+                        <!-- payment url -->
+                        <payment_url translate="label,comment">
+                            <label>Payment URL</label>
+                            <validate>required-entry validate-url validate-oyst-url</validate>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/payment_url</config_path>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>1</enable>
+                            </depends>
+                        </payment_url>
+
                         <!-- system attributes -->
                         <systemattributes translate="label,comment">
                             <label>Export select system attributes as custom options</label>
@@ -597,7 +612,7 @@
                         <!-- api url -->
                         <api_url translate="label,comment">
                             <label>API URL</label>
-                            <validate>required-entry</validate>
+                            <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/api_url</config_path>
                             <sort_order>34</sort_order>
@@ -624,8 +639,7 @@
                         <!-- notification url -->
                         <notification_url translate="label,comment">
                             <label>Notification URL</label>
-                            <validate>required-entry</validate>
-                            <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
+                            <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/notification_url</config_path>
                             <sort_order>36</sort_order>
@@ -811,13 +825,13 @@
                         <!-- cancel url -->
                         <cancel_url translate="label,comment">
                             <label>Cancel URL</label>
+                            <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/cancel_url</config_path>
                             <sort_order>93</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
                             <depends>
                                 <active>1</active>
                             </depends>
@@ -826,13 +840,13 @@
                         <!-- error url -->
                         <error_url translate="label,comment">
                             <label>Error URL</label>
+                            <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/error_url</config_path>
                             <sort_order>94</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
                             <depends>
                                 <active>1</active>
                             </depends>
@@ -841,13 +855,13 @@
                         <!-- return url -->
                         <return_url translate="label,comment">
                             <label>Return URL</label>
+                            <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/return_url</config_path>
                             <sort_order>95</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment><![CDATA[Warning: URL must finish by "/"]]></comment>
                             <depends>
                                 <active>1</active>
                             </depends>
