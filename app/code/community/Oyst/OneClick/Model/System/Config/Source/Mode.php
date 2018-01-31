@@ -17,8 +17,6 @@ use Oyst\Api\OystApiClientFactory;
 class Oyst_OneClick_Model_System_Config_Source_Mode
 {
     const CUSTOM = 'custom';
-    const PREPROD = OystApiClientFactory::ENV_PREPROD;
-    const PROD = OystApiClientFactory::ENV_PROD;
 
     /**
      * Return the options for mode.
@@ -27,10 +25,14 @@ class Oyst_OneClick_Model_System_Config_Source_Mode
      */
     public function toOptionArray()
     {
-        return array(
-            array('value' => self::PREPROD, 'label' => Mage::helper('oyst_oneclick')->__(self::PREPROD)),
-            array('value' => self::PROD, 'label' => Mage::helper('oyst_oneclick')->__(self::PROD)),
-            array('value' => self::CUSTOM, 'label' => Mage::helper('oyst_oneclick')->__(self::CUSTOM)),
-        );
+        /** @var Oyst_OneClick_Model_Api $oystClient */
+        $oystApi = Mage::getModel('oyst_oneclick/api');
+
+        $list = array();
+        foreach ($oystApi->getEnvironments() as $environment) {
+            $list[] = array('value' => $environment, 'label' => Mage::helper('oyst_oneclick')->__($environment));
+        }
+
+        return $list;
     }
 }
