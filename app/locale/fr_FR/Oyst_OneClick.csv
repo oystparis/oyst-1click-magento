@@ -126,3 +126,6 @@
 "Success Cancel Order. Payment Id: ""%s"".","Success Annulation de la commande. Référence de paiement : ""%s""."
 
 "FreePay has been installed.","FreePay a été correctement installé."
+
+"Enable tracking","Activer le tracking"
+"Enabling this option will make it easier to track fraudulent payments.","Activer cette option permet de repérer plus facilement les paiements frauduleux."

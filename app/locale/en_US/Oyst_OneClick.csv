@@ -126,3 +126,6 @@
 "Success Cancel Order. Payment Id: ""%s"".","Success Cancel Order. Payment Id: ""%s""."
 
 "FreePay has been installed.","FreePay has been installed."
+
+"Enable tracking","Enable tracking"
+"Enabling this option will make it easier to track fraudulent payments.","Enabling this option will make it easier to track fraudulent payments."

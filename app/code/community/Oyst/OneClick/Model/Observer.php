@@ -84,4 +84,14 @@ class Oyst_OneClick_Model_Observer
 
         return $this;
     }
+
+    /**
+     * Invalidate config cache.
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function invalidateCache(Varien_Event_Observer $observer)
+    {
+        Mage::app()->getCacheInstance()->invalidateType('config');
+    }
 }

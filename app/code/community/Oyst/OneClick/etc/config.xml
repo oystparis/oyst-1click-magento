@@ -158,6 +158,26 @@
                     </oyst_payment>
                 </observers>
             </sales_order_payment_refund>
+
+            <!-- Invalidate config cache for Freepay -->
+            <admin_system_config_changed_section_payment>
+                <observers>
+                    <oyst_payment>
+                        <class>Oyst_OneClick_Model_Observer</class>
+                        <method>invalidateCache</method>
+                    </oyst_payment>
+                </observers>
+            </admin_system_config_changed_section_payment>
+
+            <!-- Invalidate config cache for OneClick -->
+            <admin_system_config_changed_section_oyst_oneclick>
+                <observers>
+                    <oyst_payment>
+                        <class>Oyst_OneClick_Model_Observer</class>
+                        <method>invalidateCache</method>
+                    </oyst_payment>
+                </observers>
+            </admin_system_config_changed_section_oyst_oneclick>
         </events>
     </adminhtml>
     <!-- Default configuration values -->
@@ -177,6 +197,7 @@
                 <enable_invoice_auto_generation>1</enable_invoice_auto_generation>
                 <button_theme>normal</button_theme>
                 <button_before_addtocart>before</button_before_addtocart>
+                <tracking>1</tracking>
             </oneclick>
             <order_settings>
                 <enable>0</enable>
@@ -208,6 +229,7 @@
                 <enable_logs>1</enable_logs>
                 <mode>prod</mode>
                 <invoice_label>FreePay</invoice_label>
+                <tracking>1</tracking>
             </oyst_abstract>
             <oyst_freepay translate="title" module="oyst_oneclick">
                 <active>0</active>
