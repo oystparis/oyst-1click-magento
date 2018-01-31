@@ -832,43 +832,48 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $taxHelper = Mage::helper('tax');
         foreach ($rates as $rate) {
-            $price = $rate->getPrice();
-            if (!$taxHelper->shippingPriceIncludesTax()) {
-                $price = $taxHelper->getShippingPrice($price, true, $address);
-            }
-            Mage::helper('oyst_oneclick')->log(
-                sprintf('%s (%s): %s',
-                    trim($this->_getConfigMappingName($rate->getCode())),
-                    $rate->getCode(),
-                    $price
-                )
-            );
+            try {
+                $price = $rate->getPrice();
+                if (!$taxHelper->shippingPriceIncludesTax()) {
+                    $price = $taxHelper->getShippingPrice($price, true, $address);
+                }
+                Mage::helper('oyst_oneclick')->log(
+                    sprintf('%s (%s): %s',
+                        trim($this->_getConfigMappingName($rate->getCode())),
+                        $rate->getCode(),
+                        $price
+                    )
+                );
 
-            // This mean it's disable for 1-Click
-            if ("0" === ($carrierMapping = $this->_getConfigMappingDelay($rate->getCode()))) {
+                // This mean it's disable for 1-Click
+                if ("0" === ($carrierMapping = $this->_getConfigMappingDelay($rate->getCode()))) {
+                    continue;
+                }
+
+                $oystPrice = new OystPrice($price, Mage::app()->getStore()->getCurrentCurrencyCode());
+
+                $oystCarrier = new OystCarrier(
+                    $rate->getCode(),
+                    trim($this->_getConfigMappingName($rate->getCode())),
+                    $carrierMapping
+                );
+
+                $shipment = new OneClickShipmentCatalogLess(
+                    $oystPrice,
+                    $this->_getConfigCarrierDelay($rate->getCode()),
+                    $oystCarrier
+                );
+
+                if ($rate->getCode() === $this->_getConfig('carrier_default')) {
+                    $shipment->setPrimary(true);
+                    $isPrimarySet = true;
+                }
+
+                $oneClickShipmentCalculation->addShipment($shipment);
+            } catch (Exception $e) {
+                Mage::logException($e);
                 continue;
             }
-
-            $oystPrice = new OystPrice($price, Mage::app()->getStore()->getCurrentCurrencyCode());
-
-            $oystCarrier = new OystCarrier(
-                $rate->getCode(),
-                trim($this->_getConfigMappingName($rate->getCode())),
-                $carrierMapping
-            );
-
-            $shipment = new OneClickShipmentCatalogLess();
-            $shipment->setAmount($oystPrice);
-            $shipment->setDelay($this->_getConfigCarrierDelay($rate->getCode()));
-            $shipment->setPrimary(false);
-            if ($rate->getCode() === $this->_getConfig('carrier_default')) {
-                $shipment->setPrimary(true);
-                $isPrimarySet = true;
-            }
-
-            $shipment->setCarrier($oystCarrier);
-
-            $oneClickShipmentCalculation->addShipment($shipment);
         }
 
         if (!$isPrimarySet) {
