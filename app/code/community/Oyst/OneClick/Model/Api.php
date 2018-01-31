@@ -93,7 +93,7 @@ class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');
 
-        $userAgent = new OystUserAgent('Magento', $oystHelper->getModuleVersion(), Mage::getVersion(), 'php', phpversion());
+        $userAgent = new OystUserAgent('Magento', $oystHelper->getModuleVersion(), Mage::getVersion());
 
         return $userAgent;
     }
