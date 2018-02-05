@@ -167,9 +167,9 @@ function prependChild(parentElement, newFirstChildElement) {
 /**
  * Move OneClick button in first position in add to cart buttons list
  */
-function oneClickButtonPickToFirstAddToCartButtons() {
+function oneClickButtonPickToFirstAddToCartButtons(addtocartButtonsClass) {
     ready(function () {
-        var addToCartButtons = document.getElementsByClassName("add-to-cart-buttons")[0];
+        var addToCartButtons = document.getElementsByClassName(addtocartButtonsClass)[0];
         var oystOneClickButton = document.getElementById("oyst-1click-button-wrapper");
         prependChild(addToCartButtons, oystOneClickButton);
     });

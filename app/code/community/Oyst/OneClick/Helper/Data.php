@@ -23,7 +23,7 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return mixed
      */
-    public function _getConfig($code)
+    public function getConfig($code)
     {
         return Mage::getStoreConfig("oyst/oneclick/$code");
     }
@@ -60,7 +60,7 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function log($message)
     {
-        if ($this->_getConfig('log_enable')) {
+        if ($this->getConfig('log_enable')) {
             Mage::log($message, null, $this->getModuleName() . '.log', true);
         }
     }
@@ -123,12 +123,12 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getOneClickJs()
     {
-        if ($this->_getConfig('enable')) {
-            $mode = $this->_getConfig('mode');
-            $oneclickjs = $this->_getConfig('oneclickjs_' . $mode . '_url') . '1click/script/script.min.js';
+        if ($this->getConfig('enable')) {
+            $mode = $this->getConfig('mode');
+            $oneclickjs = $this->getConfig('oneclickjs_' . $mode . '_url') . '1click/script/script.min.js';
 
             if (Oyst_OneClick_Model_System_Config_Source_Mode::CUSTOM === $mode) {
-                $oneclickjs = $this->_getConfig('oneclickjs_url');
+                $oneclickjs = $this->getConfig('oneclickjs_url');
             }
 
             return '<script src="' . $oneclickjs . '"></script>';
