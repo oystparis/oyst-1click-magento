@@ -427,6 +427,42 @@
                                 </enable>
                             </depends>
                         </product_page_buttons_wrapper_class>
+
+                        <!-- button rounded -->
+                        <button_rounded translate="label">
+                            <label>Border radius</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/button_rounded</config_path>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_rounded>
+
+                        <!-- smart button -->
+                        <button_smart translate="label">
+                            <label>Smart button</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/button_smart</config_path>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_smart>
                     </fields>
                 </oneclick>
 

@@ -22,6 +22,8 @@
  * @param {Boolean} isProductAddtocartFormValidate  Backend conf to validate or not form data
  */
 function oystOneClick(productId, childId, oneClickUrl, isProductAddtocartFormValidate) {
+    smartButtonData();
+
     window.__OYST__ = window.__OYST__ || {};
     window.__OYST__.getOneClickURL = function (cb, opts) {
         opts = opts || {};
@@ -173,4 +175,18 @@ function oneClickButtonPickToFirstAddToCartButtons(addtocartButtonsClass) {
         var oystOneClickButton = document.getElementById("oyst-1click-button-wrapper");
         prependChild(addToCartButtons, oystOneClickButton);
     });
+}
+
+/**
+ * Apply add to cart size on OneClick button
+ */
+function smartButtonData() {
+    //var addtocartButtons = null;
+    if (document.getElementById("oyst-1click-button").getAttribute("data-smart")) {
+        var addtocartButtons = document.getElementsByClassName("add-to-cart-buttons");
+        var addtocartButton = addtocartButtons[0].getElementsByClassName("button btn-cart");
+
+        document.getElementById("oyst-1click-button").setAttribute("data-height", addtocartButton[0].getHeight() + "px");
+        document.getElementById("oyst-1click-button").setAttribute("data-width", addtocartButton[0].getWidth() + "px");
+    }
 }
