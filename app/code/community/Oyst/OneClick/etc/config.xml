@@ -61,16 +61,6 @@
                     </oyst_lib_load>
                 </observers>
             </controller_front_init_before>
-
-            <!-- Custom cancel and refund -->
-            <core_block_abstract_prepare_layout_before>
-                <observers>
-                    <custom_void>
-                        <class>oyst_oneclick/adminhtml_observer</class>
-                        <method>cancelAndRefundButton</method>
-                    </custom_void>
-                </observers>
-            </core_block_abstract_prepare_layout_before>
         </events>
     </global>
     <admin>

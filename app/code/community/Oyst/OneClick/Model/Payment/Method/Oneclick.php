@@ -22,6 +22,8 @@ class Oyst_OneClick_Model_Payment_Method_Oneclick extends Mage_Payment_Model_Met
      * Payment Method features
      * @var bool
      */
+    protected $_canRefund = true;
+    protected $_canRefundInvoicePartial = true;
     protected $_canUseInternal = false;
     protected $_canUseCheckout = false;
     protected $_canUseForMultishipping = false;
@@ -41,5 +43,45 @@ class Oyst_OneClick_Model_Payment_Method_Oneclick extends Mage_Payment_Model_Met
     public function getName()
     {
         return self::PAYMENT_METHOD_NAME;
+    }
+
+    /**
+     * Refund specified amount for payment.
+     *
+     * @param Varien_Object $payment
+     * @param float $amount
+     *
+     * @return $this
+     */
+    public function refund(Varien_Object $payment, $amount)
+    {
+        /** @var Oyst_OneClick_Helper_Data $helper */
+        $helper = Mage::helper('oyst_oneclick');
+
+        if ($helper->getOpenRefundTransaction($payment)->getId()) {
+            Mage::throwException($helper->__('There is already one credit memo in the queue.'));
+        }
+
+        try {
+            /** @var Oyst_OneClick_Model_Order_ApiWrapper $api */
+            $api = Mage::getModel('oyst_oneclick/order_apiWrapper');
+            $api->refund($payment->getOrder()->getOystOrderId(), $amount);
+        } catch (Exception $e) {
+            /** @var Oyst_OneClick_Helper_Data $oystHelper */
+            $oystHelper = Mage::helper('oyst_oneclick');
+
+            $message = sprintf(
+                'Unable to refund Oyst order %s (%s - %s).',
+                $payment->getOrder()->getOystOrderId(),
+                $e->getMessage(),
+                $e->getCode()
+            );
+
+            $oystHelper->log($message);
+
+            Mage::throwException($helper->__($message));
+        }
+
+        return $this;
     }
 }

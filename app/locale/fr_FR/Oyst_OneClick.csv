@@ -148,3 +148,6 @@
 "Download","Télécharger"
 
 "Create a customer account for a new order","Création d'un compte client lors d'une nouvelle commande"
+
+"Unable to refund Oyst order %s (%s - %s).","Impossible de rembourser de la commande %s (%s - %s)."
+"There is already one credit memo in the queue.","Il y a déjà un remboursement en cours."
