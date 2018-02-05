@@ -64,25 +64,22 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get first notification by importId filter by type AND/OR id
+     * Check if the order notification has been already processed
      *
-     * @param bool $type
-     * @param bool $dataId
-     * @param bool $importId
+     * @param string $dataId
      *
-     * @return Oyst_OneClick_Model_Notification
+     * @return int|null Magento order id or null
      */
-    public function getFirstNotificationByImportId($type = false, $dataId = false, $importId = false)
+    public function isOrderProcessed($oystOrderId)
     {
         $collection = $this->getCollection()
-            ->addDataIdToFilter($type, $dataId)
+            ->addDataIdToFilter('order', $oystOrderId)
             ->addFieldToFilter('status', array('like' => 'finished'))
-            ->addFieldToFilter('oyst_data', array('like' => "%$importId%"))
-            ->addOrder('notification_id', 'ASC')
+            ->addFieldToFilter('order_id', array('notnull' => true))
             ->setPageSize(1)
             ->setCurPage(1)
             ->load();
 
-        return $collection->getFirstItem();
+        return $collection->getFirstItem()->getOrderId();
     }
 }
