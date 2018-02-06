@@ -16,7 +16,7 @@
 <?php
 if ($this->isSupportedProduct()) :
     ?>
-    <div id="oyst-1click-button-wrapper" style="<?php echo $this->getButtonWrapperPosition(); ?>">
+    <div id="oyst-1click-button-wrapper" style="<?php echo $this->getButtonWrapperPosition(); ?>" <?php echo $this->getButtonCustomization(); ?>>
         <div id="oyst-1click-button" <?php echo $this->getButtonCustomization(); ?>></div>
     </div>
     <script>

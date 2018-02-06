@@ -83,13 +83,18 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     public function getButtonCustomization()
     {
         $buttonCustomization = '';
-        $customizationAttributes = array('theme', 'color', 'width', 'height');
+        $customizationAttributes = array('theme', 'color', 'width', 'height', 'rounded', 'smart');
         foreach ($customizationAttributes as $customizationAttribute) {
-            if (Mage::getStoreConfig('oyst/oneclick/button_' . $customizationAttribute)) {
-                $buttonCustomization .= sprintf(" data-" .  $customizationAttribute . "='%s'",
-                    Mage::getStoreConfig('oyst/oneclick/button_' . $customizationAttribute)
-                );
+            $config = Mage::getStoreConfig('oyst/oneclick/button_' . $customizationAttribute);
+            if (empty($config)) {
+                continue;
             }
+
+            if (in_array($customizationAttribute, array('rounded', 'smart'))) {
+                $config = filter_var($config, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false';
+            }
+
+            $buttonCustomization .= sprintf(" data-" .  $customizationAttribute . "='%s'", $config);
         }
 
         return $buttonCustomization;
