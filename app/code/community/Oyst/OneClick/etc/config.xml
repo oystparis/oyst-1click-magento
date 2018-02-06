@@ -198,6 +198,7 @@
                 <button_theme>normal</button_theme>
                 <button_before_addtocart>before</button_before_addtocart>
                 <tracking>1</tracking>
+                <product_page_buttons_wrapper_class>add-to-cart-buttons</product_page_buttons_wrapper_class>
             </oneclick>
             <order_settings>
                 <enable>0</enable>

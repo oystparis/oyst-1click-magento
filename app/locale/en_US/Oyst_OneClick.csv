@@ -52,6 +52,8 @@
 "Button position","Button position"
 "1-Click button before add to cart button","1-Click button before add to cart button"
 "1-Click button after add to cart button","1-Click button after add to cart button"
+"Buy buttons wrapper CSS class","Buy buttons wrapper CSS class"
+"CSS class of the element grouping the shopping buttons on the product pages. E.g.: <i>add-to-cart-buttons</i>","CSS class of the element grouping the shopping buttons on the product pages. E.g.: <i>add-to-cart-buttons</i>"
 
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings."
 

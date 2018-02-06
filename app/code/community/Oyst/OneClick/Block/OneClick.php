@@ -103,7 +103,9 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     public function oneClickButtonPickToFirstAddToCartButtons()
     {
         if ('before' === Mage::getStoreConfig('oyst/oneclick/button_before_addtocart')) {
-            return 'oneClickButtonPickToFirstAddToCartButtons();';
+            $class = Mage::getStoreConfig('oyst/oneclick/product_page_buttons_wrapper_class');
+
+            return 'oneClickButtonPickToFirstAddToCartButtons("' . $class . '");';
         }
     }
 

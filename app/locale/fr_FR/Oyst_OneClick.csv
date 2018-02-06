@@ -52,6 +52,8 @@
 "Button position","Position du bouton"
 "1-Click button before add to cart button","Bouton 1-Click avant le bouton d'ajout au panier"
 "1-Click button after add to cart button","Bouton 1-Click après le bouton d'ajout au panier"
+"Buy buttons wrapper CSS class","Classe CSS regroupant les boutons d'achat"
+"CSS class of the element grouping the shopping buttons on the product pages. E.g.: <i>add-to-cart-buttons</i>","Classe CSS de l'élément regroupant les boutons d'achats sur les pages produits. Exemple : <i>add-to-cart-buttons</i>"
 
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","L'API Oyst 1-Click n'est pas configuré. Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
 
