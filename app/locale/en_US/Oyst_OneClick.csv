@@ -10,7 +10,7 @@
 "Oyst SDK version","Oyst SDK version"
 
 "Reset the module","Reset the module"
-"Reset","Réinitialiser"
+"Reset","Reset"
 "Click this button to remove all previous parameters and/or reset the current module parameters.","Click this button to remove all previous parameters and/or reset the current module parameters."
 "Resetting the module","Resetting the module"
 "OneClick module was reinstalled successfully.","OneClick module was reinstalled successfully."
@@ -129,3 +129,5 @@
 
 "Enable tracking","Enable tracking"
 "Enabling this option will make it easier to track fraudulent payments.","Enabling this option will make it easier to track fraudulent payments."
+
+"Do you want to proceed with the re-installation of the module?","Do you want to proceed with the re-installation of the module?"
