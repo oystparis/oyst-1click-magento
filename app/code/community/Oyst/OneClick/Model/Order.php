@@ -50,16 +50,12 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         $lastNotification = $lastNotification->getLastNotification('order', $oystOrderId);
 
         // If last notification is not finished
-        if ($lastNotification->getId() && $lastNotification->getStatus() !== 'finished') {
+        if ($lastNotification->getId() && 'finished' !== $lastNotification->getStatus()) {
             Mage::throwException(Mage::helper('oyst_oneclick')->__(
                 'Last Notification with order id "%s" is not finished.',
                 $oystOrderId)
             );
         }
-
-        // If notification already processed
-        // @TODO add control to allow only one notification by verifing if there is an order
-        // @TODO with oyst_order_id ($params['oyst_order_id']) if yes return Exception
 
         // Create new notification in db with status 'start'
         $notification = Mage::getModel('oyst_oneclick/notification');
@@ -74,21 +70,28 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         );
         $notification->save();
 
-        $params = array(
-            'oyst_order_id' => $oystOrderId,
-        );
+        // When notification already processed
+        if (!is_null($magentoOrderId = $lastNotification->isOrderProcessed($oystOrderId))) {
+            $response = Zend_Json::encode(array(
+                'magento_order_id' => $magentoOrderId,
+                'message' => 'notification has been already processed.',
+            ));
+        } else {
+            // Sync Order From Api
+            $result = $this->sync(array(
+                'oyst_order_id' => $oystOrderId,
+            ));
+            $magentoOrderId = $result['magento_order_id'];
 
-        // Sync Order From Api
-        $result = $this->sync($params);
-
-        $response = Zend_Json::encode(array(
-            'magento_order_id' => $result['magento_order_id'],
-        ));
+            $response = Zend_Json::encode(array(
+                'magento_order_id' => $result['magento_order_id'],
+            ));
+        }
 
         // Save new status and result in db
         $notification->setStatus('finished')
             ->setMageResponse($response)
-            ->setOrderId($result['magento_order_id'])
+            ->setOrderId($magentoOrderId)
             ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
             ->save();
 
