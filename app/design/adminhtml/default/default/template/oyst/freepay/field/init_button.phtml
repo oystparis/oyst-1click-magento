@@ -9,12 +9,24 @@
  * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
  */
 ?>
+
 <table>
     <tr>
         <td>
-            <button onclick="javascript:window.location='<?php echo $this->getButtonUrl()?>'; return false;" class="scalable" type="button" id="<?php echo $this->getHtmlId() ?>_button">
+            <button class="scalable" type="button" id="<?php echo $this->getHtmlId() ?>_button">
                 <span><span><?php echo $this->escapeHtml($this->getButtonLabel()); ?></span></span>
             </button>
         </td>
     </tr>
 </table>
+
+<script>
+    var btn = document.getElementById("oyst_oneclick_reset_init_module_button");
+
+    btn.onclick = function() {
+        var result = confirm("<?php echo Mage::helper('oyst_oneclick')->__('Do you want to proceed with the re-installation of the module?'); ?>");
+        if (result) {
+            window.location='<?php echo $this->getButtonUrl()?>';
+        }
+    };
+</script>
