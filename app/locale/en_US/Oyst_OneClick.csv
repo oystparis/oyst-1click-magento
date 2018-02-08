@@ -135,3 +135,14 @@
 "Enabling this option will make it easier to track fraudulent payments.","Enabling this option will make it easier to track fraudulent payments."
 
 "Do you want to proceed with the re-installation of the module?","Do you want to proceed with the re-installation of the module?"
+
+"File ""%s"" does not exist.","File ""%s"" does not exist."
+"Cannot delete ""%s"" file.","Cannot delete ""%s"" file."
+"Successfully deleted ""%s"".","Successfully deleted ""%s""."
+"Download/Delete log files","Download/Delete log files"
+"Log Actions","Log Actions"
+"Log file","Log file"
+"Log rows from EOF","Log rows from EOF"
+"Actions","Actions"
+"Delete","Delete"
+"Download","Download"

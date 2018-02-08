@@ -11,10 +11,17 @@
  */
 -->
 <config>
+    <tabs>
+        <oyst_oneclick translate="label" module="oyst_oneclick">
+            <label>Oyst</label>
+            <sort_order>100</sort_order>
+            <class>admin-system-config-oyst</class>
+        </oyst_oneclick>
+    </tabs>
     <sections>
         <oyst_oneclick translate="label" module="oyst_oneclick">
             <label>Oyst 1-Click</label>
-            <tab>sales</tab>
+            <tab>oyst_oneclick</tab>
             <frontend_type>text</frontend_type>
             <sort_order>999</sort_order>
             <show_in_default>1</show_in_default>
@@ -375,6 +382,7 @@
                             </depends>
                         </button_height>
 
+                        <!-- button left margin -->
                         <button_left_margin translate="label">
                             <label>Left margin of the button</label>
                             <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
@@ -520,6 +528,26 @@
                     <show_in_store>1</show_in_store>
                 </carrier_mapping_notcertified>
 
+                <!--============================== Log ================================ -->
+                <log_actions translate="label">
+                    <label>Log Actions</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>50</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <shipping_costs translate="label">
+                            <label>Download/Delete log files</label>
+                            <frontend_model>oyst_oneclick/adminhtml_field_logActions</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </shipping_costs>
+                    </fields>
+                </log_actions>
 
                 <!--============================== Reset ================================ -->
                 <reset translate="label">
