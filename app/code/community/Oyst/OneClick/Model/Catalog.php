@@ -691,14 +691,17 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $images[] = $product->getMediaConfig()->getMediaUrl($image['file']);
         }
 
-        if (empty($images)) {
+        $catalogPlaceholderImage = Mage::getStoreConfig('catalog/placeholder/image_placeholder');
+        if (empty($images) && !empty($catalogPlaceholderImage)) {
             $images[] = sprintf('%s/placeholder/%s',
                 Mage::getSingleton('catalog/product_media_config')->getBaseMediaUrl(),
                 Mage::getStoreConfig('catalog/placeholder/image_placeholder')
             );
         }
 
-        $oystProduct->__set('images', $images);
+        if (!empty($images)) {
+            $oystProduct->__set('images', $images);
+        }
     }
 
     /**
