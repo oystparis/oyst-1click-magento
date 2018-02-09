@@ -572,6 +572,26 @@
                     </fields>
                 </reset>
 
+                <new_customer_account translate="label">
+                    <label>Create a customer account for a new order</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>60</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <create translate="label">
+                            <label>Create a customer account for a new order</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/new_customer_account</config_path>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </create>
+                    </fields>
+                </new_customer_account>
             </groups>
         </oyst_oneclick>
         <payment>

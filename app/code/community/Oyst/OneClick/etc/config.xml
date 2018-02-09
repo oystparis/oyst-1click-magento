@@ -201,6 +201,7 @@
                 <product_page_buttons_wrapper_class>add-to-cart-buttons</product_page_buttons_wrapper_class>
                 <button_rounded>1</button_rounded>
                 <button_smart>1</button_smart>
+                <new_customer_account>1</new_customer_account>
             </oneclick>
             <order_settings>
                 <enable>0</enable>

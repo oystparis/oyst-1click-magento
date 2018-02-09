@@ -25,6 +25,9 @@ class Oyst_OneClick_Model_Magento_Quote
     /** @var array */
     private $rowTotalOyst = array();
 
+    /** @var int Website id */
+    private $websiteId = null;
+
     public function __construct($orderResponse)
     {
         $this->apiData = $orderResponse;
@@ -93,10 +96,39 @@ class Oyst_OneClick_Model_Magento_Quote
         Mage::getSingleton('checkout/session')->replaceQuote($this->quote);
     }
 
+    /**
+     * Create new customer.
+     *
+     * @param string $firstname
+     * @param string $lastname
+     * @param string $email
+     *
+     * @return false|Mage_Core_Model_Abstract
+     */
+    private function createCustomer($firstname, $lastname, $email)
+    {
+        $customer = Mage::getModel('customer/customer');
+        $store = Mage::app()->getStore();
+
+        $customer->setWebsiteId($this->websiteId)
+            ->setStore($store)
+            ->setFirstname($firstname)
+            ->setLastName($lastname)
+            ->setEmail($email)
+            ->setPassword($customer->generatePassword());
+        try {
+            $customer->save();
+        } catch (Exception $e) {
+            Mage::helper('oyst_oneclick')->log($e->getMessage());
+        }
+
+        return $customer;
+    }
+
     private function initializeCustomer()
     {
         // Already customer ; Check by website
-        if ($customer = $this->getCustomerByEmailAndWebsite($this->apiData['user']['email'])) {
+        if ($customer = $this->getCustomer()) {
             if ($customer instanceof Mage_Customer_Model_Customer) {
                 $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER);
                 $this->quote->assignCustomer($customer);
@@ -114,40 +146,43 @@ class Oyst_OneClick_Model_Magento_Quote
             $this->quote->setCustomerFirstname($firstname);
             $this->quote->setCustomerLastname($lastname);
             $this->quote->setCustomerEmail($email);
-            $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_GUEST);
-            $this->quote->setCustomerIsGuest(true);
-            $this->quote->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
+
+            $checkoutMethod = Mage_Checkout_Model_Type_Onepage::METHOD_GUEST;
+
+            if (Mage::getStoreConfig('oyst/oneclick/create_account')) {
+                $customer = $this->createCustomer($firstname, $lastname, $email);
+                $checkoutMethod = Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER;
+            }
+
+            if ($customer instanceof Mage_Customer_Model_Customer && !$customer->getId()) {
+                $this->quote->setCustomerIsGuest(true);
+                $this->quote->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
+            }
+
+            $this->quote->setCheckoutMethod($checkoutMethod);
         }
 
         $this->quote->save();
     }
 
     /**
-     * Get the customer by email
-     *
-     * @param string $email
-     * @param int $websiteId
+     * Retrieve customer by email.
      *
      * @return bool|Mage_Customer_Model_Customer
      */
-    private function getCustomerByEmailAndWebsite($email, $websiteId = null)
+    private function getCustomer()
     {
-        $customer = function ($email, $websiteId) {
-            /** @var Mage_Customer_Model_Customer $customer */
-            $customer = Mage::getModel('customer/customer');
-            $customer->setWebsiteId($websiteId);
-            $customer->loadByEmail($email);
-            if ($customer->getId()) {
-                return $customer;
-            }
-        };
+        $this->websiteId = Mage::getModel('core/store')
+            ->load($this->apiData['context']['store_id'])
+            ->getWebsiteId();
 
-        if ($websiteId) {
-            return $customer($email, $websiteId);
-        } else {
-            foreach (Mage::app()->getWebsites() as $website) {
-                return $customer($email, $website->getWebsiteId());
-            }
+        /** @var Mage_Customer_Model_Customer $customer */
+        $customer = Mage::getModel('customer/customer');
+        $customer->setWebsiteId($this->websiteId);
+        $customer->loadByEmail($this->apiData['user']['email']);
+
+        if ($customer->getId()) {
+            return $customer;
         }
 
         return false;
