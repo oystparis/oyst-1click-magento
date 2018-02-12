@@ -178,6 +178,15 @@
                     </oyst_payment>
                 </observers>
             </admin_system_config_changed_section_oyst_oneclick>
+
+            <controller_action_predispatch_adminhtml_system_config_edit>
+                <observers>
+                    <bind_locale>
+                        <class>Oyst_OneClick_Model_Observer</class>
+                        <method>redirectToNotificationsGrid</method>
+                    </bind_locale>
+                </observers>
+            </controller_action_predispatch_adminhtml_system_config_edit>
         </events>
     </adminhtml>
     <!-- Default configuration values -->
