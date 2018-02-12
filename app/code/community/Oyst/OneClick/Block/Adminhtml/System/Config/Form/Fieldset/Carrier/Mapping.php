@@ -122,8 +122,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
         $configData = $this->getConfigData();
         $path = sprintf('oyst_oneclick/carrier_mapping/%s', $group['value']);
 
-        $data = '0';
-        $inherit = false;
+        $data = Mage::getStoreConfig($path);
+        $inherit = true;
         if (isset($configData[$path])) {
             $data = $configData[$path];
             $inherit = false;
@@ -162,8 +162,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
         $configData = $this->getConfigData();
         $path = sprintf('oyst_oneclick/carrier_delay/%s', $group['value']);
 
-        $data = 48;
-        $inherit = false;
+        $data = Mage::getStoreConfig($path);
+        $inherit = true;
         if (isset($configData[$path])) {
             $data = $configData[$path];
             $inherit = false;
@@ -203,8 +203,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
         $configData = $this->getConfigData();
         $path = sprintf('oyst_oneclick/carrier_name/%s', $group['value']);
 
-        $data = $group['label'];
-        $inherit = false;
+        $data = Mage::getStoreConfig($path);
+        $inherit = true;
         if (isset($configData[$path])) {
             $data = $configData[$path];
             $inherit = false;
