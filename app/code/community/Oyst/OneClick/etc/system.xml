@@ -400,13 +400,49 @@
                             </depends>
                         </button_left_margin>
 
+                        <!-- button top margin -->
+                        <button_top_margin translate="label">
+                            <label>Top margin of the button</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/button_top_margin</config_path>
+                            <sort_order>18</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_top_margin>
+
+                        <!-- button bottom margin -->
+                        <button_bottom_margin translate="label">
+                            <label>Bottom margin of the button</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/button_bottom_margin</config_path>
+                            <sort_order>19</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>oneclick</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_bottom_margin>
+
                         <!-- button before addtocart button -->
                         <button_before_addtocart translate="label">
                             <label>Button position</label>
                             <frontend_type>select</frontend_type>
                             <source_model>oyst_oneclick/system_config_source_button_position</source_model>
                             <config_path>oyst/oneclick/button_before_addtocart</config_path>
-                            <sort_order>18</sort_order>
+                            <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -424,7 +460,7 @@
                             <comment><![CDATA[CSS class of the element grouping the shopping buttons on the product pages. E.g.: <i>add-to-cart-buttons</i>]]></comment>
                             <frontend_type>text</frontend_type>
                             <config_path>oyst/oneclick/product_page_buttons_wrapper_class</config_path>
-                            <sort_order>19</sort_order>
+                            <sort_order>21</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -442,7 +478,7 @@
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>oyst/oneclick/button_rounded</config_path>
-                            <sort_order>20</sort_order>
+                            <sort_order>22</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -460,7 +496,7 @@
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>oyst/oneclick/button_smart</config_path>
-                            <sort_order>21</sort_order>
+                            <sort_order>23</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
