@@ -21,8 +21,8 @@
  * @param {String} oneClickUrl  Backend conf oneclick payment url
  * @param {Boolean} isProductAddtocartFormValidate  Backend conf to validate or not form data
  */
-function oystOneClick(productId, childId, oneClickUrl, isProductAddtocartFormValidate) {
-    smartButtonData();
+function oystOneClick(productId, childId, oneClickUrl, isProductAddtocartFormValidate, addtocartButtonsClass) {
+    smartButtonData(addtocartButtonsClass);
 
     window.__OYST__ = window.__OYST__ || {};
     window.__OYST__.getOneClickURL = function (cb, opts) {
@@ -180,13 +180,16 @@ function oneClickButtonPickToFirstAddToCartButtons(addtocartButtonsClass) {
 /**
  * Apply add to cart size on OneClick button
  */
-function smartButtonData() {
-    //var addtocartButtons = null;
+function smartButtonData(addtocartButtonsClass) {
     if (document.getElementById("oyst-1click-button").getAttribute("data-smart")) {
-        var addtocartButtons = document.getElementsByClassName("add-to-cart-buttons");
-        var addtocartButton = addtocartButtons[0].getElementsByClassName("button btn-cart");
+        var addtocartButtons = document.getElementsByClassName(addtocartButtonsClass);
+        if (addtocartButtons.length) {
+            var addtocartButton = addtocartButtons[0].getElementsByClassName("button btn-cart");
 
-        document.getElementById("oyst-1click-button").setAttribute("data-height", addtocartButton[0].getHeight() + "px");
-        document.getElementById("oyst-1click-button").setAttribute("data-width", addtocartButton[0].getWidth() + "px");
+            document.getElementById("oyst-1click-button").setAttribute("data-height", addtocartButton[0].getHeight() + "px");
+            document.getElementById("oyst-1click-button").setAttribute("data-width", addtocartButton[0].getWidth() + "px");
+        } else {
+            console.log(addtocartButtonsClass + " class not found.");
+        }
     }
 }
