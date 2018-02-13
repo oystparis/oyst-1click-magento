@@ -28,7 +28,10 @@ if ($this->isSupportedProduct()) :
                     <?php echo $this->getProduct()->getId(); ?>,
                     <?php echo $this->getConfigurableProductChildIdIfExist(); ?>,
                     <?php echo $this->getOneClickUrl(); ?>,
-                    <?php echo $this->isProductAddtocartFormValidate(); ?>
+                    <?php echo $this->isProductAddtocartFormValidate(); ?>,
+                    <?php echo Zend_Json::encode(
+                            Mage::getStoreConfig('oyst/oneclick/product_page_buttons_wrapper_class')
+                    ); ?>
                 );
             } else {
                 console.warn("Missing function oystOneClick");
