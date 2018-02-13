@@ -195,4 +195,24 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
             . '<meta name="oyst_tracker_environnement_1click" content="'
             . Mage::getStoreConfig('oyst/oneclick/mode') . '">' . PHP_EOL;
     }
+
+    /**
+     * Checks for open refund transaction
+     *
+     * @param Mage_Sales_Model_Order_Payment $payment
+     *
+     * @return Mage_Sales_Model_Order_Payment_Transaction|null
+     */
+    public function getOpenRefundTransaction($payment)
+    {
+        /** @var Mage_Sales_Model_Resource_Order_Payment_Transaction_Collection $refundTransactions */
+        $refundTransactions = Mage::getModel('sales/order_payment_transaction')->getCollection();
+        $transaction = $refundTransactions->addPaymentIdFilter($payment->getId())
+            ->addTxnTypeFilter(Mage_Sales_Model_Order_Payment_Transaction::TYPE_REFUND)
+            ->setOrderFilter($payment->getOrder())
+            ->addFieldToFilter('is_closed', 0)
+            ->getFirstItem();
+
+        return $transaction;
+    }
 }

@@ -11,6 +11,7 @@
 
 use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystOrderApi;
+use Oyst\Classes\OystPrice;
 
 /**
  * Order ApiWrapper Model
@@ -78,6 +79,24 @@ class Oyst_OneClick_Model_Order_ApiWrapper extends Mage_Core_Model_Abstract
         } catch (Exception $e) {
             Mage::logException($e);
         }
+
+        return $response;
+    }
+
+    /**
+     * Refund an order.
+     *
+     * @param string $orderId
+     * @param int $price
+     * @param string $currency
+     *
+     * @return mixed
+     */
+    public function refund($orderId, $price, $currency = 'EUR')
+    {
+        $price = new OystPrice($price, $currency);
+        $response = $this->_orderApi->refunds($orderId, $price);
+        $this->_oystClient->validateResult($this->_orderApi);
 
         return $response;
     }

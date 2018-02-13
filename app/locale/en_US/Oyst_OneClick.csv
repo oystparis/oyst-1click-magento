@@ -148,3 +148,6 @@
 "Download","Download"
 
 "Create a customer account for a new order","Create a customer account for a new order"
+
+"Unable to refund Oyst order %s (%s - %s).","Unable to refund Oyst order %s (%s - %s)."
+"There is already one credit memo in the queue.","There is already one credit memo in the queue."
