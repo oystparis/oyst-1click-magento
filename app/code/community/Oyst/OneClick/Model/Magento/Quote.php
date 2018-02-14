@@ -149,7 +149,7 @@ class Oyst_OneClick_Model_Magento_Quote
 
             $checkoutMethod = Mage_Checkout_Model_Type_Onepage::METHOD_GUEST;
 
-            if (Mage::getStoreConfig('oyst/oneclick/create_account')) {
+            if (Mage::getStoreConfig('oyst/oneclick/new_customer_account')) {
                 $customer = $this->createCustomer($firstname, $lastname, $email);
                 $checkoutMethod = Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER;
             }
