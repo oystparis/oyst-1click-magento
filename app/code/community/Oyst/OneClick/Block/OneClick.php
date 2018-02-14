@@ -127,7 +127,7 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
         }
 
         $buttonLeftMargin = Mage::getStoreConfig('oyst/oneclick/button_left_margin');
-        $style .= sprintf(' left: %s; position: relative;', $buttonLeftMargin);
+        $style .= sprintf(' left: %s;', $buttonLeftMargin);
 
         return $style;
     }
