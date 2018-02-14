@@ -151,3 +151,7 @@
 
 "Unable to refund Oyst order %s (%s - %s).","Impossible de rembourser de la commande %s (%s - %s)."
 "There is already one credit memo in the queue.","Il y a déjà un remboursement en cours."
+
+"Place order delay","Placez le délai de commande"
+"Delay before the order is placed","Délais avant la validation de la commande"
+"In minutes","En minutes"

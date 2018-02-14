@@ -593,6 +593,29 @@
                         </create>
                     </fields>
                 </new_customer_account>
+
+                <!--============================== Delay Time ================================ -->
+                <order_delay translate="label">
+                    <label>Place order delay</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>70</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <time translate="label">
+                            <label>Delay before the order is placed</label>
+                            <comment>In minutes</comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/order_delay</config_path>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-not-negative-number</validate>
+                        </time>
+                    </fields>
+                </order_delay>
             </groups>
         </oyst_oneclick>
 
