@@ -15,27 +15,6 @@
 class Oyst_OneClick_Helper_Magento_Data extends Mage_Core_Helper_Abstract
 {
     /**
-     * In case of a configurable has only one product return the child product id
-     *
-     * @param Mage_Catalog_Model_Product $product
-     *
-     * @return null|int
-     */
-    public function getConfigurableProductChildId($product)
-    {
-        if ($product->isConfigurable()) {
-            /** @var Mage_Catalog_Model_Product_Type_Configurable $childProducts */
-            $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProductIds($product);
-
-            if (1 === count($childProducts)) {
-                return $childProducts[0];
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @param Mage_Catalog_Model_Product $product
      *
      * @return bool

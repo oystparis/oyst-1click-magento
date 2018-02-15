@@ -17,7 +17,7 @@
 if ($this->isSupportedProduct()) :
     ?>
     <div id="oyst-1click-button-wrapper" style="<?php echo $this->getButtonWrapperPosition(); ?>" <?php echo $this->getButtonCustomization(); ?>>
-        <div id="oyst-1click-button" <?php echo $this->getButtonCustomization(); ?>></div>
+        <div id="oyst-1click-button" <?php echo $this->escapeHtml($this->getButtonCustomization()); ?>></div>
     </div>
     <script>
         <?php echo $this->oneClickButtonPickToFirstAddToCartButtons(); ?>
@@ -25,16 +25,15 @@ if ($this->isSupportedProduct()) :
         (function () {
             if ("function" === typeof oystOneClick) {
                 oystOneClick(
-                    <?php echo $this->getProduct()->getId(); ?>,
-                    <?php echo $this->getConfigurableProductChildIdIfExist(); ?>,
+                    <?php echo $this->getProductType(); ?>,
                     <?php echo $this->getOneClickUrl(); ?>,
-                    <?php echo $this->isProductAddtocartFormValidate(); ?>,
+                    <?php echo $this->escapeHtml($this->isProductAddtocartFormValidate()); ?>,
                     <?php echo Zend_Json::encode(
                             Mage::getStoreConfig('oyst/oneclick/product_page_buttons_wrapper_class')
                     ); ?>
                 );
             } else {
-                console.warn("Missing function oystOneClick");
+                console.error("Missing function oystOneClick");
             }
         })();
     </script>

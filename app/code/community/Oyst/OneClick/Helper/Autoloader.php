@@ -32,13 +32,14 @@ class Oyst_OneClick_Helper_Autoloader
     /**
      * Load Composer autoload from lib oyst vendor folder
      *
-     * @param $libBaseDir   Path of the Magento lib folder
+     * @param string $libBaseDir Path of the Magento lib folder
      */
     public static function loadComposerAutoLoad($libBaseDir)
     {
         static $registered = false;
         if (!$registered) {
-            require_once $libBaseDir . DS . 'vendor' . DS . 'autoload.php';
+            $autoload = $libBaseDir . DS . 'vendor' . DS . 'autoload.php';
+            require_once $autoload;
             $registered = true;
         }
     }
@@ -46,7 +47,7 @@ class Oyst_OneClick_Helper_Autoloader
     /**
      * Load store config first in case we are in update mode, where store config would not be available
      *
-     * @param $path
+     * @param string $path
      *
      * @return bool
      */

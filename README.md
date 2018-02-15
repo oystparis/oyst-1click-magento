@@ -1,7 +1,7 @@
 # Oyst 1-Click plugin for Magento
 
 [![Build Status](https://travis-ci.org/oystparis/oyst-1click-magento.svg?branch=master)](https://travis-ci.org/oystparis/oyst-1click-magento)
-[![Latest Stable Version](https://img.shields.io/badge/latest-1.4.2-green.svg)](https://github.com/oystparis/oyst-1click-magento/releases)
+[![Latest Stable Version](https://img.shields.io/badge/latest-1.5.0-green.svg)](https://github.com/oystparis/oyst-1click-magento/releases)
 [![Magento = 1.7.x.x](https://img.shields.io/badge/magento-1.7-blue.svg)](#)
 [![Magento = 1.8.x.x](https://img.shields.io/badge/magento-1.8-blue.svg)](#)
 [![Magento = 1.9.x.x](https://img.shields.io/badge/magento-1.9-blue.svg)](#)
@@ -20,38 +20,41 @@ But you can also request or suggest new features or code changes yourself!
 
 ## Installation
 
+To install the module there is different way to do it. Chose the most efficient one for your website.
+
 ### Via Magento Downloader
 
-1. Download the last package [Oyst_OneClick-x.x.x.tgz](https://github.com/oystparis/oyst-1click-magento/releases) from the official releases ;
-2. Login into the backend, go to `System` — `Cache Management` and __enable__ all types of cache ;
-3. Go to `System` — `Tools` — `Compilation` and make sure compilation is disabled. It should display “_Compiler Status: Disabled_” on that page ;
-4. Go to `System` — `Magento Connect` — `Magento Connect Manager` and upload your file ;
-5. Go to `System` — `Cache Management` page under Magento backend and click “_Flush Cache Storage_” button. After this action, the extension is installed ;
-6. If you need to enable compilation, you can do it now at `System` — `Tools` — `Compilation` ;
-7. Please log out of the backend and log in again, so Magento can refresh permissions.
+If you are using the compilation, before installing the extension it's necessary to disable it! After you install, click the `Run Compilation Process` button in `Admin Backend` — `System` — `Tools` — `Compilation` ;
+
+1. Download the lastest release [Oyst_OneClick-x.x.x.tgz](https://github.com/oystparis/oyst-1click-magento/releases/latest) ;
+2. Go to `Admin Backend` — `System` — `Magento Connect` — `Magento Connect Manager` and upload your file ;
+3. Clear the cache from `Admin Backend` — `System` — `Cache Management` ;
+4. Log out of the backend and log in again, so Magento can refresh permissions.
 
 ### Via FTP/SFTP/SSH
 
-1. Download the last package [Oyst_OneClick-x.x.x.tgz](https://github.com/oystparis/oyst-1click-magento/releases) from the official releases and unzip ;
-2. Login into the backend, go to `System` — `Cache Management` and __enable__ all types of cache ;
-3. Go to `System` — `Tools` — `Compilation` and make sure compilation is disabled. It should display “_Compiler Status: Disabled_” on that page ;
-4. Connect to your website source folder with FTP/SFTP/SSH and upload all the extension files and folders of the extension package to the root folder of your Magento installation:
-> /!\ Please use the “__Merge__” upload mode. Do not replace the whole folders, but merge them. This way your FTP/SFTP client will only add new files. This mode is used by default by most of FTP/SFTP clients software. For MacOS it’s recommended to use Transmit.
-5. Go to `System` — `Cache Management` page under Magento backend and click “_Flush Cache Storage_” button. After this action, the extension is installed ;
-6. If you need to enable compilation, you can do it now at `System` — `Tools` — `Compilation` ;
-7. Please log out of the backend and log in again, so Magento can refresh permissions.
+If you are using the compilation, before installing the extension it's necessary to disable it! After you install, click the `Run Compilation Process` button in `Admin Backend` — `System` — `Tools` — `Compilation` ;
 
-### By cloning this repository
+1. Download the lastest release [Oyst_OneClick-x.x.x.tgz](https://github.com/oystparis/oyst-1click-magento/releases/latest) and unzip ;
+2. Upload all files and folders to the root folder of your Magento:
+> /!\ Please use the “__Merge__” upload mode. Do not replace the whole folders, but merge them. This way your FTP/SFTP client will only add new files. This mode is used by default by most of FTP/SFTP clients software.
+3. Clear the cache from `Admin Backend` — `System` — `Cache Management` ;
+4. Log out of the backend and log in again, so Magento can refresh permissions.
 
-1. Login into the backend, go to `System` — `Cache Management` and __enable__ all types of cache ;
-2. Go to `System` — `Tools` — `Compilation` and make sure compilation is disabled. It should display “_Compiler Status: Disabled_” on that page ;
-3. Clone this repository ;
-4. Copy the `app`, `js`, `lib`, `skin` folders into the root folder of your Magento ;
-5. Exec `./lib/Oyst/get-sdk.sh`.
+### Via Git, cloning this repository
 
-### Install using Composer
+If you are using the compilation, before installing the extension it's necessary to disable it! After you install, click the `Run Compilation Process` button in `Admin Backend` — `System` — `Tools` — `Compilation` ;
 
-Add the repository
+1. Clone this repository ;
+2. Copy the `app`, `js`, `lib`, `skin` folders into the root folder of your Magento ;
+3. Download the lastest release of the oyst-php lib [oyst-php-x.x.x.tar.gz](https://github.com/oystparis/oyst-php/releases/latest) and unzip ;
+4. Copy `oyst-php` folder in `./lib/Oyst/` of your Magento ;
+5. Remove `./lib/Oyst/oyst-php/.gitignore` file ;
+6. Commit your changes.
+
+### Via Composer
+
+Add the repository:
 ```
   "repositories": [
     {
@@ -60,7 +63,7 @@ Add the repository
     }
   ]
 ```
-and script block to your ```composer.json```.
+and script block:
 ```
   "scripts": {
     "post-install-cmd": [
@@ -71,9 +74,11 @@ and script block to your ```composer.json```.
     ]
   }
 ```
+to your ```composer.json```.
+
 Then run the composer installer: `composer require oyst/oyst-1click-magento`
 
-### Install using modman
+### Via modman
 
 This is the preferred installation method, unless installing manually.
 ```

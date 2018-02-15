@@ -38,21 +38,6 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     }
 
     /**
-     * Get configurable product id or return null string
-     *
-     * @return string
-     */
-    public function getConfigurableProductChildIdIfExist()
-    {
-        /** @var Oyst_OneClick_Helper_Catalog_Data $catalogHelper */
-        $catalogHelper = Mage::helper('oyst_oneclick/magento_data');
-
-        $configurableProductChildId = $catalogHelper->getConfigurableProductChildId($this->getProduct());
-
-        return null === $configurableProductChildId ? 'null' : $configurableProductChildId;
-    }
-
-    /**
      * Return the shop payment url
      * Used to get in server-to-server payment url
      *
@@ -62,7 +47,7 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     {
         $store = Mage::getSingleton('adminhtml/session_quote')->getStore();
 
-        return Zend_Json::encode(Mage::getStoreConfig('oyst/oneclick/payment_url', $store->getId()));
+        return Zend_Json::encode($this->escapeUrl(Mage::getStoreConfig('oyst/oneclick/payment_url', $store->getId())));
     }
 
     /**
@@ -130,5 +115,15 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
         $style .= sprintf(' left: %s;', $buttonLeftMargin);
 
         return $style;
+    }
+
+    /**
+     * Get the product type: simple, configurable, grouped, ...
+     *
+     * @return mixed
+     */
+    public function getProductType()
+    {
+        return Zend_Json::encode($this->escapeHtml($this->getProduct()->getTypeId()));
     }
 }
