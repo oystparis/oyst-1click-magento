@@ -28,6 +28,10 @@
                                 <title>Reset Button</title>
                                 <sort_order>10</sort_order>
                             </reset>
+                            <notifications translate="title" module="oyst_oneclick">
+                                <title>Oyst Notifications Grid</title>
+                                <sort_order>10</sort_order>
+                            </notifications>
                         </children>
                     </oyst>
                     <system>

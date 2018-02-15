@@ -14,6 +14,11 @@
 class Oyst_OneClick_Model_Observer
 {
     /**
+     * Notifications system configuration path.
+     */
+    const NOTIFICATIONS_SECTION = 'oyst_notifications';
+
+    /**
      * Change order status after partial refund.
      *
      * @param Varien_Event_Observer $observer
@@ -93,5 +98,17 @@ class Oyst_OneClick_Model_Observer
     public function invalidateCache(Varien_Event_Observer $observer)
     {
         Mage::app()->getCacheInstance()->invalidateType('config');
+    }
+
+    public function redirectToNotificationsGrid(Varien_Event_Observer $observer)
+    {
+        $controllerAction = $observer->getEvent()->getControllerAction();
+        $section = $controllerAction->getRequest()->getParam('section');
+
+        if ('oyst_notifications' === $section) {
+            $controllerAction->getResponse()->clearHeaders()
+                ->setRedirect(Mage::helper('adminhtml')->getUrl('adminhtml/oyst_notifications/'))
+                ->sendHeadersAndExit();
+        }
     }
 }
