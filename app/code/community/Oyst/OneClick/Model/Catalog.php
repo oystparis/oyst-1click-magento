@@ -835,13 +835,26 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $taxHelper = Mage::helper('tax');
         foreach ($rates as $rate) {
             try {
+                $mappingName = $this->getConfigMappingName($rate->getCode());
+
+                if (!$mappingName) {
+                    Mage::helper('oyst_oneclick')->log(
+                        Mage::helper('oyst_oneclick')->__(
+                            'rate %s code not defined in system configuration',
+                            $rate->getCode()
+                        )
+                    );
+                    continue;
+                }
+
                 $price = $rate->getPrice();
                 if (!$taxHelper->shippingPriceIncludesTax()) {
                     $price = $taxHelper->getShippingPrice($price, true, $address);
                 }
+
                 Mage::helper('oyst_oneclick')->log(
                     sprintf('%s (%s): %s',
-                        trim($this->getConfigMappingName($rate->getCode())),
+                        trim($mappingName),
                         $rate->getCode(),
                         $price
                     )
@@ -856,7 +869,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
                 $oystCarrier = new OystCarrier(
                     $rate->getCode(),
-                    trim($this->getConfigMappingName($rate->getCode())),
+                    trim($mappingName),
                     $carrierMapping
                 );
 
