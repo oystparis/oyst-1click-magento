@@ -163,3 +163,6 @@
 
 "Please enter the shipment delay","Please enter the shipment delay"
 "Please enter the shipment name","Please enter the shipment name"
+
+"Add custom CSS","Add custom CSS"
+"ex: .add-to-cart-buttons { text-align:center }","ex: .add-to-cart-buttons { text-align:center }"
