@@ -835,7 +835,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $taxHelper = Mage::helper('tax');
         foreach ($rates as $rate) {
             try {
-                if($mappingName = $this->_getConfigMappingName($rate->getCode())) {
+                if ($mappingName = $this->getConfigMappingName($rate->getCode())) {
                     $price = $rate->getPrice();
                     if (!$taxHelper->shippingPriceIncludesTax()) {
                         $price = $taxHelper->getShippingPrice($price, true, $address);
@@ -849,7 +849,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                     );
 
                     // This mean it's disable for 1-Click
-                    if ("0" === ($carrierMapping = $this->_getConfigMappingDelay($rate->getCode()))) {
+                    if ("0" === ($carrierMapping = $this->getConfigMappingDelay($rate->getCode()))) {
                         continue;
                     }
 
@@ -863,11 +863,11 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
                     $shipment = new OneClickShipmentCatalogLess(
                         $oystPrice,
-                        $this->_getConfigCarrierDelay($rate->getCode()),
+                        $this->getConfigCarrierDelay($rate->getCode()),
                         $oystCarrier
                     );
 
-                    if ($rate->getCode() === $this->_getConfig('carrier_default')) {
+                    if ($rate->getCode() === $this->getConfig('carrier_default')) {
                         $shipment->setPrimary(true);
                         $isPrimarySet = true;
                     }
