@@ -155,3 +155,5 @@
 "Place order delay","Placez le délai de commande"
 "Delay before the order is placed","Délais avant la validation de la commande"
 "In minutes","En minutes"
+
+"Reinitialize the buffer of the order when a product is added","Réinitialiser le délai de validation de la commande à chaque ajout de produit"
