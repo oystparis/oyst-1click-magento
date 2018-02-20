@@ -365,6 +365,28 @@
                     </fields>
                 </customization_button_product_page>
 
+                <!--==================== Customization button checkout cart ====================== -->
+                <customization_button_checkout_cart translate="label">
+                    <label>Checkout cart button customization</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>27</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <position translate="label">
+                            <label>Select position of button</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>oyst_oneclick/system_config_source_cartPosition</source_model>
+                            <config_path>oyst/oneclick/checkout_cart_button_position</config_path>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </position>
+                    </fields>
+                </customization_button_checkout_cart>
+
                 <!--============================== Shipments Settings ================================ -->
                 <shipments translate="label">
                     <label>Shipments configuration</label>
@@ -602,7 +624,6 @@
                         </reset_module>
                     </fields>
                 </advanced>
-                
             </groups>
         </oyst_oneclick>
 
