@@ -160,3 +160,6 @@
 "Customization button on product page","Personnalisation du bouton sur page produit"
 
 "Reinitialize the buffer of the order when a product is added","Réinitialiser le délai de validation de la commande à chaque ajout de produit"
+
+"Please enter the shipment delay","Veuillez entrer le délai d'expédition ou désactivez le mode d'expédition"
+"Please enter the shipment name","Veuillez entrer le nom d'expédition ou désactivez le mode d'expédition"
