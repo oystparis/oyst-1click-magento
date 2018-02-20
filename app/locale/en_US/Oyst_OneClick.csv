@@ -155,3 +155,5 @@
 "Place order delay","Place order delay"
 "Delay before the order is placed","Delay before the order is placed"
 "In minutes","In minutes"
+
+"Reinitialize the buffer of the order when a product is added","Reinitialize the buffer of the order when a product is added"

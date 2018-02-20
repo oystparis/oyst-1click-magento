@@ -76,8 +76,13 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         }
 
         $orderParams = $this->getOneClickOrderParams();
+
         if ($delay = Mage::getStoreConfig('oyst/oneclick/order_delay')) {
             $orderParams->setDelay($delay);
+        }
+
+        if ($reinitialize = Mage::getStoreConfig('oyst/oneclick/reinitialize_buffer')) {
+            $orderParams->setShouldReinitBuffer($reinitialize);
         }
 
         $context = $this->getContext();
