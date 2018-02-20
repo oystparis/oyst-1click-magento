@@ -615,6 +615,12 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $finalPriceIncludingTax = $finalPrice + $calculator->calcTaxAmount($finalPrice, $taxPercent, false);
         }
 
+        if (Mage::getStoreConfig(Mage_Weee_Helper_Data::XML_PATH_FPT_ENABLED)) {
+            $amount = Mage::getModel('weee/tax')->getWeeeAmount($product);
+            $priceIncludingTax += $amount;
+            $finalPriceIncludingTax += $amount;
+        }
+
         // Get prices
         $data['price-including-tax'] = round($finalPriceIncludingTax, 2);
         $data['price-before-discount'] = round($priceIncludingTax, 2);

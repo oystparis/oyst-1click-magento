@@ -19,7 +19,8 @@ class Oyst_OneClick_Model_System_Config_Source_Systemattributes
         $type = Mage::getModel('eav/entity_type');
         $type->loadByCode('catalog_product');
 
-        $attrs = Mage::getResourceModel('eav/entity_attribute_collection')
+        $attributeModel = Mage::getModel('eav/entity_attribute');
+        $attrs = $attributeModel->getCollection()
             ->setEntityTypeFilter($type)
             ->addFieldToFilter('is_user_defined', false)
             ->addFieldToFilter('frontend_input', 'select');
@@ -32,6 +33,16 @@ class Oyst_OneClick_Model_System_Config_Source_Systemattributes
                 'label' => $attr->getFrontendLabel(),
             );
         }
+
+        $attributes = $attributeModel->getAttributeCodesByFrontendType('weee');
+        foreach ($attributes as $attribute) {
+            $attr = $attributeModel->loadByCode('catalog_product', $attribute);
+            $array[$attr->getId()] = array(
+                'value' => $attr->getId(),
+                'label' => $attr->getFrontendLabel(),
+            );
+        }
+
         return $array;
     }
 }
