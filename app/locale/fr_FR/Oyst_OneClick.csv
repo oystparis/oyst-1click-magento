@@ -1,5 +1,8 @@
 "Settings","Paramètres"
 
+"General","Général"
+"Advanced configuration","Configuration avancée"
+
 "Click <a href=""%s"">here</a> to set up your settings.","Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
 
 "MODULE INFORMATION","INFORMATIONS SUR LE MODULE"
@@ -13,7 +16,6 @@
 "Reset","Réinitialiser"
 "Click this button to remove all previous parameters and/or reset the current module parameters.","Cliquer sur ce bouton pour supprimer toutes les configurations précédentes et/ou réinitialiser les paramètres actuels du module."
 "The configuration of the Oyst module has been successfully reset.","La configuration du module Oyst a été réinitialisée avec succès."
-"Resetting the module","Réinitialisation du module"
 "OneClick module was reinstalled successfully.","Le module OneClick a été réinstallé avec succès."
 "OneClick module was unable to reinstall successfully.","Le module OneClick n'a pas pu être réinstallé correctement."
 
@@ -29,7 +31,7 @@
 "Payment URL","URL de paiement"
 
 "<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Veuillez noter que, après avoir changé cette valeur, vous devrez peut-être mettre à jour le champ Clé d'API.</p>"
-"Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.","En fonction de la sélection, l'extension communiquera avec le service 1-Click de test / pré-production / production. Choisissez personnalisé, si vous devez utiliser des URL spéciales pour la gateway."
+"Depending on the selection the extension will communicate with the 1-Click test / sandbox / production service. Choose custom, if you have to use special urls for the gateway.","En fonction de la sélection, l'extension communiquera avec le service 1-Click de test / sandbox / production. Choisissez personnalisé, si vous devez utiliser des URL spéciales pour la gateway."
 "Please enter a valid URL finishing by ""/""","Veuillez entrer une URL valide en terminant par ""/"""
 "JavaScript CDN URL","URL CDN JavaScript"
 "Export select system attributes as custom options","Exporter les attributs select du système comme options personnalisées"
@@ -50,8 +52,8 @@
 "Button height","Hauteur du bouton"
 "Left margin of the button","Marge gauche du bouton"
 "Button position","Position du bouton"
-"1-Click button before add to cart button","Bouton 1-Click avant le bouton d'ajout au panier"
-"1-Click button after add to cart button","Bouton 1-Click après le bouton d'ajout au panier"
+"Before add to cart button","Avant le bouton d'ajout au panier"
+"After add to cart button","Après le bouton d'ajout au panier"
 "Buy buttons wrapper CSS class","Classe CSS regroupant les boutons d'achat"
 "CSS class of the element grouping the shopping buttons on the product pages. E.g.: <i>add-to-cart-buttons</i>","Classe CSS de l'élément regroupant les boutons d'achats sur les pages produits. Exemple : <i>add-to-cart-buttons</i>"
 "Border radius","Coins arrondis"
@@ -89,7 +91,7 @@
 
 
 "<p id=""freepay-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""freepay-mode-comment"" style=""color:red; display:none;"">Veuillez noter que, après avoir changé cette valeur, vous devrez peut-être mettre à jour le champ Clé d'API.</p>"
-"Depending on the selection the extension will communicate with the FreePay test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.","En fonction de la sélection, l'extension communiquera avec le service FreePay de test / pré-production / production. Choisissez personnalisé, si vous devez utiliser des URL spéciales pour la gateway."
+"Depending on the selection the extension will communicate with the FreePay test / sandbox / production service. Choose custom, if you have to use special urls for the gateway.","En fonction de la sélection, l'extension communiquera avec le service FreePay de test / pré-production / production. Choisissez personnalisé, si vous devez utiliser des URL spéciales pour la gateway."
 "Warning: URL must finish by ""/""","Avertissement : l'URL doit se terminer par ""/"""
 
 "FREEPAY SETTINGS","PARAMÈTRES DE FREEPAY"
@@ -134,15 +136,15 @@
 "Enable tracking","Activer le tracking"
 "Enabling this option will make it easier to track fraudulent payments.","Activer cette option permet de repérer plus facilement les paiements frauduleux."
 
-"Do you want to proceed with the re-installation of the module?","Êtes-vous sûr de vouloir procéder à la réinitialisation du module ?"
+"Do you want to reset the module?","Êtes-vous sûr de vouloir procéder à la réinitialisation du module ?"
 
 "File ""%s"" does not exist.","Le fichier ""%s"" n'existe pas."
 "Cannot delete ""%s"" file.","Impossible de supprimer le fichier ""%s""."
 "Successfully deleted ""%s"".","Supprimé avec succès ""%s""."
 "Download/Delete log files","Télécharger / Supprimer les fichiers de log"
-"Log Actions","Actions de journal"
 "Log file","Fichier de log"
-"Log rows from EOF","Nombre de lignes depuis la fin du fichier"
+"Log rows","Nombre de lignes"
+"from EOF","depuis la fin du fichier"
 "Actions","Actions"
 "Delete","Effacer"
 "Download","Télécharger"
@@ -152,8 +154,9 @@
 "Unable to refund Oyst order %s (%s - %s).","Impossible de rembourser de la commande %s (%s - %s)."
 "There is already one credit memo in the queue.","Il y a déjà un remboursement en cours."
 
-"Place order delay","Placez le délai de commande"
 "Delay before the order is placed","Délais avant la validation de la commande"
 "In minutes","En minutes"
+
+"Customization button on product page","Personnalisation du bouton sur page produit"
 
 "Reinitialize the buffer of the order when a product is added","Réinitialiser le délai de validation de la commande à chaque ajout de produit"

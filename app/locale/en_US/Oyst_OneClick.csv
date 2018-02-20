@@ -1,5 +1,8 @@
 "Settings","Settings"
 
+"General","General"
+"Advanced configuration","Advanced configuration"
+
 "Click <a href=""%s"">here</a> to set up your settings.","Click <a href=""%s"">here</a> to set up your settings."
 
 "MODULE INFORMATION","MODULE INFORMATION"
@@ -12,7 +15,6 @@
 "Reset the module","Reset the module"
 "Reset","Reset"
 "Click this button to remove all previous parameters and/or reset the current module parameters.","Click this button to remove all previous parameters and/or reset the current module parameters."
-"Resetting the module","Resetting the module"
 "OneClick module was reinstalled successfully.","OneClick module was reinstalled successfully."
 "OneClick module was unable to reinstall successfully.","OneClick module was unable to reinstall successfully."
 "The configuration of the Oyst module has been successfully reset.","The configuration of the Oyst module has been successfully reset."
@@ -29,7 +31,7 @@
 "Payment URL","Payment URL"
 
 "<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""oneclick-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>"
-"Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.","Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway."
+"Depending on the selection the extension will communicate with the 1-Click test / sandbox / production service. Choose custom, if you have to use special urls for the gateway.","Depending on the selection the extension will communicate with the 1-Click test / sandbox / production service. Choose custom, if you have to use special urls for the gateway."
 "Please enter a valid URL finishing by ""/""","Please enter a valid URL finishing by ""/"""
 "JavaScript CDN URL","JavaScript CDN URL"
 "Export select system attributes as custom options","Export select system attributes as custom options"
@@ -50,8 +52,8 @@
 "Button height","Button height"
 "Left margin of the button","Left margin of the button"
 "Button position","Button position"
-"1-Click button before add to cart button","1-Click button before add to cart button"
-"1-Click button after add to cart button","1-Click button after add to cart button"
+"Before add to cart button","Before add to cart button"
+"After add to cart button","After add to cart button"
 "Buy buttons wrapper CSS class","Buy buttons wrapper CSS class"
 "CSS class of the element grouping the shopping buttons on the product pages. E.g.: <i>add-to-cart-buttons</i>","CSS class of the element grouping the shopping buttons on the product pages. E.g.: <i>add-to-cart-buttons</i>"
 "Border radius","Border rounded"
@@ -89,7 +91,7 @@
 
 
 "<p id=""freepay-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>","<p id=""freepay-mode-comment"" style=""color:red; display:none;"">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>"
-"Depending on the selection the extension will communicate with the FreePay test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.","Depending on the selection the extension will communicate with the FreePay test / pre-production / production service. Choose custom, if you have to use special urls for the gateway."
+"Depending on the selection the extension will communicate with the FreePay test / sandbox / production service. Choose custom, if you have to use special urls for the gateway.","Depending on the selection the extension will communicate with the FreePay test / sandbox / production service. Choose custom, if you have to use special urls for the gateway."
 "Warning: URL must finish by ""/""","Warning: URL must finish by ""/"""
 
 "FREEPAY SETTINGS","FREEPAY SETTINGS"
@@ -134,15 +136,15 @@
 "Enable tracking","Enable tracking"
 "Enabling this option will make it easier to track fraudulent payments.","Enabling this option will make it easier to track fraudulent payments."
 
-"Do you want to proceed with the re-installation of the module?","Do you want to proceed with the re-installation of the module?"
+"Do you want to reset the module?","Do you want to reset the module?"
 
 "File ""%s"" does not exist.","File ""%s"" does not exist."
 "Cannot delete ""%s"" file.","Cannot delete ""%s"" file."
 "Successfully deleted ""%s"".","Successfully deleted ""%s""."
 "Download/Delete log files","Download/Delete log files"
-"Log Actions","Log Actions"
 "Log file","Log file"
-"Log rows from EOF","Log rows from EOF"
+"Log rows","Log rows"
+"from EOF","from EOF"
 "Actions","Actions"
 "Delete","Delete"
 "Download","Download"
@@ -152,8 +154,9 @@
 "Unable to refund Oyst order %s (%s - %s).","Unable to refund Oyst order %s (%s - %s)."
 "There is already one credit memo in the queue.","There is already one credit memo in the queue."
 
-"Place order delay","Place order delay"
 "Delay before the order is placed","Delay before the order is placed"
 "In minutes","In minutes"
+
+"Customization button on product page","Customization button on product page"
 
 "Reinitialize the buffer of the order when a product is added","Reinitialize the buffer of the order when a product is added"

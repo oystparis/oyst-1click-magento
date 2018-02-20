@@ -21,7 +21,7 @@
 </table>
 
 <script>
-    var btn = document.getElementById("oyst_oneclick_reset_init_module_button");
+    var btn = document.getElementById("<?php echo $this->getHtmlId() ?>_button");
 
     btn.onclick = function() {
         var result = confirm("<?php echo Mage::helper('oyst_oneclick')->__('Do you want to proceed with the re-installation of the module?'); ?>");

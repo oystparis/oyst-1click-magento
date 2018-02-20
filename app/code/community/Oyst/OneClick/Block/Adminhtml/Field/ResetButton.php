@@ -10,11 +10,11 @@
  */
 
 /**
- * Custom renderer for the Oyst init button
+ * Custom renderer for the Oyst reset button
  *
- * Adminhtml_Field_InitButton Block
+ * Adminhtml_Field_ResetButton Block
  */
-class Oyst_OneClick_Block_Adminhtml_Field_InitButton extends Mage_Adminhtml_Block_System_Config_Form_Field
+class Oyst_OneClick_Block_Adminhtml_Field_ResetButton extends Mage_Adminhtml_Block_System_Config_Form_Field
 {
     /**
      * Set template to itself
@@ -22,7 +22,7 @@ class Oyst_OneClick_Block_Adminhtml_Field_InitButton extends Mage_Adminhtml_Bloc
     protected function _prepareLayout()
     {
         parent::_prepareLayout();
-        $this->setTemplate('oyst/freepay/field/init_button.phtml');
+        $this->setTemplate('oyst/freepay/field/reset_button.phtml');
 
         return $this;
     }
@@ -31,6 +31,7 @@ class Oyst_OneClick_Block_Adminhtml_Field_InitButton extends Mage_Adminhtml_Bloc
      * Unset some non-related element parameters
      *
      * @param Varien_Data_Form_Element_Abstract $element
+     *
      * @return string
      */
     public function render(Varien_Data_Form_Element_Abstract $element)
@@ -44,6 +45,7 @@ class Oyst_OneClick_Block_Adminhtml_Field_InitButton extends Mage_Adminhtml_Bloc
      * Get the button and scripts contents
      *
      * @param Varien_Data_Form_Element_Abstract $element
+     *
      * @return string
      */
     protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
@@ -55,7 +57,7 @@ class Oyst_OneClick_Block_Adminhtml_Field_InitButton extends Mage_Adminhtml_Bloc
         $this->addData(
             array(
                 'button_label' => $oystHelper->__((string)$fieldConfig->descend('button_label')),
-                'button_url'   => $this->getUrl($fieldConfig->descend('button_url'), array('_secure' => true)),
+                'button_url' => $this->getUrl($fieldConfig->descend('button_url'), array('_secure' => true)),
                 'html_id' => $element->getHtmlId(),
             )
         );
