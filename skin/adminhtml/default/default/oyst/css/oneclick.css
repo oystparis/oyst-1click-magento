@@ -24,8 +24,16 @@
     margin-right: 6px;
 }
 
+.file-rows {
+    text-align: right;
+}
+#oyst-log-file-rows {
+    width: 100%;
+    text-align: right;
+}
+
 .oyst-actions {
-    width: 150px;
+    width: 180px;
 }
 
 .oyst-actions button {
@@ -34,4 +42,7 @@
 
 .oyst-log-actions-header th {
     text-align: center;
+}
+.columns .form-list td.value {
+    width: auto;
 }

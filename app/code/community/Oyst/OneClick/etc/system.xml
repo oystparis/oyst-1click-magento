@@ -19,6 +19,7 @@
         </oyst_oneclick>
     </tabs>
     <sections>
+        <!-- @@@ Oyst OneClick @@@ -->
         <oyst_oneclick translate="label" module="oyst_oneclick">
             <label>Oyst 1-Click</label>
             <tab>oyst_oneclick</tab>
@@ -86,9 +87,9 @@
                     </fields>
                 </informations>
 
-                <!--============================== OneClick Settings ================================ -->
-                <oneclick translate="label">
-                    <label>1-Click</label>
+                <!--============================== General Settings ================================ -->
+                <general translate="label">
+                    <label>General</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>10</sort_order>
                     <show_in_default>1</show_in_default>
@@ -126,7 +127,7 @@
                         <mode translate="label,comment,tooltip">
                             <label>Mode</label>
                             <comment><![CDATA[<p id="oneclick-mode-comment" style="color:red; display:none;">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>]]></comment>
-                            <tooltip><![CDATA[Depending on the selection the extension will communicate with the 1-Click test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.]]></tooltip>
+                            <tooltip><![CDATA[Depending on the selection the extension will communicate with the 1-Click test / sandbox / production service. Choose custom, if you have to use special urls for the gateway.]]></tooltip>
                             <frontend_type>select</frontend_type>
                             <frontend_model>oyst_oneclick/adminhtml_config_mode</frontend_model>
                             <source_model>oyst_oneclick/system_config_source_mode</source_model>
@@ -217,225 +218,35 @@
                                 <enable>1</enable>
                             </depends>
                         </payment_url>
+                    </fields>
+                </general>
 
-                        <!-- system attributes -->
-                        <systemattributes translate="label,comment">
-                            <label>Export select system attributes as custom options</label>
-                            <comment><![CDATA[Color, size and all other custom attributes are exported by default.]]></comment>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>oyst_oneclick/system_config_source_systemattributes</source_model>
-                            <config_path>oyst/oneclick/systemattributes</config_path>
-                            <sort_order>8</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <can_be_empty>1</can_be_empty>
-                            <depends>
-                                <enable>1</enable>
-                            </depends>
-                        </systemattributes>
-
-                        <!-- product addtocart form validate -->
-                        <product_addtocart_form_validate translate="label">
-                            <label>Enable native form validator to add to cart</label>
-                            <comment><![CDATA[To use a custom validator, disable and implement a javascript function isCustomProductAddtocartFormValid]]></comment>
+                <!--==================== Customization button product page ====================== -->
+                <customization_button_product_page translate="label">
+                    <label>Customization button on product page</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <!-- smart button -->
+                        <button_smart translate="label">
+                            <label>Smart button</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>oyst/oneclick/product_addtocart_form_validate</config_path>
-                            <sort_order>9</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>oneclick</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </product_addtocart_form_validate>
-
-                        <!-- allow quantity change -->
-                        <allow_quantity_change translate="label">
-                            <label>Allow the customer to change the quantity of purchases in the payment modal</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>oyst/oneclick/allow_quantity_change</config_path>
+                            <config_path>oyst/oneclick/button_smart</config_path>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <enable>
-                                    <fieldset>oneclick</fieldset>
+                                    <fieldset>general</fieldset>
                                     <value>1</value>
                                 </enable>
                             </depends>
-                        </allow_quantity_change>
-
-                        <!-- should ask stock for order -->
-                        <should_ask_stock translate="label">
-                            <label>Should ask stock</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>oyst/oneclick/should_ask_stock</config_path>
-                            <sort_order>11</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>oneclick</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </should_ask_stock>
-
-                        <!-- enable invoice auto generation -->
-                        <enable_invoice_auto_generation translate="label">
-                            <label>Enable invoice auto-generation</label>
-                            <tooltip><![CDATA[<b>Yes</b> creation of the invoice when the order is created, the "Due amount" will be 0.<br/><b>No</b> the order remains with a "Due amount" and the invoice is not created.]]></tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>oyst/oneclick/enable_invoice_auto_generation</config_path>
-                            <sort_order>12</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>oneclick</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </enable_invoice_auto_generation>
-
-                        <!-- button theme -->
-                        <button_theme translate="label">
-                            <label>Button theme</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>oyst_oneclick/system_config_source_button_theme</source_model>
-                            <config_path>oyst/oneclick/button_theme</config_path>
-                            <sort_order>13</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>oneclick</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </button_theme>
-
-                        <!-- button color -->
-                        <button_color translate="label">
-                            <label>Button color</label>
-                            <comment>Please Click the text box to select color</comment>
-                            <frontend_type>text</frontend_type>
-                            <frontend_class>color {required:false, hash:true, pickerPosition: 'right'}</frontend_class>
-                            <config_path>oyst/oneclick/button_color</config_path>
-                            <sort_order>14</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>color</validate>
-                            <depends>
-                                <enable>
-                                    <fieldset>oneclick</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </button_color>
-
-                        <!-- button width -->
-                        <button_width translate="label">
-                            <label>Button width</label>
-                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <config_path>oyst/oneclick/button_width</config_path>
-                            <sort_order>15</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>oneclick</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </button_width>
-
-                        <!-- button height -->
-                        <button_height translate="label">
-                            <label>Button height</label>
-                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <config_path>oyst/oneclick/button_height</config_path>
-                            <sort_order>16</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>oneclick</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </button_height>
-
-                        <!-- button left margin -->
-                        <button_left_margin translate="label">
-                            <label>Left margin of the button</label>
-                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <config_path>oyst/oneclick/button_left_margin</config_path>
-                            <sort_order>17</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>oneclick</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </button_left_margin>
-
-                        <!-- button before addtocart button -->
-                        <button_before_addtocart translate="label">
-                            <label>Button position</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>oyst_oneclick/system_config_source_button_position</source_model>
-                            <config_path>oyst/oneclick/button_before_addtocart</config_path>
-                            <sort_order>18</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>oneclick</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </button_before_addtocart>
-
-                        <!-- product_page_buttons_wrapper_class -->
-                        <product_page_buttons_wrapper_class translate="label">
-                            <label>Buy buttons wrapper CSS class</label>
-                            <comment><![CDATA[CSS class of the element grouping the shopping buttons on the product pages. E.g.: <i>add-to-cart-buttons</i>]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <config_path>oyst/oneclick/product_page_buttons_wrapper_class</config_path>
-                            <sort_order>19</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>oneclick</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </product_page_buttons_wrapper_class>
+                        </button_smart>
 
                         <!-- button rounded -->
                         <button_rounded translate="label">
@@ -449,37 +260,147 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <enable>
-                                    <fieldset>oneclick</fieldset>
+                                    <fieldset>general</fieldset>
                                     <value>1</value>
                                 </enable>
                             </depends>
                         </button_rounded>
 
-                        <!-- smart button -->
-                        <button_smart translate="label">
-                            <label>Smart button</label>
+                        <!-- button theme -->
+                        <button_theme translate="label">
+                            <label>Button theme</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>oyst/oneclick/button_smart</config_path>
-                            <sort_order>21</sort_order>
+                            <source_model>oyst_oneclick/system_config_source_button_theme</source_model>
+                            <config_path>oyst/oneclick/button_theme</config_path>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <enable>
-                                    <fieldset>oneclick</fieldset>
+                                    <fieldset>general</fieldset>
                                     <value>1</value>
                                 </enable>
                             </depends>
-                        </button_smart>
+                        </button_theme>
+
+                        <!-- button before addtocart button -->
+                        <button_before_addtocart translate="label">
+                            <label>Button position</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>oyst_oneclick/system_config_source_button_position</source_model>
+                            <config_path>oyst/oneclick/button_before_addtocart</config_path>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_before_addtocart>
+
+                        <!-- button color -->
+                        <button_color translate="label">
+                            <label>Button color</label>
+                            <comment>Please Click the text box to select color</comment>
+                            <frontend_type>text</frontend_type>
+                            <frontend_class>color {required:false, hash:true, pickerPosition: 'right'}</frontend_class>
+                            <config_path>oyst/oneclick/button_color</config_path>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>color</validate>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_color>
+
+                        <!-- button width -->
+                        <button_width translate="label">
+                            <label>Button width</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/button_width</config_path>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_width>
+
+                        <!-- button height -->
+                        <button_height translate="label">
+                            <label>Button height</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/button_height</config_path>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_height>
+
+                        <!-- button left margin -->
+                        <button_left_margin translate="label">
+                            <label>Left margin of the button</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/button_left_margin</config_path>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_left_margin>
+
+                        <!-- product_page_buttons_wrapper_class -->
+                        <product_page_buttons_wrapper_class translate="label">
+                            <label>Buy buttons wrapper CSS class</label>
+                            <comment><![CDATA[CSS class of the element grouping the shopping buttons on the product pages. E.g.: <i>add-to-cart-buttons</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/product_page_buttons_wrapper_class</config_path>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </product_page_buttons_wrapper_class>
                     </fields>
-                </oneclick>
+                </customization_button_product_page>
 
                 <!--============================== Shipments Settings ================================ -->
                 <shipments translate="label">
                     <label>Shipments configuration</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>20</sort_order>
+                    <sort_order>30</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -497,7 +418,7 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <enable>
-                                    <fieldset>oneclick</fieldset>
+                                    <fieldset>general</fieldset>
                                     <value>1</value>
                                 </enable>
                             </depends>
@@ -505,141 +426,217 @@
                     </fields>
                 </shipments>
 
-                <!--============================== Dynamic Shipments Mapping Certified ================================ -->
+                <!--============================ Dynamic Shipments Mapping Certified ============================== -->
                 <carrier_mapping_certified translate="label">
                     <label>Certified Shipping method Mapping with 1-Click</label>
                     <comment>This section lists all the active shipping method for the 1-Click payment. The default shipment method have to be activated here.</comment>
                     <frontend_type>text</frontend_type>
                     <frontend_model>oyst_oneclick/adminhtml_system_config_form_fieldset_carrier_certified</frontend_model>
-                    <sort_order>30</sort_order>
+                    <sort_order>40</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                 </carrier_mapping_certified>
 
-                <!--============================== Dynamic Shipments Mapping Not Certified ================================ -->
+                <!--========================== Dynamic Shipments Mapping Not Certified ============================ -->
                 <carrier_mapping_notcertified translate="label">
                     <label>Not Certified Shipping method Mapping with 1-Click</label>
                     <comment>This section lists all the active shipping method for the 1-Click payment.</comment>
                     <frontend_type>text</frontend_type>
                     <frontend_model>oyst_oneclick/adminhtml_system_config_form_fieldset_carrier_notcertified</frontend_model>
-                    <sort_order>40</sort_order>
+                    <sort_order>50</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                 </carrier_mapping_notcertified>
 
-                <!--============================== Log ================================ -->
-                <log_actions translate="label">
-                    <label>Log Actions</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>50</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <shipping_costs translate="label">
-                            <label>Download/Delete log files</label>
-                            <frontend_model>oyst_oneclick/adminhtml_field_logActions</frontend_model>
-                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </shipping_costs>
-                    </fields>
-                </log_actions>
-
-                <!--============================== Reset ================================ -->
-                <reset translate="label">
-                    <label>Resetting the module</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>50</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <init_module translate="label,button_label,comment">
-                            <label>Reset the module</label>
-                            <comment>Click this button to remove all previous parameters and/or reset the current module parameters.</comment>
-                            <button_label>Reset</button_label>
-                            <button_url><![CDATA[adminhtml/oyst_config/reset]]></button_url>
-                            <frontend_model>oyst_oneclick/adminhtml_field_initButton</frontend_model>
-                            <sort_order>1</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </init_module>
-                    </fields>
-                </reset>
-
-                <new_customer_account translate="label">
-                    <label>Create a customer account for a new order</label>
+                <!--============================== Advanced Settings ================================ -->
+                <advanced translate="label">
+                    <label>Advanced configuration</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>60</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <create translate="label">
-                            <label>Create a customer account for a new order</label>
+                        <!-- product addtocart form validate -->
+                        <product_addtocart_form_validate translate="label">
+                            <label>Enable native form validator to add to cart</label>
+                            <comment><![CDATA[To use a custom validator, disable and implement a javascript function isCustomProductAddtocartFormValid]]></comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>oyst/oneclick/new_customer_account</config_path>
-                            <sort_order>1</sort_order>
+                            <config_path>oyst/oneclick/product_addtocart_form_validate</config_path>
+                            <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </create>
-                    </fields>
-                </new_customer_account>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </product_addtocart_form_validate>
 
-                <!--============================== Delay Time ================================ -->
-                <order_delay translate="label">
-                    <label>Place order delay</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>70</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <time translate="label">
+                        <!-- allow quantity change -->
+                        <allow_quantity_change translate="label">
+                            <label>Allow the customer to change the quantity of purchases in the payment modal</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/allow_quantity_change</config_path>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </allow_quantity_change>
+
+                        <!-- should ask stock for order -->
+                        <should_ask_stock translate="label">
+                            <label>Should ask stock</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/should_ask_stock</config_path>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </should_ask_stock>
+
+                        <!-- enable invoice auto generation -->
+                        <enable_invoice_auto_generation translate="label">
+                            <label>Enable invoice auto-generation</label>
+                            <tooltip><![CDATA[<b>Yes</b> creation of the invoice when the order is created, the "Due amount" will be 0.<br/><b>No</b> the order remains with a "Due amount" and the invoice is not created.]]></tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/enable_invoice_auto_generation</config_path>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </enable_invoice_auto_generation>
+
+                        <!-- order delay -->
+                        <order_delay translate="label">
                             <label>Delay before the order is placed</label>
                             <comment>In minutes</comment>
                             <frontend_type>text</frontend_type>
                             <config_path>oyst/oneclick/order_delay</config_path>
-                            <sort_order>1</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <validate>validate-not-negative-number</validate>
-                        </time>
-                    </fields>
-                </order_delay>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </order_delay>
 
-                <reinitialize_buffer translate="label">
-                    <label>Reinitialize the buffer of the order when a product is added</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>80</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <enable translate="label">
-                            <label>Enable</label>
+                        <!-- reinitialize buffer -->
+                        <reinitialize_buffer translate="label">
+                            <label>Reinitialize the buffer of the order when a product is added</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>oyst/oneclick/reinitialize_buffer</config_path>
-                            <sort_order>1</sort_order>
+                            <sort_order>35</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </enable>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </reinitialize_buffer>
+
+                        <!-- new customer account -->
+                        <new_customer_account translate="label">
+                            <label>Create a customer account for a new order</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/new_customer_account</config_path>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </new_customer_account>
+
+                        <!-- system attributes -->
+                        <systemattributes translate="label,comment">
+                            <label>Export select system attributes as custom options</label>
+                            <comment><![CDATA[Color, size and all other custom attributes are exported by default.]]></comment>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>oyst_oneclick/system_config_source_systemattributes</source_model>
+                            <config_path>oyst/oneclick/systemattributes</config_path>
+                            <sort_order>45</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </systemattributes>
+
+                        <!-- log actions -->
+                        <log_actions translate="label">
+                            <label>Download/Delete log files</label>
+                            <frontend_model>oyst_oneclick/adminhtml_field_logActions</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </log_actions>
+
+                        <!-- reset module -->
+                        <reset_module translate="label,button_label,comment">
+                            <label>Reset the module</label>
+                            <comment>Click this button to remove all previous parameters and/or reset the current module parameters.</comment>
+                            <button_label>Reset</button_label>
+                            <button_url><![CDATA[adminhtml/oyst_config/reset]]></button_url>
+                            <frontend_model>oyst_oneclick/adminhtml_field_resetButton</frontend_model>
+                            <sort_order>55</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </reset_module>
                     </fields>
-                </reinitialize_buffer>
+                </advanced>
             </groups>
         </oyst_oneclick>
 
+        <!-- @@@ Oyst Notifications @@@ -->
         <oyst_notifications translate="label" module="oyst_oneclick">
             <label>Oyst Notifications</label>
             <tab>oyst_oneclick</tab>
@@ -650,6 +647,7 @@
             <show_in_store>1</show_in_store>
         </oyst_notifications>
 
+        <!-- @@@ FreePay @@@ -->
         <payment>
             <groups>
                 <freepay translate="label comment" module="oyst_oneclick">
@@ -718,28 +716,40 @@
                         </gateway_version>
 
                          <!-- reset -->
-                        <init_module translate="label,button_label,comment">
+                        <reset_module translate="label,button_label,comment">
                             <label>Reset the module</label>
                             <comment>Click this button to remove all previous parameters and/or reset the current module parameters.</comment>
                             <button_label>Reset</button_label>
                             <button_url><![CDATA[adminhtml/oyst_config/reset]]></button_url>
-                            <frontend_model>oyst_oneclick/adminhtml_field_initButton</frontend_model>
+                            <frontend_model>oyst_oneclick/adminhtml_field_resetButton</frontend_model>
                             <sort_order>15</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </init_module>
+                        </reset_module>
 
-                        <!--============================== Global Settings ================================ -->
-                        <global_settings translate="label">
-                            <label>GLOBAL SETTINGS</label>
+                        <!--============================== FreePay Settings ================================ -->
+                        <freepay_settings translate="label">
+                            <label>FREEPAY SETTINGS</label>
                             <frontend_type>label</frontend_type>
-                            <frontend_model>oyst_oneclick/adminhtml_field_sectionTitle</frontend_model>
-                            <sort_order>30</sort_order>
+                            <frontend_model>oyst_oneclick/adminhtml_field_sectionTitleFreepay</frontend_model>
+                            <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </global_settings>
+                        </freepay_settings>
+
+                        <!-- freepay active -->
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>payment/oyst_freepay/active</config_path>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
 
                         <!-- enable module logs -->
                         <log_enable translate="label">
@@ -747,25 +757,31 @@
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>payment/oyst_abstract/log_enable</config_path>
-                            <sort_order>32</sort_order>
+                            <sort_order>2é</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
                         </log_enable>
 
                         <!-- mode -->
                         <mode translate="label,comment,tooltip">
                             <label>Mode</label>
                             <comment><![CDATA[<p id="freepay-mode-comment" style="color:red; display:none;">Please note that, after changing this value, you might also need to update additional fields like API Key.</p>]]></comment>
-                            <tooltip><![CDATA[Depending on the selection the extension will communicate with the FreePay test / pre-production / production service. Choose custom, if you have to use special urls for the gateway.]]></tooltip>
+                            <tooltip><![CDATA[Depending on the selection the extension will communicate with the FreePay test / sandbox / production service. Choose custom, if you have to use special urls for the gateway.]]></tooltip>
                             <frontend_type>select</frontend_type>
                             <frontend_model>oyst_oneclick/adminhtml_config_mode</frontend_model>
                             <source_model>oyst_oneclick/system_config_source_mode</source_model>
                             <config_path>payment/oyst_abstract/mode</config_path>
-                            <sort_order>33</sort_order>
+                            <sort_order>23</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
                         </mode>
 
                         <!-- api url -->
@@ -774,11 +790,12 @@
                             <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/api_url</config_path>
-                            <sort_order>34</sort_order>
+                            <sort_order>24</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
+                                <active>1</active>
                                 <mode>custom</mode>
                             </depends>
                         </api_url>
@@ -789,10 +806,14 @@
                             <validate>required-entry validate-length maximum-length-64 minimum-length-64</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/api_login</config_path>
-                            <sort_order>35</sort_order>
+                            <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                                <active>1</active>
+                            </depends>
                         </api_login>
 
                         <!-- notification url -->
@@ -801,41 +822,21 @@
                             <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/notification_url</config_path>
-                            <sort_order>36</sort_order>
+                            <sort_order>26</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
                         </notification_url>
-
-                        <!--============================== FreePay Settings ================================ -->
-                        <freepay_settings translate="label">
-                            <label>FREEPAY SETTINGS</label>
-                            <frontend_type>label</frontend_type>
-                            <frontend_model>oyst_oneclick/adminhtml_field_sectionTitleFreepay</frontend_model>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </freepay_settings>
-
-                        <!-- freepay active url -->
-                        <active translate="label">
-                            <label>Enabled</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>payment/oyst_freepay/active</config_path>
-                            <sort_order>51</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </active>
 
                         <!-- freepay title -->
                         <freepay_title translate="label">
                             <label>Title</label>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_freepay/title</config_path>
-                            <sort_order>52</sort_order>
+                            <sort_order>27</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -851,7 +852,7 @@
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_order_status_newprocessing</source_model>
                             <config_path>payment/oyst_freepay/order_status</config_path>
-                            <sort_order>53</sort_order>
+                            <sort_order>28</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -866,7 +867,7 @@
                             <frontend_type>select</frontend_type>
                             <source_model>payment/source_invoice</source_model>
                             <config_path>payment/oyst_freepay/payment_action</config_path>
-                            <sort_order>54</sort_order>
+                            <sort_order>29</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -882,7 +883,7 @@
                             <frontend_type>select</frontend_type>
                             <config_path>payment/oyst_freepay/payment_cancelled</config_path>
                             <source_model>oyst_oneclick/system_config_source_cancelModes</source_model>
-                            <sort_order>55</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -898,7 +899,7 @@
                             <frontend_type>select</frontend_type>
                             <config_path>payment/oyst_freepay/refund_authorized</config_path>
                             <source_model>oyst_oneclick/system_config_source_status_refund</source_model>
-                            <sort_order>56</sort_order>
+                            <sort_order>31</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -913,7 +914,7 @@
                             <frontend_type>select</frontend_type>
                             <config_path>payment/oyst_freepay/refund_partial_authorized</config_path>
                             <source_model>adminhtml/system_config_source_order_status_processing</source_model>
-                            <sort_order>57</sort_order>
+                            <sort_order>32</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -927,7 +928,7 @@
                             <label>Payment Applicable From</label>
                             <frontend_type>select</frontend_type>
                             <config_path>payment/oyst_freepay/allowspecific</config_path>
-                            <sort_order>58</sort_order>
+                            <sort_order>33</sort_order>
                             <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -942,7 +943,7 @@
                             <label>Countries Payment Applicable From</label>
                             <frontend_type>multiselect</frontend_type>
                             <config_path>payment/oyst_freepay/specificcountry</config_path>
-                            <sort_order>59</sort_order>
+                            <sort_order>34</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -957,7 +958,7 @@
                             <label>Sort Payment List</label>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_freepay/sort_order</config_path>
-                            <sort_order>60</sort_order>
+                            <sort_order>35</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -972,7 +973,7 @@
                             <label>Invoice Label</label>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/invoice_label</config_path>
-                            <sort_order>91</sort_order>
+                            <sort_order>36</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -987,7 +988,7 @@
                             <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/cancel_url</config_path>
-                            <sort_order>93</sort_order>
+                            <sort_order>37</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1002,7 +1003,7 @@
                             <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/error_url</config_path>
-                            <sort_order>94</sort_order>
+                            <sort_order>38</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1017,7 +1018,7 @@
                             <validate>required-entry validate-url validate-oyst-url</validate>
                             <frontend_type>text</frontend_type>
                             <config_path>payment/oyst_abstract/return_url</config_path>
-                            <sort_order>95</sort_order>
+                            <sort_order>39</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
