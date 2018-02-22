@@ -85,6 +85,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             $orderParams->setShouldReinitBuffer($reinitialize);
         }
 
+        if (isset($dataFormated['isCheckoutCart'])) {
+            $orderParams->setIsCheckoutCart(true);
+        }
+
         $context = $this->getContext();
 
         try {
@@ -164,6 +168,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             'id' => $this->generateId(),
             'remote_addr' => Mage::helper('core/http')->getRemoteAddr(),
             'store_id' => Mage::app()->getStore()->getStoreId(),
+            'quote_id' => Mage::getSingleton('checkout/session')->getQuote()->getId(),
         );
 
         if (Mage::getSingleton('customer/session')->isLoggedIn()) {

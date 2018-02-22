@@ -33,14 +33,15 @@ function oystOneClick(oneClickUrl) {
             for (var i = 0; i < actions.length; i++) {
                 var qtyInput = actions[i].getElementsByClassName("input-text qty");
                 var sku = qtyInput[0].getAttribute("data-cart-item-id");
-                var qty = qtyInput[0].value
+                var qty = qtyInput[0].value;
                 products.push({
                     productId: sku,
-                    quantity: Number(qty),
+                    quantity: Number(qty)
                 });
             }
 
             form.append("products", JSON.stringify(products));
+            form.append("isCheckoutCart", true);
 
             var settings = {
                 async: true,

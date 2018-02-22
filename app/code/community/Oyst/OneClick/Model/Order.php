@@ -154,6 +154,8 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         Mage::unregister('order_status_changing');
 
+        $this->clearCart($magentoQuoteBuilder->getQuote()->getQuoteId());
+
         return $magentoOrderBuilder->getOrder();
     }
 
@@ -235,5 +237,19 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         }
 
         $order->save();
+    }
+
+    private function clearCart($quoteId)
+    {
+        $quotes = Mage::getModel('sales/quote')->getCollection()
+            ->addFieldToFilter('is_active', array('eq' => 1))
+            ->addFieldToFilter('entity_id', array('eq' => $quoteId));
+
+        foreach ($quotes as $quote) {
+            $quote->setIsActive(0);
+
+            // @codingStandardsIgnoreLine
+            $quote->save();
+        }
     }
 }
