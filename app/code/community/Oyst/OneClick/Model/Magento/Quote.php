@@ -306,6 +306,15 @@ class Oyst_OneClick_Model_Magento_Quote
         $street = isset($customerAddress['street']) ? $customerAddress['street'] : '';
         $street .= isset($customerAddress['complementary']) ? ' ' . $customerAddress['complementary'] : '';
 
+        $city = null;
+        if (isset($customerAddress['postcode'])) {
+            $city = $this->mapCityZipCode($customerAddress['postcode']);
+        }
+
+        if (is_null($city)) {
+            $city = isset($customerAddress['city']) ? $customerAddress['city'] : '';
+        }
+
         $formattedAddress = array(
             'email' => $this->apiData['order']['user']['email'],
             'firstname' => isset($customerAddress['first_name']) ? $customerAddress['first_name'] : '',
@@ -313,7 +322,7 @@ class Oyst_OneClick_Model_Magento_Quote
             'telephone' => $this->apiData['order']['user']['phone'],
             'street' => $street,
             'postcode' => isset($customerAddress['postcode']) ? $customerAddress['postcode'] : '',
-            'city' => isset($customerAddress['city']) ? $customerAddress['city'] : '',
+            'city' => $city,
             'region' => isset($customerAddress['city']) ? $customerAddress['city'] : '',
             'region_id' =>  null,
             'country_id' => $country->getIso2Code(),
@@ -421,5 +430,23 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $payment
             ->save();
+    }
+
+    /**
+     * Get city name from the zipCode ; Specific for TNT module
+     *
+     * @param $zipCode
+     *
+     * @return mixed
+     */
+    public function mapCityZipCode($zipCode)
+    {
+        $map = Oyst_OneClick_Helper_ZipMap::getZipMap();
+
+        if (key_exists($zipCode, $map)) {
+            return $map[$zipCode];
+        }
+
+        return null;
     }
 }
