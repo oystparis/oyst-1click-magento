@@ -157,6 +157,7 @@
 "Delay before the order is placed","Délais avant la validation de la commande"
 "In minutes","En minutes"
 
+"Customization button global","Personnalisation du bouton au global"
 "Customization button on product page","Personnalisation du bouton sur page produit"
 
 "Reinitialize the buffer of the order when a product is added","Réinitialiser le délai de validation de la commande à chaque ajout de produit"
@@ -166,3 +167,4 @@
 
 "Add custom CSS","Ajouter du CSS personnalisé"
 "ex: .add-to-cart-buttons { text-align:center }","ex: .add-to-cart-buttons { text-align:center }"
+"This CSS block will be added automaticaly in all the page with the button","Ce bloc CSS sera ajouté automatiquement dans toute la page avec le bouton"
