@@ -163,3 +163,6 @@
 
 "Please enter the shipment delay","Veuillez entrer le délai d'expédition ou désactivez le mode d'expédition"
 "Please enter the shipment name","Veuillez entrer le nom d'expédition ou désactivez le mode d'expédition"
+
+"Add custom CSS","Ajouter du CSS personnalisé"
+"ex: .add-to-cart-buttons { text-align:center }","ex: .add-to-cart-buttons { text-align:center }"

@@ -322,60 +322,6 @@
                             </depends>
                         </button_color>
 
-                        <!-- button width -->
-                        <button_width translate="label">
-                            <label>Button width</label>
-                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <config_path>oyst/oneclick/button_width</config_path>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>general</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </button_width>
-
-                        <!-- button height -->
-                        <button_height translate="label">
-                            <label>Button height</label>
-                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <config_path>oyst/oneclick/button_height</config_path>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>general</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </button_height>
-
-                        <!-- button left margin -->
-                        <button_left_margin translate="label">
-                            <label>Left margin of the button</label>
-                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <config_path>oyst/oneclick/button_left_margin</config_path>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>general</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </button_left_margin>
-
                         <!-- product_page_buttons_wrapper_class -->
                         <product_page_buttons_wrapper_class translate="label">
                             <label>Buy buttons wrapper CSS class</label>
@@ -393,6 +339,17 @@
                                 </enable>
                             </depends>
                         </product_page_buttons_wrapper_class>
+
+                        <styles translate="label comment">
+                            <label>Add custom CSS</label>
+                            <comment><![CDATA[ex: .add-to-cart-buttons { text-align:center }]]></comment>
+                            <frontend_type>textarea</frontend_type>
+                            <config_path>oyst/oneclick/button_wrapper_styles</config_path>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </styles>
                     </fields>
                 </customization_button_product_page>
 
@@ -633,6 +590,7 @@
                         </reset_module>
                     </fields>
                 </advanced>
+                
             </groups>
         </oyst_oneclick>
 

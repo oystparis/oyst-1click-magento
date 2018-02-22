@@ -100,21 +100,31 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     }
 
     /**
-     * Change
+     * Add CSS styles block
      *
-     * @return stringw
+     * @return string
      */
-    public function getButtonWrapperPosition()
+    public function addCssStylesBlock()
     {
-        $style = '';
-        if ($buttonWidth = Mage::getStoreConfig('oyst/oneclick/button_width')) {
-            $style .= sprintf('width: %s;', $buttonWidth);
+        $configuration = Mage::getStoreConfig('oyst/oneclick/button_wrapper_styles');
+
+        if (!$configuration) {
+            return null;
         }
 
-        $buttonLeftMargin = Mage::getStoreConfig('oyst/oneclick/button_left_margin');
-        $style .= sprintf(' left: %s;', $buttonLeftMargin);
+        $configuration = rtrim($configuration, " \n\r;");
+        $configuration = explode(';', $configuration);
 
-        return $style;
+        $styles = '<style>';
+
+        foreach ($configuration as $item) {
+            $item = str_replace(array('"', '&quot;'), array('\''), $item);
+            $styles .= trim($item) . '; ';
+        }
+
+        $styles .= '</style>';
+
+        return $styles;
     }
 
     /**
