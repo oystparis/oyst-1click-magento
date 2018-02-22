@@ -169,6 +169,7 @@
 "ex: .add-to-cart-buttons { text-align:center }","ex: .add-to-cart-buttons { text-align:center }"
 "This CSS block will be added automaticaly in all the page with the button","This CSS block will be added automaticaly in all the page with the button"
 
+"Checkout cart button customization","Checkout cart button customization"
 "Top","Top"
 "Bottom","Bottom"
 "Disabled","Disabled"

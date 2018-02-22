@@ -169,6 +169,7 @@
 "ex: .add-to-cart-buttons { text-align:center }","ex: .add-to-cart-buttons { text-align:center }"
 "This CSS block will be added automaticaly in all the page with the button","Ce bloc CSS sera ajouté automatiquement dans toute la page avec le bouton"
 
+"Checkout cart button customization","Personnalisation du bouton page panier"
 "Top","Haut"
 "Bottom","Bas"
 "Disabled","Désactivée"
