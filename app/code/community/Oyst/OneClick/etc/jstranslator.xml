@@ -15,5 +15,11 @@
     <validate-oyst-url translate="message" module="oyst_oneclick">
         <message>Please enter a valid URL finishing by "/"</message>
     </validate-oyst-url>
+    <validate-oyst-shipment-delay translate="message" module="oyst_oneclick">
+        <message>Please enter the shipment delay</message>
+    </validate-oyst-shipment-delay>
+    <validate-oyst-shipment-name translate="message" module="oyst_oneclick">
+        <message>Please enter the shipment name</message>
+    </validate-oyst-shipment-name>
     <!-- end validation.js -->
 </jstranslator>

@@ -24,6 +24,30 @@ if (Validation) {
     Validation.add("validate-oyst-url", "Please enter a valid URL finishing by \"/\"", function (v) {
         return v.endsWith("/");
     });
+
+    Validation.add("validate-oyst-shipment-delay", "Please enter the shipment delay", function (v, element) {
+        var id = element.getAttribute("id");
+        var carrier = id.replace("oyst_oneclick_carrier_delay", "");
+        var shipmentType = document.getElementById("oyst_oneclick_carrier_mapping" + carrier);
+
+        if (null !== shipmentType && "0" !== shipmentType.options[shipmentType.selectedIndex].value && "" === v) {
+            return false;
+        }
+
+        return true;
+    });
+
+    Validation.add("validate-oyst-shipment-name", "Please enter the shipment name", function (v, element) {
+        var id = element.getAttribute("id");
+        var carrier = id.replace("oyst_oneclick_carrier_name", "");
+        var shipmentType = document.getElementById("oyst_oneclick_carrier_mapping" + carrier);
+
+        if (null !== shipmentType && "0" !== shipmentType.options[shipmentType.selectedIndex].value && "" === v) {
+            return false;
+        }
+
+        return true;
+    });
 }
 
 function getUrl(url) {
