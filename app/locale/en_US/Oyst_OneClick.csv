@@ -157,6 +157,7 @@
 "Delay before the order is placed","Delay before the order is placed"
 "In minutes","In minutes"
 
+"Customization button global","Customization button global"
 "Customization button on product page","Customization button on product page"
 
 "Reinitialize the buffer of the order when a product is added","Reinitialize the buffer of the order when a product is added"
@@ -166,3 +167,4 @@
 
 "Add custom CSS","Add custom CSS"
 "ex: .add-to-cart-buttons { text-align:center }","ex: .add-to-cart-buttons { text-align:center }"
+"This CSS block will be added automaticaly in all the page with the button","This CSS block will be added automaticaly in all the page with the button"
