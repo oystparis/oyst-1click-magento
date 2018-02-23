@@ -942,7 +942,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             }
 
             foreach ($apiData['products'] as $product) {
-                $qty = $product['quantity'];
+                $qty = isset($product['quantity']) ? $product['quantity'] : 1;
 
                 if (0 === $qty) {
                     continue;
