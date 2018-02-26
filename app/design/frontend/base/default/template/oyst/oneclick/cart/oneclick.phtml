@@ -14,8 +14,10 @@
  */
 ?>
 
+<?php echo $this->addCssStylesBlock(); ?>
+
 <div id="oyst-1click-button-wrapper">
-    <div id="oyst-1click-button"></div>
+    <div id="oyst-1click-button" <?php echo $this->escapeHtml($this->getButtonCustomization()); ?>></div>
 </div>
 
 <script>
