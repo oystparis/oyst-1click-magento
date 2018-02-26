@@ -42,19 +42,9 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      * @var array
      */
     protected $productAttrTranslate = array(
-        'entity_id' => array(
-            'lib_property' => 'reference',
-            'type' => 'string',
-            'required' => true,
-        ),
         'status' => array(
             'lib_property' => 'active',
             'type' => 'bool',
-        ),
-        'name' => array(
-            'lib_property' => 'title',
-            'type' => 'string',
-            'required' => true,
         ),
         'short_description' => array(
             'lib_property' => 'shortDescription',
@@ -322,14 +312,13 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 continue;
             }
 
-            $oystProduct = new OystProduct();
+            // this price is overwritten later with taxes and others stuff
+            $price = new OystPrice(1, 'EUR');
 
-/*            if (is_array($products)) {
-                // @TODO This need to be improved
-                // @codingStandardsIgnoreLine
-                $product = Mage::getModel('catalog/product')->load($product->getId());
-            }
-*/
+            $qty = is_null($qty) ? 1 : $qty;
+
+            $oystProduct = new OystProduct($product->getEntityId(), $product->getName(), $price, $qty);
+
             // Get product attributes
             $this->getAttributes($product, $this->productAttrTranslate, $oystProduct);
             if ($product->isConfigurable()) {
@@ -353,10 +342,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             if ($product->isConfigurable()) {
                 $oystProduct->__set('reference', $product->getId() . ';' . $this->configurableProductChildId);
                 $oystProduct->__set('variation_reference', $this->configurableProductChildId);
-            }
-
-            if (!is_null($qty)) {
-                $oystProduct->__set('quantity', $qty);
             }
         }
 
@@ -502,7 +487,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $variationProductsFormated = $this->format($childProducts);
 
-        $oystProduct->__set('variations', array($variationProductsFormated));
+        $oystProduct->__set('variations', array($variationProductsFormated->toArray()));
     }
 
     /**
@@ -519,7 +504,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         if (isset($prices['price-excluding-tax'])) {
             $oystPriceExcludingTaxes = new OystPrice($prices['price-excluding-tax'], 'EUR');
-            $oystProduct->__set('amountExcludingTax', $oystPriceExcludingTaxes);
+            $oystProduct->__set('amount_excluding_taxes', $oystPriceExcludingTaxes->toArray());
         }
     }
 
@@ -690,21 +675,17 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('url_key');
 
-        $oystCategory = array();
+        $categories = array();
 
         /** @var Mage_Catalog_Model_Category $category */
         foreach ($categoryCollection as $category) {
             // Count slash to determine if it's a main category
             $isMain = substr_count($category->getPath(), '/') == 2;
-            $oystCategory[] = new OystCategory($category->getId(), $category->getName(), $isMain);
+            $oystCategory = new OystCategory($category->getId(), $category->getName(), $isMain);
+            $categories[] = $oystCategory->toArray();
         }
 
-        if (empty($oystCategory)) {
-            // Category is mandatory
-            $oystCategory[] = new OystCategory('none', 'none');
-        }
-
-        $oystProduct->__set('categories', $oystCategory);
+        $oystProduct->__set('categories', $categories);
     }
 
     /**
@@ -746,7 +727,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     protected function addRelatedProducts(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
         if ($relatedProducts = $product->getRelatedProductIds()) {
-            $oystProduct->__set('relatedProducts', $relatedProducts);
+            $oystProduct->__set('related_products', $relatedProducts);
         }
     }
 
