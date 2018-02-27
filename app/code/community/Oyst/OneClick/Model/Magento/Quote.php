@@ -81,14 +81,14 @@ class Oyst_OneClick_Model_Magento_Quote
         $store = Mage::app()->getStore($storeId);
 
         $this->quote->setStore($store);
-        $this->quote->getStore()->setCurrentCurrencyCode($this->apiData['order_amount']['currency']);
-        $this->quote->setRemoteIp($this->apiData['context']['remote_addr']);
+        $this->quote->getStore()->setCurrentCurrencyCode($this->apiData['order']['order_amount']['currency']);
+        $this->quote->setRemoteIp($this->apiData['order']['context']['remote_addr']);
 
         $this->quote->setIsMultiShipping(false);
         $this->quote->setIsSuperMode(true);
-        $this->quote->setCreatedAt($this->apiData['created_at']);
-        $this->quote->setUpdatedAt($this->apiData['created_at']);
-        $this->quote->setOystOrderId($this->apiData['id']);
+        $this->quote->setCreatedAt($this->apiData['order']['created_at']);
+        $this->quote->setUpdatedAt($this->apiData['order']['created_at']);
+        $this->quote->setOystOrderId($this->apiData['order']['id']);
 
         $this->quote->save();
 
@@ -138,10 +138,14 @@ class Oyst_OneClick_Model_Magento_Quote
 
         // New guest
         if (!$customer) {
-            $firstname = !empty($this->apiData['user']['first_name']) ? $this->apiData['user']['first_name'] : '';
-            $lastname = !empty($this->apiData['user']['last_name']) ? $this->apiData['user']['last_name'] : '';
-            $email = !empty($this->apiData['user']['email']) ?
-                $this->apiData['user']['email'] :
+            $firstname = !empty($this->apiData['order']['user']['first_name']) ?
+                $this->apiData['order']['user']['first_name'] :
+                '';
+            $lastname = !empty($this->apiData['order']['user']['last_name']) ?
+                $this->apiData['order']['user']['last_name'] :
+                '';
+            $email = !empty($this->apiData['order']['user']['email']) ?
+                $this->apiData['order']['user']['email'] :
                 Mage::getStoreConfig('trans_email/ident_general/email');
             $this->quote->setCustomerFirstname($firstname);
             $this->quote->setCustomerLastname($lastname);
@@ -173,13 +177,13 @@ class Oyst_OneClick_Model_Magento_Quote
     private function getCustomer()
     {
         $this->websiteId = Mage::getModel('core/store')
-            ->load($this->apiData['context']['store_id'])
+            ->load($this->apiData['order']['context']['store_id'])
             ->getWebsiteId();
 
         /** @var Mage_Customer_Model_Customer $customer */
         $customer = Mage::getModel('customer/customer');
         $customer->setWebsiteId($this->websiteId);
-        $customer->loadByEmail($this->apiData['user']['email']);
+        $customer->loadByEmail($this->apiData['order']['user']['email']);
 
         if ($customer->getId()) {
             return $customer;
@@ -194,8 +198,8 @@ class Oyst_OneClick_Model_Magento_Quote
     private function initializeAddresses()
     {
         // Bypass some info for EndpointShipment
-        if (isset($this->apiData['shipment'])) {
-            $carrier = explode('_', $this->apiData['shipment']['carrier']['id']);
+        if (isset($this->apiData['order']['shipment'])) {
+            $carrier = explode('_', $this->apiData['order']['shipment']['carrier']['id']);
         }
 
         /** @var Mage_Sales_Model_Quote_Address $billingAddress */
@@ -203,9 +207,9 @@ class Oyst_OneClick_Model_Magento_Quote
         $billingInfoFormated = $this->getAddressData($billingAddress);
         $billingAddress->addData($billingInfoFormated);
         $billingAddress->implodeStreetAddress();
-        if (isset($this->apiData['shipment'])) {
+        if (isset($this->apiData['order']['shipment'])) {
             $billingAddress->setLimitCarrier($carrier[0]);
-            $billingAddress->setShippingMethod($this->apiData['shipment']['carrier']['id']); // bad api naming
+            $billingAddress->setShippingMethod($this->apiData['order']['shipment']['carrier']['id']); // bad api naming
         }
         $billingAddress->setSaveInAddressBook(false);
         $billingAddress->setShouldIgnoreValidation(true);
@@ -218,9 +222,9 @@ class Oyst_OneClick_Model_Magento_Quote
         $shippingAddress->setSameAsBilling(0); // maybe just set same as billing?
         $shippingAddress->addData($shippingInfoFormated);
         $shippingAddress->implodeStreetAddress();
-        if (isset($this->apiData['shipment'])) {
+        if (isset($this->apiData['order']['shipment'])) {
             $shippingAddress->setLimitCarrier($carrier[0]);
-            $shippingAddress->setShippingMethod($this->apiData['shipment']['carrier']['id']); // bad api naming
+            $shippingAddress->setShippingMethod($this->apiData['order']['shipment']['carrier']['id']); // bad api naming
         }
         $shippingAddress->setSaveInAddressBook(false);
         $shippingAddress->setShouldIgnoreValidation(true);
@@ -234,7 +238,7 @@ class Oyst_OneClick_Model_Magento_Quote
      */
     private function getAddressData()
     {
-        $customerAddress = $this->apiData['user']['address'];
+        $customerAddress = $this->apiData['order']['user']['address'];
 
         $country = Mage::getModel('directory/country')->loadByCode($customerAddress['country']);
 
@@ -242,10 +246,10 @@ class Oyst_OneClick_Model_Magento_Quote
         $street .= isset($customerAddress['complementary']) ? ' ' . $customerAddress['complementary'] : '';
 
         $formattedAddress = array(
-            'email' => $this->apiData['user']['email'],
+            'email' => $this->apiData['order']['user']['email'],
             'firstname' => isset($customerAddress['first_name']) ? $customerAddress['first_name'] : '',
             'lastname' => isset($customerAddress['last_name']) ? $customerAddress['last_name'] : '',
-            'telephone' => $this->apiData['user']['phone'],
+            'telephone' => $this->apiData['order']['user']['phone'],
             'street' => $street,
             'postcode' => isset($customerAddress['postcode']) ? $customerAddress['postcode'] : '',
             'city' => isset($customerAddress['city']) ? $customerAddress['city'] : '',
@@ -273,8 +277,8 @@ class Oyst_OneClick_Model_Magento_Quote
         // Default API currency
         $currentCurrency = 'EUR';
 
-        if ($this->apiData['order_amount']) {
-            $currentCurrency = $this->apiData['order_amount']['currency'];
+        if ($this->apiData['order']['order_amount']) {
+            $currentCurrency = $this->apiData['order']['order_amount']['currency'];
         }
 
         $this->quote->getStore()->setCurrentCurrencyCode($currentCurrency);
@@ -291,14 +295,14 @@ class Oyst_OneClick_Model_Magento_Quote
 
         // Add product in quote
         $this->addOystProducts(
-            $this->apiData['items'],
+            $this->apiData['order']['items'],
             $priceIncludesTax
         );
 
         // @TODO EndpointShipment: improve this bad hack
-        if (isset($this->apiData['shipment'])) {
+        if (isset($this->apiData['order']['shipment'])) {
             // Get shipping cost with tax
-            $shippingCost = $helper->getHumanAmount($this->apiData['shipment']['amount']['value']);
+            $shippingCost = $helper->getHumanAmount($this->apiData['order']['shipment']['amount']['value']);
         }
         // If shipping cost not include tax -> get shipping cost without tax
         if (!$shippingIncludeTax) {
@@ -324,11 +328,11 @@ class Oyst_OneClick_Model_Magento_Quote
         }
 
         // @TODO EndpointShipment: improve this bad hack
-        if (isset($this->apiData['shipment'])) {
+        if (isset($this->apiData['order']['shipment'])) {
             // Set shipping price and shipping method for current order
             $this->quote->getShippingAddress()
                 ->setShippingPrice($shippingCost)
-                ->setShippingMethod($this->apiData['shipment']['carrier']['id']);
+                ->setShippingMethod($this->apiData['order']['shipment']['carrier']['id']);
         }
 
         $this->quote->setTotalsCollectedFlag(false);
@@ -340,8 +344,8 @@ class Oyst_OneClick_Model_Magento_Quote
         // Re-adjust cents for item quote
         // Conversion Tax Include > Tax Exclude > Tax Include maybe make 0.01 amount error
         // @TODO EndpointShipment: improve this bad hack
-        if (isset($this->apiData['shipment']) && !$priceIncludesTax && isset($this->apiData['order_amount']['value'])) {
-            if ($this->quote->getGrandTotal() != $helper->getHumanAmount($this->apiData['order_amount']['value'])) {
+        if (isset($this->apiData['order']['shipment']) && !$priceIncludesTax && isset($this->apiData['order']['order_amount']['value'])) {
+            if ($this->quote->getGrandTotal() != $helper->getHumanAmount($this->apiData['order']['order_amount']['value'])) {
                 $quoteItems = $this->quote->getAllItems();
 
                 foreach ($quoteItems as $item) {
@@ -444,8 +448,8 @@ class Oyst_OneClick_Model_Magento_Quote
 
                 // Increase stock with qty decrease when order made if should_ask_stock is enabled
                 if (Mage::getStoreConfig('oyst/oneclick/should_ask_stock') &&
-                    isset($this->apiData['event']) &&
-                    'order.v2.new' === $this->apiData['event'])
+                    isset($this->apiData['order']['event']) &&
+                    'order.v2.new' === $this->apiData['order']['event'])
                 {
                     $productForStock = isset($configurableProductChild) ? $configurableProductChild : $product;
 
