@@ -616,7 +616,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         }
 
         if (Mage::getStoreConfig(Mage_Weee_Helper_Data::XML_PATH_FPT_ENABLED)) {
-            $amount = Mage::getModel('weee/tax')->getWeeeAmount($product);
+            $amount = Mage::getModel('weee/tax')->getWeeeAmount($product, null, null, $storeId);
             $priceIncludingTax += $amount;
             $finalPriceIncludingTax += $amount;
         }
