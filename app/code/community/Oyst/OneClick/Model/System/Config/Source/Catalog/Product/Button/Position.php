@@ -9,12 +9,10 @@
  * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
  */
 
-use Oyst\Api\OystApiClientFactory;
-
 /**
- * Mode Model
+ * Catalog product button position
  */
-class Oyst_OneClick_Model_System_Config_Source_Button_Position
+class Oyst_OneClick_Model_System_Config_Source_Catalog_Product_Button_Position
 {
     /**
      * Return the options for button position.
