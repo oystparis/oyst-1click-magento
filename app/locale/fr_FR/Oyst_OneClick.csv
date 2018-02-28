@@ -158,7 +158,7 @@
 "In minutes","En minutes"
 
 "Customization button global","Personnalisation du bouton au global"
-"Customization button on product page","Personnalisation du bouton sur page produit"
+"Customization button on product page","Personnalisation du bouton sur la page produit"
 
 "Reinitialize the buffer of the order when a product is added","Réinitialiser le délai de validation de la commande à chaque ajout de produit"
 
@@ -167,13 +167,10 @@
 
 "Add custom CSS","Ajouter du CSS personnalisé"
 "ex: .add-to-cart-buttons { text-align:center }","ex: .add-to-cart-buttons { text-align:center }"
-"This CSS block will be added automaticaly in all the page with the button","Ce bloc CSS sera ajouté automatiquement dans toute la page avec le bouton"
+"This CSS block will be added automaticaly in all the page with the button","Ce bloc CSS sera ajouté automatiquement dans toute les pages avec le bouton"
 
 "Get configurable price from product","Prix du configurable à partir du produit"
 
-"Checkout cart button customization","Personnalisation du bouton page panier"
+"Checkout cart button customization","Personnalisation du bouton la page panier"
 "Top","Haut"
 "Bottom","Bas"
-"Disabled","Désactivée"
-"Position of button from checkout cart","Position du bouton dans la page panier"
-"Select position of button","Sélectionnez la position du bouton"

@@ -83,6 +83,7 @@ class Oyst_OneClick_Model_Magento_Quote
         $this->quote->setStore($store);
         $this->quote->getStore()->setCurrentCurrencyCode($this->apiData['order']['order_amount']['currency']);
         $this->quote->setRemoteIp($this->apiData['order']['context']['remote_addr']);
+        $this->quote->setQuoteId($this->apiData['order']['context']['quote_id']);
 
         $this->quote->setIsMultiShipping(false);
         $this->quote->setIsSuperMode(true);
