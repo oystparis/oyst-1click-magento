@@ -77,14 +77,6 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
 
         $orderParams = $this->getOneClickOrderParams();
 
-        if ($delay = Mage::getStoreConfig('oyst/oneclick/order_delay')) {
-            $orderParams->setDelay($delay);
-        }
-
-        if ($reinitialize = Mage::getStoreConfig('oyst/oneclick/reinitialize_buffer')) {
-            $orderParams->setShouldReinitBuffer($reinitialize);
-        }
-
         $context = $this->getContext();
 
         try {
@@ -137,6 +129,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         $notifications->setShouldAskStock($this->getConfig('should_ask_stock'));
         $notifications->setUrl($this->getConfig('notification_url'));
 
+        if ($notifications->isShouldAskShipments()) {
+            $notifications->addEvent('order.cart.estimate');
+        }
+
         return $notifications;
     }
 
@@ -149,6 +145,14 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     {
         $orderParams = new OneClickOrderParams();
         $orderParams->setManageQuantity($this->getConfig('allow_quantity_change'));
+
+        if ($delay = Mage::getStoreConfig('oyst/oneclick/order_delay')) {
+            $orderParams->setDelay($delay);
+        }
+
+        if ($reinitialize = Mage::getStoreConfig('oyst/oneclick/reinitialize_buffer')) {
+            $orderParams->setShouldReinitBuffer($reinitialize);
+        }
 
         return $orderParams;
     }
