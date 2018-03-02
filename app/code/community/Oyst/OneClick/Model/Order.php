@@ -122,13 +122,20 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         }
 
         $this->orderResponse['event'] = $this->eventNotification;
-        $order = $this->createMagentoOrder();
+        $order = $this->createMagentoOrder($oystOrderId);
         $this->orderResponse['magento_order_id'] = $order->getId();
 
         return $this->orderResponse;
     }
 
-    private function createMagentoOrder()
+    /**
+     * Create magento order.
+     *
+     * @param $oystOrderId
+     *
+     * @return Mage_Sales_Model_Order
+     */
+    private function createMagentoOrder($oystOrderId)
     {
         // Register a 'lock' for not update status to Oyst
         Mage::register('order_status_changing', true);
@@ -154,7 +161,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         Mage::unregister('order_status_changing');
 
-        $this->clearCart($magentoQuoteBuilder->getQuote()->getQuoteId());
+        $this->clearCart($magentoQuoteBuilder->getQuote()->getQuoteId(), $oystOrderId);
 
         return $magentoOrderBuilder->getOrder();
     }
@@ -239,7 +246,13 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         $order->save();
     }
 
-    private function clearCart($quoteId)
+    /**
+     * Clear cart.
+     *
+     * @param $quoteId
+     * @param $oystOrderId
+     */
+    private function clearCart($quoteId, $oystOrderId)
     {
         $quotes = Mage::getModel('sales/quote')->getCollection()
             ->addFieldToFilter('is_active', array('eq' => 1))
@@ -247,6 +260,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         foreach ($quotes as $quote) {
             $quote->setIsActive(0);
+            $quote->setOystOrderId($oystOrderId);
 
             // @codingStandardsIgnoreLine
             $quote->save();
