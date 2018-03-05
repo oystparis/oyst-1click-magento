@@ -63,13 +63,17 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     /**
      * Return button customization
      *
+     * @param string $path
+     *
      * @return mixed
      */
-    public function getButtonCustomization()
+    public function getButtonCustomization($path = '')
     {
         $buttonCustomization = '';
-        $customizationAttributes = array('theme', 'color', 'width', 'height', 'rounded', 'smart');
-        foreach ($customizationAttributes as $customizationAttribute) {
+
+        $genericCustomizationAttributes = array('theme', 'color', 'rounded', 'smart');
+
+        foreach ($genericCustomizationAttributes as $customizationAttribute) {
             $config = Mage::getStoreConfig('oyst/oneclick/button_' . $customizationAttribute);
             if (empty($config)) {
                 continue;
@@ -79,7 +83,18 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
                 $config = filter_var($config, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false';
             }
 
-            $buttonCustomization .= sprintf(" data-" .  $customizationAttribute . "='%s'", $config);
+            $buttonCustomization .= sprintf(" data-" . $customizationAttribute . "='%s'", $config);
+        }
+
+        $specificCustomizationAttributes = array('height', 'width');
+
+        foreach ($specificCustomizationAttributes as $customizationAttribute) {
+            $config = Mage::getStoreConfig('oyst/oneclick/' . $path . 'button_' . $customizationAttribute);
+            if (empty($config)) {
+                continue;
+            }
+
+            $buttonCustomization .= sprintf(" data-" . $customizationAttribute . "='%s'", $config);
         }
 
         return $buttonCustomization;
