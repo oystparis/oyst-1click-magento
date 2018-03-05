@@ -816,9 +816,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $isPrimarySet = false;
 
         $taxHelper = Mage::helper('tax');
+        $coreHelper = Mage::helper('core');
         foreach ($rates as $rate) {
             try {
-                $price = $rate->getPrice();
+                $price = $coreHelper->currency($rate->getPrice(), true, false);
                 if (!$taxHelper->shippingPriceIncludesTax()) {
                     $price = $taxHelper->getShippingPrice($price, true, $address);
                 }
