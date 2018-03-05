@@ -61,8 +61,8 @@ class Oyst_OneClick_Block_Adminhtml_Table_Notifications_Grid extends Mage_Adminh
 
         $this->addColumn('event', array(
             'header' => $helper->__('Event'),
-            'type' => 'options',
             'index' => 'event',
+            'type' => 'options',
             'options' => $this->getColumnFilter('event'),
         ));
 
@@ -84,21 +84,21 @@ class Oyst_OneClick_Block_Adminhtml_Table_Notifications_Grid extends Mage_Adminh
 
         $this->addColumn('status', array(
             'header' => $helper->__('Status'),
-            'type' => 'options',
             'index' => 'status',
+            'type' => 'options',
             'options' => $this->getColumnFilter('status'),
         ));
 
         $this->addColumn('created_at', array(
-            'header' => $helper->__('Customer Group'),
-            'type' => 'datetime',
+            'header' => $helper->__('Created At'),
             'index' => 'created_at',
+            'type' => 'datetime',
         ));
 
         $this->addColumn('executed_at', array(
-            'header' => $helper->__('Grand Total'),
-            'type' => 'datetime',
+            'header' => $helper->__('Executed At'),
             'index' => 'executed_at',
+            'type' => 'datetime',
         ));
 
         return parent::_prepareColumns();
