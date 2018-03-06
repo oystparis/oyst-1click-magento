@@ -120,7 +120,7 @@ function oystOneClick(productTypeId, oneClickUrl, isProductAddtocartFormValidate
                             isErrorsInForm = !isCustomProductAddtocartFormValid();
                         }
 
-                        if (data.has_error && data.message) {
+                        if (data && data.has_error && data.message) {
                             isErrorsInForm = true;
                             if ("function" === typeof customMessagesProductView) {
                                 // This function allow anyone to display custom message
