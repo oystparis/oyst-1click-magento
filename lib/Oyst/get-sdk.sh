@@ -60,6 +60,6 @@ fi
 
 # Composer Install
 cd "$GITHUB_REPO" || exit
-composer install --no-dev
+composer install --no-dev -o
 echo "Composer install done."
 exit 0

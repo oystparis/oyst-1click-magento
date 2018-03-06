@@ -10,6 +10,9 @@
             "email": "plugin@oyst.com"
         }
     ],
+    "config": {
+        "optimize-autoloader": true
+    },
     "require": {
         "php": ">=5.3",
         "magento-hackathon/magento-composer-installer": "*"
