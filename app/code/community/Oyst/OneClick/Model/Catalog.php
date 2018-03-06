@@ -797,8 +797,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     public function cartEstimate($apiData)
     {
-        /** @var Mage_Core_Model_Store $store */
-        $store = Mage::getModel('core/store')->load($apiData['order']['context']['store_id']);
+        /** @var Mage_Core_Model_Store $storeId */
+        $storeId = Mage::getModel('core/store')->load($apiData['order']['context']['store_id']);
 
         /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
         $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $apiData);
@@ -825,14 +825,15 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 }
                 Mage::helper('oyst_oneclick')->log(
                     sprintf('%s (%s): %s',
-                        trim($this->getConfigMappingName($rate->getCode())),
+                        trim($this->getConfigMappingName($rate->getCode(), $storeId)),
                         $rate->getCode(),
                         $price
                     )
                 );
+                $carrierMapping = $this->getConfigMappingDelay($rate->getCode(), $storeId);
 
                 // This mean it's disable for 1-Click
-                if ("0" === ($carrierMapping = $this->getConfigMappingDelay($rate->getCode()))) {
+                if ("0" === $carrierMapping || is_null($carrierMapping)) {
                     continue;
                 }
 
@@ -840,13 +841,13 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
                 $oystCarrier = new OystCarrier(
                     $rate->getCode(),
-                    trim($this->getConfigMappingName($rate->getCode())),
+                    trim($this->getConfigMappingName($rate->getCode(), $storeId)),
                     $carrierMapping
                 );
 
                 $shipment = new OneClickShipmentCatalogLess(
                     $oystPrice,
-                    $this->getConfigCarrierDelay($rate->getCode()),
+                    $this->getConfigCarrierDelay($rate->getCode(), $storeId),
                     $oystCarrier
                 );
 
@@ -878,9 +879,9 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      *
      * @return mixed
      */
-    protected function getConfigCarrierDelay($code)
+    protected function getConfigCarrierDelay($code, $storeId)
     {
-        return Mage::getStoreConfig("oyst_oneclick/carrier_delay/$code");
+        return Mage::getStoreConfig("oyst_oneclick/carrier_delay/$code", $storeId);
     }
 
     /**
@@ -890,9 +891,9 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      *
      * @return mixed
      */
-    protected function getConfigMappingDelay($code)
+    protected function getConfigMappingDelay($code, $storeId)
     {
-        return Mage::getStoreConfig("oyst_oneclick/carrier_mapping/$code");
+        return Mage::getStoreConfig("oyst_oneclick/carrier_mapping/$code", $storeId);
     }
 
     /**
@@ -902,9 +903,9 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      *
      * @return mixed
      */
-    protected function getConfigMappingName($code)
+    protected function getConfigMappingName($code, $storeId)
     {
-        return Mage::getStoreConfig("oyst_oneclick/carrier_name/$code");
+        return Mage::getStoreConfig("oyst_oneclick/carrier_name/$code", $storeId);
     }
 
     /**
