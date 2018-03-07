@@ -24,7 +24,10 @@
 <script>
     (function () {
         if ("function" === typeof oystOneClick) {
-            oystOneClick(<?php echo $this->getOneClickUrl(); ?>);
+            oystOneClick(
+                <?php echo $this->getOneClickUrl(); ?>,
+                <?php echo Mage::getSingleton('checkout/session')->getQuote()->getId(); ?>
+            );
         } else {
             console.error("Missing function oystOneClick");
         }

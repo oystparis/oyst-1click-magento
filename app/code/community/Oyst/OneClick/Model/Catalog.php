@@ -234,13 +234,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $checkQuoteItemQty = '';
         $productsFormated = array();
         foreach ($products as $product) {
-
-            if (is_numeric($product['productId'])) {
-                // @codingStandardsIgnoreLine
-                $currentProduct = Mage::getModel('catalog/product')->load($product['productId']);
-            } else {
-                $currentProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $product['productId']);
-            }
+            // @codingStandardsIgnoreLine
+            $currentProduct = Mage::getModel('catalog/product')->load($product['productId']);
 
             if ($isPreload) {
                 $product['quantity'] = 1;
@@ -290,21 +285,26 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             // Book initial quantity
             if (!$isPreload && $this->getConfig('should_ask_stock') && 0 !== $product['quantity']) {
+                $realProductId = $currentProduct->getId();
+
                 if (array_key_exists('configurableProductChildId', $product)) {
-                    $realPid = $this->configurableProductChildId;
-                } else {
-                    $realPid = $currentProduct->getId();
+                    $realProductId = $this->configurableProductChildId;
                 }
 
-                $this->stockItemToBook($realPid, $product['quantity']);
+                $this->stockItemToBook($realProductId, $product['quantity']);
+                Mage::helper('oyst_oneclick')->log(
+                    sprintf('Book initial qty %s for productId %s', $product['quantity'], $realProductId)
+                );
             }
+
+            $this->configurableProductChildId = null;
         }
 
         return $productsFormated;
     }
 
     /**
-     * Transform Database Data to formatted array
+     * Transform Database Data to formatted product
      *
      * @param Mage_Catalog_Model_Product[] $products
      * @param int $qty
@@ -333,7 +333,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             // Add others attributes
             // Don't get price from child product
-            if (in_array($product->getId(), $this->productsIds) || in_array($product->getSku(), $this->productsIds)) {
+            if (in_array($product->getId(), $this->productsIds)) {
                 $this->addAmount($product, $oystProduct);
             }
 
@@ -768,7 +768,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             $informations[$attributeCode] = $value;
         }
-        $oystProduct->__set('information', $informations);
+        $oystProduct->__set('informations', $informations);
     }
 
     /**

@@ -212,6 +212,8 @@
                 <new_customer_account>1</new_customer_account>
                 <order_delay>15</order_delay>
                 <checkout_cart_button_position>disabled</checkout_cart_button_position>
+                <checkout_cart_cta_label><![CDATA[Retour boutique.]]></checkout_cart_cta_label>
+                <checkout_cart_cta_loading_message><![CDATA[Nous n’avons pas encore reçu la confirmation du paiement. Veuillez attendre quelques minutes pour rafraichir cette page.]]></checkout_cart_cta_loading_message>
             </oneclick>
             <order_settings>
                 <enable>0</enable>

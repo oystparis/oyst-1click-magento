@@ -122,13 +122,20 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         }
 
         $this->orderResponse['event'] = $this->eventNotification;
-        $order = $this->createMagentoOrder();
+        $order = $this->createMagentoOrder($oystOrderId);
         $this->orderResponse['magento_order_id'] = $order->getId();
 
         return $this->orderResponse;
     }
 
-    private function createMagentoOrder()
+    /**
+     * Create magento order.
+     *
+     * @param $oystOrderId
+     *
+     * @return Mage_Sales_Model_Order
+     */
+    private function createMagentoOrder($oystOrderId)
     {
         // Register a 'lock' for not update status to Oyst
         Mage::register('order_status_changing', true);
@@ -145,7 +152,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
             Mage::helper('oyst_oneclick')->__(
                 '%s import order id: "%s".',
                 $this->paymentMethod,
-                $this->orderResponse['id']
+                $this->orderResponse['order']['id']
             )
         )->save();
 
@@ -154,7 +161,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         Mage::unregister('order_status_changing');
 
-        $this->clearCart($magentoQuoteBuilder->getQuote()->getQuoteId());
+        $this->clearCart($magentoQuoteBuilder->getQuote()->getQuoteId(), $oystOrderId);
 
         return $magentoOrderBuilder->getOrder();
     }
@@ -165,7 +172,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
     private function changeStatus(Mage_Sales_Model_Order $order)
     {
         // Take the last status and change order status
-        $currentStatus = $this->orderResponse['current_status'];
+        $currentStatus = $this->orderResponse['order']['current_status'];
 
         // Update Oyst order to accepted and auto-generate invoice
         if (in_array($currentStatus, array(OystOrderStatus::PENDING))) {
@@ -173,7 +180,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
             $orderApiClient = Mage::getModel('oyst_oneclick/order_apiWrapper');
 
             try {
-                $response = $orderApiClient->updateOrder($this->orderResponse['id'], OystOrderStatus::ACCEPTED);
+                $response = $orderApiClient->updateOrder($this->orderResponse['order']['id'], OystOrderStatus::ACCEPTED);
                 Mage::helper('oyst_oneclick')->log($response);
 
                 $this->initTransaction($order);
@@ -226,20 +233,26 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         // Set transaction info
         /** @var Mage_Sales_Model_Order_Payment $payment */
         $payment = $order->getPayment();
-        $payment->setTransactionId($this->orderResponse['transaction']['id']);
-        $payment->setCurrencyCode($this->orderResponse['transaction']['amount']['currency']);
+        $payment->setTransactionId($this->orderResponse['order']['transaction']['id']);
+        $payment->setCurrencyCode($this->orderResponse['order']['transaction']['amount']['currency']);
         $payment->setPreparedMessage(Mage::helper('oyst_oneclick')->__('%s', $this->paymentMethod));
         $payment->setShouldCloseParentTransaction(true);
         $payment->setIsTransactionClosed(1);
 
         if (Mage::helper('oyst_oneclick')->getConfig('enable_invoice_auto_generation')) {
-            $payment->registerCaptureNotification($helper->getHumanAmount($this->orderResponse['order_amount']['value']));
+            $payment->registerCaptureNotification($helper->getHumanAmount($this->orderResponse['order']['order_amount']['value']));
         }
 
         $order->save();
     }
 
-    private function clearCart($quoteId)
+    /**
+     * Clear cart.
+     *
+     * @param $quoteId
+     * @param $oystOrderId
+     */
+    private function clearCart($quoteId, $oystOrderId)
     {
         $quotes = Mage::getModel('sales/quote')->getCollection()
             ->addFieldToFilter('is_active', array('eq' => 1))
@@ -247,6 +260,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         foreach ($quotes as $quote) {
             $quote->setIsActive(0);
+            $quote->setOystOrderId($oystOrderId);
 
             // @codingStandardsIgnoreLine
             $quote->save();
