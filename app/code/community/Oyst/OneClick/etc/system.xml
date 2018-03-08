@@ -291,7 +291,7 @@
                             <frontend_type>text</frontend_type>
                             <frontend_class>color {required:false, hash:true, pickerPosition: 'right'}</frontend_class>
                             <config_path>oyst/oneclick/button_color</config_path>
-                            <sort_order>50</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -304,13 +304,14 @@
                             </depends>
                         </button_color>
 
+                        <!-- styles -->
                         <styles translate="label comment">
                             <label>Add custom CSS</label>
                             <comment><![CDATA[ex: .add-to-cart-buttons { text-align:center }]]></comment>
                             <tooltip><![CDATA[This CSS block will be added automaticaly in all the page with the button]]></tooltip>
                             <frontend_type>textarea</frontend_type>
                             <config_path>oyst/oneclick/button_wrapper_styles</config_path>
-                            <sort_order>100</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -333,7 +334,7 @@
                             <frontend_type>select</frontend_type>
                             <source_model>oyst_oneclick/system_config_source_button_position</source_model>
                             <config_path>oyst/oneclick/button_before_addtocart</config_path>
-                            <sort_order>40</sort_order>
+                            <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -351,7 +352,7 @@
                             <comment><![CDATA[CSS class of the element grouping the shopping buttons on the product pages. E.g.: <i>add-to-cart-buttons</i>]]></comment>
                             <frontend_type>text</frontend_type>
                             <config_path>oyst/oneclick/product_page_buttons_wrapper_class</config_path>
-                            <sort_order>90</sort_order>
+                            <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -362,6 +363,42 @@
                                 </enable>
                             </depends>
                         </product_page_buttons_wrapper_class>
+
+                        <!-- button width -->
+                        <product_page_button_width translate="label">
+                            <label>Button width</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/product_page_button_width</config_path>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </product_page_button_width>
+
+                        <!-- button height -->
+                        <product_page_button_height translate="label">
+                            <label>Button height</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/product_page_button_height</config_path>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </product_page_button_height>
                     </fields>
                 </customization_button_product_page>
 
