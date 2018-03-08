@@ -51,7 +51,9 @@ function RedirectCart(url, oystParam) {
 
     this.send = function () {
         if (null === self.data) {
-            self.xhr.onload = self.nullResponse;
+            setTimeout(function(){
+                self.xhr.onload = self.nullResponse;
+            }, 2000);
         } else {
             self.url = self.data.check_order_url;
             self.oystParam = self.data.oyst_order_id;
