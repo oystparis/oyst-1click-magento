@@ -11,6 +11,7 @@
 
 use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystOneClickApi;
+use Oyst\Classes\OneClickCustomization;
 use Oyst\Classes\OneClickNotifications;
 use Oyst\Classes\OneClickOrderParams;
 
@@ -26,6 +27,9 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     protected $oneClickApi;
 
     protected $type = OystApiClientFactory::ENTITY_ONECLICK;
+
+    /* @var int $quoteId */
+    private $quoteId;
 
     public function __construct()
     {
@@ -75,9 +79,13 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             $notifications->addEvent('order.stock.released');
         }
 
-        $orderParams = $this->getOneClickOrderParams();
+        $this->quoteId = Mage::getSingleton('checkout/session')->getQuote()->getId();
+
+        $orderParams = $this->getOneClickOrderParams($dataFormated);
 
         $context = $this->getContext();
+
+        $customization = $this->getOneClickCustomization($dataFormated);
 
         try {
             $response = $this->oneClickApi->authorizeOrderV2(
@@ -85,7 +93,8 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
                 $notifications,
                 null,
                 $orderParams,
-                $context
+                $context,
+                $customization
             );
             $this->oystClient->validateResult($this->oneClickApi);
 
@@ -137,11 +146,13 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     }
 
     /**
-     * Get OneClickOrderParams configuration
+     * Get OneClickOrderParams configuration.
+     *
+     * @param array $dataFormated
      *
      * @return OneClickOrderParams
      */
-    private function getOneClickOrderParams()
+    private function getOneClickOrderParams($dataFormated)
     {
         $orderParams = new OneClickOrderParams();
         $orderParams->setManageQuantity($this->getConfig('allow_quantity_change'));
@@ -172,7 +183,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             'id' => $this->generateId(),
             'remote_addr' => Mage::helper('core/http')->getRemoteAddr(),
             'store_id' => Mage::app()->getStore()->getStoreId(),
-            'quote_id' => Mage::getSingleton('checkout/session')->getQuote()->getId(),
+            'quote_id' => $this->quoteId,
         );
 
         if (Mage::getSingleton('customer/session')->isLoggedIn()) {
@@ -180,5 +191,26 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         }
 
         return $context;
+    }
+
+    /**
+     * Get one click customization.
+     *
+     * @param array $dataFormated
+     *
+     * @return OneClickCustomization
+     */
+    private function getOneClickCustomization($dataFormated)
+    {
+        $customization = new OneClickCustomization();
+
+        if (isset($dataFormated['isCheckoutCart'])) {
+            $customization->setCta(
+                Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_label'),
+                Mage::helper('oyst_oneclick')->getRedirectUrl($this->quoteId)
+            );
+        }
+
+        return $customization;
     }
 }
