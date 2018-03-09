@@ -411,6 +411,7 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
+                        <!-- position -->
                         <position translate="label">
                             <label>Button position</label>
                             <frontend_type>select</frontend_type>
@@ -427,6 +428,40 @@
                                 </enable>
                             </depends>
                         </position>
+
+                        <!-- button width -->
+                        <button_width translate="label">
+                            <label>Button width</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/checkout_cart_button_width</config_path>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <position separator=",">
+                                    <value>top,bottom</value>
+                                </position>
+                            </depends>
+                        </button_width>
+
+                        <!-- button height -->
+                        <button_height translate="label">
+                            <label>Button height</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/checkout_cart_button_height</config_path>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <position separator=",">
+                                    <value>top,bottom</value>
+                                </position>
+                            </depends>
+                        </button_height>
                     </fields>
                 </customization_button_checkout_cart>
 

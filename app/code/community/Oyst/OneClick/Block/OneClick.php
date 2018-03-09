@@ -97,6 +97,17 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
             $buttonCustomization .= sprintf(" data-" . $customizationAttribute . "='%s'", $config);
         }
 
+        $specificCustomizationAttributes = array('height', 'width');
+
+        foreach ($specificCustomizationAttributes as $customizationAttribute) {
+            $config = Mage::getStoreConfig('oyst/oneclick/' . $path . 'button_' . $customizationAttribute);
+            if (empty($config)) {
+                continue;
+            }
+
+            $buttonCustomization .= sprintf(" data-" .  $customizationAttribute . "='%s'", $config);
+        }
+
         return $buttonCustomization;
     }
 
