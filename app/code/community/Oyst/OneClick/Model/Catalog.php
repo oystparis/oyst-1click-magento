@@ -823,14 +823,24 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 if (!$taxHelper->shippingPriceIncludesTax()) {
                     $price = $taxHelper->getShippingPrice($price, true, $address);
                 }
+
+                $rateCode = $rate->getCode();
+                $mappingName = $this->getConfigMappingName($rateCode, $storeId);
+
+                // For Webshopapps Matrix rates module
+                if (strpos($rate->getCode(), 'matrixrate_matrixrate') !== false) {
+                    $rateCode = 'matrixrate_matrixrate';
+                    $mappingName = $rate->getMethodTitle();
+                }
+
                 Mage::helper('oyst_oneclick')->log(
                     sprintf('%s (%s): %s',
-                        trim($this->getConfigMappingName($rate->getCode(), $storeId)),
+                        trim($mappingName),
                         $rate->getCode(),
                         $price
                     )
                 );
-                $carrierMapping = $this->getConfigMappingDelay($rate->getCode(), $storeId);
+                $carrierMapping = $this->getConfigMappingDelay($rateCode, $storeId);
 
                 // This mean it's disable for 1-Click
                 if ("0" === $carrierMapping || is_null($carrierMapping)) {
@@ -841,17 +851,17 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
                 $oystCarrier = new OystCarrier(
                     $rate->getCode(),
-                    trim($this->getConfigMappingName($rate->getCode(), $storeId)),
+                    trim($mappingName),
                     $carrierMapping
                 );
 
                 $shipment = new OneClickShipmentCatalogLess(
                     $oystPrice,
-                    $this->getConfigCarrierDelay($rate->getCode(), $storeId),
+                    $this->getConfigCarrierDelay($rateCode, $storeId),
                     $oystCarrier
                 );
 
-                if ($rate->getCode() === $this->getConfig('carrier_default')) {
+                if ($rateCode === $this->getConfig('carrier_default')) {
                     $shipment->setPrimary(true);
                     $isPrimarySet = true;
                 }
