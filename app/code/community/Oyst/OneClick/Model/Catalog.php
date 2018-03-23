@@ -47,35 +47,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             'lib_property' => 'active',
             'type' => 'bool',
         ),
-        'short_description' => array(
-            'lib_property' => 'shortDescription',
-            'type' => 'string',
-        ),
-        'description' => array(
-            'lib_property' => 'description',
-            'type' => 'string',
-        ),
-        'manufacturer' => array(
-            'lib_property' => 'manufacturer',
-            'type' => 'string',
-            'required' => true,
-        ),
-        'weight' => array(
-            'lib_property' => 'weight',
-            'type' => 'string',
-        ),
-        'ean' => array(
-            'lib_property' => 'ean',
-            'type' => 'string',
-        ),
-        'isbn' => array(
-            'lib_property' => 'isbn',
-            'type' => 'string',
-        ),
-        'upc' => array(
-            'lib_property' => 'upc',
-            'type' => 'string',
-        ),
     );
 
     /**
@@ -338,9 +309,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             }
 
             $this->addComplexAttributes($product, $oystProduct);
-            $this->addCategories($product, $oystProduct);
             $this->addImages($product, $oystProduct);
-            $this->addRelatedProducts($product, $oystProduct);
             $this->addCustomAttributesToInformation($product, $oystProduct);
 
             // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
@@ -650,22 +619,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function addComplexAttributes(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
-        $oystProduct->__set('url', $product->getUrlModel()->getProductUrl($product));
-        $product->unsRequestPath();
         $oystProduct->__set('url', $product->getUrlInStore(array('_ignore_category' => true)));
         $oystProduct->__set('materialized', !($product->isVirtual()) ? true : false);
-
-        $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
-        $oystProduct->__set('availableQuantity', (int)$stock->getQty());
-
-        $productActive = ('1' === $product->getStatus()) ? true : false;
-        $oystProduct->__set('active', $productActive);
-
-        $oystProduct->__set('condition', 'new');
-
-        // @TODO add verification for discount price
-        $isDiscounted = false;
-        $oystProduct->__set('discounted', $isDiscounted);
     }
 
     /**
