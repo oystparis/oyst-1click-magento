@@ -322,9 +322,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             // Get product attributes
             $this->getAttributes($product, $this->productAttrTranslate, $oystProduct);
-            if ($product->isConfigurable()) {
-                $this->addVariations($product, $oystProduct);
-            }
 
             // Add others attributes
             // Don't get price from child product
@@ -337,6 +334,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $this->addImages($product, $oystProduct);
             $this->addRelatedProducts($product, $oystProduct);
             $this->addCustomAttributesToInformation($product, $oystProduct);
+
+            if ($product->isConfigurable()) {
+                $this->addVariations($product, $oystProduct);
+            }
 
             // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
             // in release stock event
@@ -488,7 +489,9 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $variationProductsFormated = $this->format($childProducts);
 
-        $oystProduct->__set('variations', array($variationProductsFormated->toArray()));
+        if (property_exists($variationProductsFormated, 'informations')) {
+            $oystProduct->__set('informations', $variationProductsFormated->__get('informations'));
+        }
     }
 
     /**
@@ -763,7 +766,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             $informations[$attributeCode] = $value;
         }
-        $oystProduct->__set('information', $informations);
+        $oystProduct->__set('informations', $informations);
     }
 
     /**
