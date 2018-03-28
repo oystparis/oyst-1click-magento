@@ -116,9 +116,11 @@ class Oyst_OneClick_Model_Magento_Quote
                 ->setStore($store)
                 ->setFirstname($firstname)
                 ->setLastname($lastname)
-                ->setEmail($email)
-                ->setPassword($customer->generatePassword());
+                ->setEmail($email);
             $customer->save();
+
+            // Send welcome email
+            $customer->sendNewAccountEmail('registered', '', $store->getId(), $customer->generatePassword(16));
 
             /** @var Mage_Customer_Model_Address $address */
             $address = Mage::getModel('customer/address');
