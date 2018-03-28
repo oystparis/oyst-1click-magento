@@ -154,6 +154,8 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         Mage::unregister('order_status_changing');
 
+        $magentoOrderBuilder->getOrder()->sendNewOrderEmail();
+
         return $magentoOrderBuilder->getOrder();
     }
 
