@@ -429,6 +429,57 @@
                             </depends>
                         </position>
 
+                        <!-- cta label -->
+                        <cta_label translate="label">
+                            <label>Button Label</label>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/checkout_cart_cta_label</config_path>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                            <depends>
+                                <position separator=",">
+                                    <value>top,bottom</value>
+                                </position>
+                            </depends>
+                        </cta_label>
+
+                        <!-- cta loading message -->
+                        <cta_loading_message translate="label">
+                            <label>Redirect loading message</label>
+                            <frontend_type>textarea</frontend_type>
+                            <config_path>oyst/oneclick/checkout_cart_cta_loading_message</config_path>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                            <depends>
+                                <position separator=",">
+                                    <value>top,bottom</value>
+                                </position>
+                            </depends>
+                        </cta_loading_message>
+
+                        <!-- cta success page -->
+                        <cta_success_page translate="label">
+                            <label>Success Page</label>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/checkout_cart_cta_success_page</config_path>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-url</validate>
+                            <depends>
+                                <position separator=",">
+                                    <value>top,bottom</value>
+                                </position>
+                            </depends>
+                        </cta_success_page>
+
                         <!-- button width -->
                         <button_width translate="label">
                             <label>Button width</label>

@@ -18,7 +18,7 @@
  *
  * @param {String} oneClickUrl  Backend conf oneclick payment url
  */
-function oystOneClick(oneClickUrl) {
+function oystOneClick(oneClickUrl, quoteId) {
     window.__OYST__ = window.__OYST__ || {};
     window.__OYST__.getOneClickURL = function (cb, opts) {
         opts = opts || {};
@@ -26,22 +26,8 @@ function oystOneClick(oneClickUrl) {
         ready(function () {
             var form = new FormData();
             form.append("preload", opts.preload);
-
-            var products = [];
-            var actions = document.getElementsByClassName("product-cart-actions");
-
-            for (var i = 0; i < actions.length; i++) {
-                var qtyInput = actions[i].getElementsByClassName("input-text qty");
-                var sku = qtyInput[0].getAttribute("data-cart-item-id");
-                var qty = qtyInput[0].value;
-                products.push({
-                    productId: sku,
-                    quantity: Number(qty)
-                });
-            }
-
-            form.append("products", JSON.stringify(products));
             form.append("isCheckoutCart", true);
+            form.append("quoteId", Number(quoteId));
 
             var settings = {
                 async: true,
@@ -58,7 +44,8 @@ function oystOneClick(oneClickUrl) {
             xhr.onload = function () {
                 if (200 === xhr.status) {
                     var data = JSON.parse(xhr.responseText);
-                    cb(null, data.url);
+                    var isErrorsInForm = null;
+                    cb(isErrorsInForm, data.url);
                 }
             };
             xhr.send(form);
