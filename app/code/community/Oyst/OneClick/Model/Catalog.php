@@ -565,9 +565,16 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 'catalog_product_type_configurable_price',
                 array('product' => $product)
             );
+
             $configurablePrice = $product->getConfigurablePrice();
-            $price = $product->getPrice() + $configurableOldPrice;
-            $finalPrice = $product->getFinalPrice() + $configurablePrice;
+            $productType = $product;
+
+            if (Mage::getStoreConfig('oyst/oneclick/configurable_price')) {
+                $productType = Mage::getModel('catalog/product')->load($this->configurableProductChildId);
+            }
+
+            $price = $productType->getPrice() + $configurableOldPrice;
+            $finalPrice = $productType->getFinalPrice() + $configurablePrice;
         }
 
         if ($product->isGrouped()) {
