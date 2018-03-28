@@ -107,17 +107,34 @@ class Oyst_OneClick_Model_Magento_Quote
      */
     private function createCustomer($firstname, $lastname, $email)
     {
+        /** @var Mage_Customer_Model_Customer $customer */
         $customer = Mage::getModel('customer/customer');
         $store = Mage::app()->getStore();
 
-        $customer->setWebsiteId($this->websiteId)
-            ->setStore($store)
-            ->setFirstname($firstname)
-            ->setLastName($lastname)
-            ->setEmail($email)
-            ->setPassword($customer->generatePassword());
         try {
+            $customer->setWebsiteId($this->websiteId)
+                ->setStore($store)
+                ->setFirstname($firstname)
+                ->setLastname($lastname)
+                ->setEmail($email)
+                ->setPassword($customer->generatePassword());
             $customer->save();
+
+            /** @var Mage_Customer_Model_Address $address */
+            $address = Mage::getModel('customer/address');
+
+            $address->setCustomerId($customer->getId())
+                ->setFirstname($customer->getFirstname())
+                ->setLastname($customer->getLastname())
+                ->setCountryId($this->apiData['order']['user']['address']['country'])
+                ->setPostcode($this->apiData['order']['user']['address']['postcode'])
+                ->setCity($this->apiData['order']['user']['address']['city'])
+                ->setTelephone($this->apiData['order']['user']['phone'])
+                ->setStreet($this->apiData['order']['user']['address']['postcode'])
+                ->setIsDefaultBilling(true)
+                ->setIsDefaultShipping(true)
+                ->setSaveInAddressBook(true);
+            $address->save();
         } catch (Exception $e) {
             Mage::helper('oyst_oneclick')->log($e->getMessage());
         }
