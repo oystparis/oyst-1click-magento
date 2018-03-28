@@ -18,7 +18,7 @@ class Oyst_OneClick_Block_Form_Freepay extends Mage_Payment_Block_Form_Cc
     protected function _construct()
     {
         parent::_construct();
-        $this->setTemplate('oyst/form/freepay.phtml');
+        $this->setTemplate('oyst/freepay/form/freepay.phtml');
     }
 
     public function getPaymentMethodLabel()
