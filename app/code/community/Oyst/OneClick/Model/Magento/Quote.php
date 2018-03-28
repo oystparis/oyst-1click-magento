@@ -465,8 +465,8 @@ class Oyst_OneClick_Model_Magento_Quote
 
                 // Increase stock with qty decrease when order made if should_ask_stock is enabled
                 if (Mage::getStoreConfig('oyst/oneclick/should_ask_stock') &&
-                    isset($this->apiData['order']['event']) &&
-                    'order.v2.new' === $this->apiData['order']['event'])
+                    isset($this->apiData['event']) &&
+                    'order.v2.new' === $this->apiData['event'])
                 {
                     $productForStock = isset($configurableProductChild) ? $configurableProductChild : $product;
 
