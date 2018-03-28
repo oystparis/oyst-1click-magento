@@ -19,8 +19,10 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Certifie
         /** @var Mage_Shipping_Model_Config $methods */
         $methods = Mage::getSingleton('shipping/config')->getActiveCarriers($this->getStore());
         $methodOptions = array();
+        $ignoredShipments = Mage::helper('oyst_oneclick/shipments')->getIgnoredShipments();
+
         foreach ($methods as $ccode => $carrier) {
-            if (in_array($ccode, $this->certified)) {
+            if (in_array($ccode, $this->certified) && !in_array($ccode, $ignoredShipments)) {
                 if ($_methods = $carrier->getAllowedMethods()) {
                     foreach ($_methods as $mcode => $method) {
                         $code = $ccode . '_' . $mcode;
