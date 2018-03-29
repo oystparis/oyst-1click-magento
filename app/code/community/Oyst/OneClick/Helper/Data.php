@@ -16,6 +16,14 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
 {
     const MODULE_NAME = 'Oyst_OneClick';
 
+    const LOADING_URL = 'oyst_oneclick/checkout_cart/loading/';
+
+    const ORDER_URL = 'oyst_oneclick/checkout_cart/order';
+
+    const QUOTE_URL = 'oyst_oneclick/checkout_cart/quote/';
+
+    const SUCCESS_URL = 'checkout/onepage/success';
+
     /**
      * Get config from Magento
      *
@@ -214,5 +222,38 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
             ->getFirstItem();
 
         return $transaction;
+    }
+
+    /**
+     * Generate unique identifier.
+     *
+     * Identifier is built as [custom string][current datetime][random part]
+     *
+     * @return string
+     */
+    public function generateId($string = null)
+    {
+        $randomPart = rand(10, 99);
+
+        list($usec, $sec) = explode(' ', microtime());
+        unset($sec);
+
+        $microtime = explode('.', $usec);
+        $datetime = new DateTime();
+        $datetime = $datetime->format('YmdHis');
+
+        return $string . $datetime . $microtime[1] . $randomPart;
+    }
+
+    /**
+     * Get loading page url.
+     *
+     * @param int $cartId
+     *
+     * @return string
+     */
+    public function getRedirectUrl($cartId)
+    {
+        return Mage::getBaseUrl() . self::LOADING_URL . 'cart_id/' . $cartId;
     }
 }

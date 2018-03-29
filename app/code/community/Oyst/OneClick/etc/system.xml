@@ -332,7 +332,7 @@
                         <button_before_addtocart translate="label">
                             <label>Button position</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>oyst_oneclick/system_config_source_button_position</source_model>
+                            <source_model>oyst_oneclick/system_config_source_catalog_product_button_position</source_model>
                             <config_path>oyst/oneclick/button_before_addtocart</config_path>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
@@ -401,6 +401,120 @@
                         </product_page_button_height>
                     </fields>
                 </customization_button_product_page>
+
+                <!--==================== Customization button checkout cart ====================== -->
+                <customization_button_checkout_cart translate="label">
+                    <label>Checkout cart button customization</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>27</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <!-- position -->
+                        <position translate="label">
+                            <label>Button position</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>oyst_oneclick/system_config_source_checkout_cart_button_position</source_model>
+                            <config_path>oyst/oneclick/checkout_cart_button_position</config_path>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </position>
+
+                        <!-- cta label -->
+                        <cta_label translate="label">
+                            <label>Button Label</label>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/checkout_cart_cta_label</config_path>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                            <depends>
+                                <position separator=",">
+                                    <value>top,bottom</value>
+                                </position>
+                            </depends>
+                        </cta_label>
+
+                        <!-- cta loading message -->
+                        <cta_loading_message translate="label">
+                            <label>Redirect loading message</label>
+                            <frontend_type>textarea</frontend_type>
+                            <config_path>oyst/oneclick/checkout_cart_cta_loading_message</config_path>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
+                            <depends>
+                                <position separator=",">
+                                    <value>top,bottom</value>
+                                </position>
+                            </depends>
+                        </cta_loading_message>
+
+                        <!-- cta success page -->
+                        <cta_success_page translate="label">
+                            <label>Success Page</label>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/checkout_cart_cta_success_page</config_path>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-url</validate>
+                            <depends>
+                                <position separator=",">
+                                    <value>top,bottom</value>
+                                </position>
+                            </depends>
+                        </cta_success_page>
+
+                        <!-- button width -->
+                        <button_width translate="label">
+                            <label>Button width</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/checkout_cart_button_width</config_path>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <position separator=",">
+                                    <value>top,bottom</value>
+                                </position>
+                            </depends>
+                        </button_width>
+
+                        <!-- button height -->
+                        <button_height translate="label">
+                            <label>Button height</label>
+                            <comment><![CDATA[In <i>%</i> or <i>px</i>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/checkout_cart_button_height</config_path>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <position separator=",">
+                                    <value>top,bottom</value>
+                                </position>
+                            </depends>
+                        </button_height>
+                    </fields>
+                </customization_button_checkout_cart>
 
                 <!--============================== Shipments Settings ================================ -->
                 <shipments translate="label">
@@ -657,7 +771,6 @@
                         </reset_module>
                     </fields>
                 </advanced>
-                
             </groups>
         </oyst_oneclick>
 

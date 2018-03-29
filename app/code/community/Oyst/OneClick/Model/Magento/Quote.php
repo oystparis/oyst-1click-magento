@@ -83,6 +83,7 @@ class Oyst_OneClick_Model_Magento_Quote
         $this->quote->setStore($store);
         $this->quote->getStore()->setCurrentCurrencyCode($this->apiData['order']['order_amount']['currency']);
         $this->quote->setRemoteIp($this->apiData['order']['context']['remote_addr']);
+        $this->quote->setQuoteId($this->apiData['order']['context']['quote_id']);
 
         $this->quote->setIsMultiShipping(false);
         $this->quote->setIsSuperMode(true);
@@ -465,12 +466,20 @@ class Oyst_OneClick_Model_Magento_Quote
 
                 $request = array('qty' => $item['quantity']);
 
-                // Increase stock with qty decrease when order made if should_ask_stock is enabled
+                // Increase stock with qty decreased when order was made if should_ask_stock is enabled
                 if (Mage::getStoreConfig('oyst/oneclick/should_ask_stock') &&
                     isset($this->apiData['event']) &&
                     'order.v2.new' === $this->apiData['event'])
                 {
                     $productForStock = isset($configurableProductChild) ? $configurableProductChild : $product;
+                    Mage::helper('oyst_oneclick')->log(
+                        sprintf(
+                            'Increase stock of %s (%s) with %s',
+                            $productForStock->getName(),
+                            $productForStock->getSku(),
+                            $item['quantity']
+                        )
+                    );
 
                     /** @var Mage_CatalogInventory_Model_Stock_Item $stockItem */
                     $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productForStock->getId());
@@ -533,6 +542,7 @@ class Oyst_OneClick_Model_Magento_Quote
 
                 $this->quote->addProduct($product, new Varien_Object($request));
             }
+            unset($configurableProductChild);
         }
     }
 

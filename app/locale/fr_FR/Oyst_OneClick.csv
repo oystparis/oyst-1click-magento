@@ -62,7 +62,7 @@
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","L'API Oyst 1-Click n'est pas configuré. Cliquez <a href=""%s"">ici</a> pour finaliser la configuration."
 
 "1-Click has been installed.","1-Click a été correctement installé."
-"Remove this message","Retirer ce message"
+"Ignore this notification","Ignorer cette notification"
 
 "Cancel and Refund","Annulation et Remboursement"
 
@@ -158,7 +158,7 @@
 "In minutes","En minutes"
 
 "Customization button global","Personnalisation du bouton au global"
-"Customization button on product page","Personnalisation du bouton sur page produit"
+"Customization button on product page","Personnalisation du bouton sur la page produit"
 
 "Reinitialize the buffer of the order when a product is added","Réinitialiser le délai de validation de la commande à chaque ajout de produit"
 
@@ -167,6 +167,14 @@
 
 "Add custom CSS","Ajouter du CSS personnalisé"
 "ex: .add-to-cart-buttons { text-align:center }","ex: .add-to-cart-buttons { text-align:center }"
-"This CSS block will be added automaticaly in all the page with the button","Ce bloc CSS sera ajouté automatiquement dans toute la page avec le bouton"
+"This CSS block will be added automaticaly in all the page with the button","Ce bloc CSS sera ajouté automatiquement dans toute les pages avec le bouton"
 
 "Get configurable price from product","Prix du configurable à partir du produit"
+
+"Checkout cart button customization","Personnalisation du bouton la page panier"
+"Top","Haut"
+"Bottom","Bas"
+
+"Button Label","Texte du bouton"
+"Redirect loading message","Message de chargement de la redirection"
+"Success Page","Page de succès"

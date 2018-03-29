@@ -62,7 +62,7 @@
 "Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings.","Oyst 1-Click API key is not set. Click <a href=""%s"">here</a> to set up your settings."
 
 "1-Click has been installed.","1-Click has been installed."
-"Remove this message","Remove this message"
+"Ignore this notification","Ignore this notification"
 
 "Cancel and Refund","Cancel and Refund"
 
@@ -170,3 +170,11 @@
 "This CSS block will be added automaticaly in all the page with the button","This CSS block will be added automaticaly in all the page with the button"
 
 "Get configurable price from product","Get configurable price from product"
+
+"Checkout cart button customization","Checkout cart button customization"
+"Top","Top"
+"Bottom","Bottom"
+
+"Button Label","Button Label"
+"Redirect loading message","Redirect loading message"
+"Success Page","Success Page"

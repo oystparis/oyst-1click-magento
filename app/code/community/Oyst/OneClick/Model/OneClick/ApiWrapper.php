@@ -11,6 +11,7 @@
 
 use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystOneClickApi;
+use Oyst\Classes\OneClickCustomization;
 use Oyst\Classes\OneClickNotifications;
 use Oyst\Classes\OneClickOrderParams;
 
@@ -26,6 +27,9 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     protected $oneClickApi;
 
     protected $type = OystApiClientFactory::ENTITY_ONECLICK;
+
+    /* @var int $quoteId */
+    private $quoteId;
 
     public function __construct()
     {
@@ -59,6 +63,16 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         Mage::helper('oyst_oneclick')->log('$dataFormated');
         Mage::helper('oyst_oneclick')->log($dataFormated);
 
+        if (isset($dataFormated['quoteId'])) {
+            $this->quoteId = $dataFormated['quoteId'];
+        }
+
+        if (isset($dataFormated['isCheckoutCart'])) {
+            $dataFormated['isCheckoutCart'] = filter_var($dataFormated['isCheckoutCart'], FILTER_VALIDATE_BOOLEAN);
+
+            $this->getCartItems($dataFormated);
+        }
+
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
         $oystProducts = $oystCatalog->getOystProducts($dataFormated);
@@ -75,9 +89,9 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             $notifications->addEvent('order.stock.released');
         }
 
-        $orderParams = $this->getOneClickOrderParams();
-
+        $orderParams = $this->getOneClickOrderParams($dataFormated);
         $context = $this->getContext();
+        $customization = $this->getOneClickCustomization($dataFormated);
 
         try {
             $response = $this->oneClickApi->authorizeOrderV2(
@@ -85,7 +99,8 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
                 $notifications,
                 null,
                 $orderParams,
-                $context
+                $context,
+                $customization
             );
             $this->oystClient->validateResult($this->oneClickApi);
 
@@ -94,27 +109,6 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         }
 
         return $response;
-    }
-
-    /**
-     * Generate unique identifier.
-     *
-     * Identifier is built as [custom string][current datetime][random part]
-     *
-     * @return string
-     */
-    public function generateId($string = null)
-    {
-        $randomPart = rand(10, 99);
-
-        list($usec, $sec) = explode(' ', microtime());
-        unset($sec);
-
-        $microtime = explode('.', $usec);
-        $datetime = new DateTime();
-        $datetime = $datetime->format('YmdHis');
-
-        return $string . $datetime . $microtime[1] . $randomPart;
     }
 
     /**
@@ -137,11 +131,13 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     }
 
     /**
-     * Get OneClickOrderParams configuration
+     * Get OneClickOrderParams configuration.
+     *
+     * @param array $dataFormated
      *
      * @return OneClickOrderParams
      */
-    private function getOneClickOrderParams()
+    private function getOneClickOrderParams($dataFormated)
     {
         $orderParams = new OneClickOrderParams();
         $orderParams->setManageQuantity($this->getConfig('allow_quantity_change'));
@@ -152,6 +148,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
 
         if ($reinitialize = Mage::getStoreConfig('oyst/oneclick/reinitialize_buffer')) {
             $orderParams->setShouldReinitBuffer($reinitialize);
+        }
+
+        if (isset($dataFormated['isCheckoutCart'])) {
+            $orderParams->setIsCheckoutCart(true);
         }
 
         return $orderParams;
@@ -165,9 +165,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     private function getContext()
     {
         $context = array(
-            'id' => $this->generateId(),
+            'id' => Mage::helper('oyst_oneclick')->generateId(),
             'remote_addr' => Mage::helper('core/http')->getRemoteAddr(),
             'store_id' => Mage::app()->getStore()->getStoreId(),
+            'quote_id' => $this->quoteId,
         );
 
         if (Mage::getSingleton('customer/session')->isLoggedIn()) {
@@ -175,5 +176,71 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         }
 
         return $context;
+    }
+
+    /**
+     * Get one click customization.
+     *
+     * @param array $dataFormated
+     *
+     * @return OneClickCustomization
+     */
+    private function getOneClickCustomization($dataFormated)
+    {
+        $customization = new OneClickCustomization();
+
+        if (isset($dataFormated['isCheckoutCart'])) {
+            $customization->setCta(
+                Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_label', Mage::app()->getStore()->getStoreId()),
+                Mage::helper('oyst_oneclick')->getRedirectUrl($this->quoteId)
+            );
+        }
+
+        return $customization;
+    }
+
+    /**
+     * Get cart items
+     *
+     * @param array $dataFormated
+     */
+    public function getCartItems(&$dataFormated)
+    {
+        $products = array();
+
+        /** @var Mage_Sales_Model_Quote $items */
+        $items = Mage::getModel('sales/quote')->load($dataFormated['quoteId'])->getAllVisibleItems();
+
+        $returnItems = array();
+
+        /** @var Mage_Sales_Model_Quote_Item $item */
+        foreach($items as $item){
+            if ($item->getHasChildren()) {
+                foreach($item->getChildren() as $child) {
+                    $returnItems[] = $child;
+                }
+            } else {
+                $returnItems[] = $item;
+            }
+        }
+
+        /** @var Mage_Sales_Model_Quote_Item $item */
+        foreach ($returnItems as $item) {
+            if (!is_null($item->getParentItem())) {
+                $products[] = array(
+                    'productId' => $item->getParentItem()->getProductId(),
+                    'quantity' => $item->getParentItem()->getQty(),
+                    'configurableProductChildId' => $item->getProductId(),
+                );
+            } else {
+                $products[] = array(
+                    'productId' => $item->getProductId(),
+                    'quantity' => $item->getQty(),
+                );
+            }
+        }
+
+        $dataFormated['products'] = Zend_Json::encode($products);
+        Mage::helper('oyst_oneclick')->log($dataFormated['products']);
     }
 }

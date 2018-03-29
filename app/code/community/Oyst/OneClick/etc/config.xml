@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>1.7.1</version>
+            <version>1.8.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -100,6 +100,16 @@
                 </oyst_oneclick>
             </updates>
         </layout>
+        <events>
+            <controller_action_layout_load_before>
+                <observers>
+                    <oyst_payment>
+                        <class>Oyst_OneClick_Model_Observer</class>
+                        <method>appendOneClickButton</method>
+                    </oyst_payment>
+                </observers>
+            </controller_action_layout_load_before>
+        </events>
     </frontend>
     <adminhtml>
         <layout>
@@ -201,6 +211,9 @@
                 <button_smart>1</button_smart>
                 <new_customer_account>1</new_customer_account>
                 <order_delay>15</order_delay>
+                <checkout_cart_button_position>disabled</checkout_cart_button_position>
+                <checkout_cart_cta_label><![CDATA[Retour boutique.]]></checkout_cart_cta_label>
+                <checkout_cart_cta_loading_message><![CDATA[Nous n’avons pas encore reçu la confirmation du paiement. Veuillez attendre quelques minutes pour rafraichir cette page.]]></checkout_cart_cta_loading_message>
             </oneclick>
             <order_settings>
                 <enable>0</enable>
