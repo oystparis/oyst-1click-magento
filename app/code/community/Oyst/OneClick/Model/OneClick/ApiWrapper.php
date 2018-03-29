@@ -154,6 +154,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             $orderParams->setIsCheckoutCart(true);
         }
 
+        if ($allowDiscountCoupon = Mage::getStoreConfig('oyst/oneclick/allow_discount_coupon')) {
+            $orderParams->setAllowDiscountCoupon($allowDiscountCoupon);
+        }
+
         return $orderParams;
     }
 

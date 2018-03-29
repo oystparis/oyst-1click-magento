@@ -315,6 +315,12 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
                         </styles>
                     </fields>
                 </customization_button>
@@ -440,6 +446,10 @@
                             <show_in_store>1</show_in_store>
                             <validate>required-entry</validate>
                             <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
                                 <position separator=",">
                                     <value>top,bottom</value>
                                 </position>
@@ -457,6 +467,10 @@
                             <show_in_store>1</show_in_store>
                             <validate>required-entry</validate>
                             <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
                                 <position separator=",">
                                     <value>top,bottom</value>
                                 </position>
@@ -474,6 +488,10 @@
                             <show_in_store>1</show_in_store>
                             <validate>validate-url</validate>
                             <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
                                 <position separator=",">
                                     <value>top,bottom</value>
                                 </position>
@@ -491,6 +509,10 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
                                 <position separator=",">
                                     <value>top,bottom</value>
                                 </position>
@@ -508,6 +530,10 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
                                 <position separator=",">
                                     <value>top,bottom</value>
                                 </position>
@@ -746,6 +772,24 @@
                             </depends>
                         </configurable_price>
 
+                        <!-- allow discount coupon from modal -->
+                        <allow_discount_coupon_from_modal translate="label">
+                            <label>Allow discount coupon from OYST modal</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/allow_discount_coupon_from_modal</config_path>
+                            <sort_order>47</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </allow_discount_coupon_from_modal>
+
                         <!-- log actions -->
                         <log_actions translate="label">
                             <label>Download/Delete log files</label>
@@ -895,7 +939,7 @@
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>payment/oyst_abstract/log_enable</config_path>
-                            <sort_order>2é</sort_order>
+                            <sort_order>22</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
