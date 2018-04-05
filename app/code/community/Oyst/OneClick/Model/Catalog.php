@@ -103,6 +103,11 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     private $stockItem = null;
 
     /**
+     * @var bool
+     */
+    private $isPreload;
+
+    /**
      * Object construct
      */
     public function __construct()
@@ -179,6 +184,72 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         return $response;
     }
 
+    private function getProducts($data)
+    {
+        $childrenIds = $stockFilter = array();
+
+        foreach ($data as $item) {
+            $index = 'productId';
+
+            if (array_key_exists('configurableProductChildId', $item) && $item['configurableProductChildId']) {
+                $childrenIds[$item['configurableProductChildId']] = $item['productId'];
+                $index = 'configurableProductChildId';
+            }
+
+            $this->products[$item['productId']]['quantity'] = $stockFilter[$item[$index]] = $item['quantity'];
+        }
+
+        if (!$this->checkItemsQty($stockFilter) && !$this->isPreload) {
+            return null;
+        }
+
+        $products = $this->getProductCollection(array_keys($this->products));
+
+        if (count($childrenIds)) {
+            $childProducts = $this->getProductCollection(array_keys($childrenIds));
+
+            foreach ($childProducts as $childProduct) {
+                $this->products[$childrenIds[$childProduct->getId()]]['childProduct'] = $childProduct;
+            }
+        }
+
+        return $products;
+    }
+
+    /**
+     * Get product collection.
+     *
+     * @param array $data
+     *
+     * @return mixed
+     */
+    private function getProductCollection($data)
+    {
+        $products = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addFieldToFilter('entity_id', array('in' => $data))
+            ->addFinalPrice()
+            ->addAttributeToSelect('*');
+
+        return $products;
+    }
+
+    private function checkItemsQty($data)
+    {
+        $stockItems = Mage::getModel('cataloginventory/stock_item')
+            ->getCollection()
+            ->addFieldToFilter('product_id', array('in' => array_keys($data)));
+
+        foreach ($stockItems as $stockItem) {
+            $checkQuoteItemQty = $stockItem->checkQuoteItemQty($data[$stockItem->getProductId()], $stockItem->getQty());
+            if ($checkQuoteItemQty->getData('has_error')) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Return OystProduct array
      *
@@ -188,83 +259,28 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     public function getOystProducts($dataFormated)
     {
-        $isPreload = filter_var($dataFormated['preload'], FILTER_VALIDATE_BOOLEAN);
+        $this->isPreload = filter_var($dataFormated['preload'], FILTER_VALIDATE_BOOLEAN);
 
-        $products = Zend_Json::decode($dataFormated['products']);
-        $productsCount = count($products);
+        $products = $this->getProducts(Zend_Json::decode($dataFormated['products']));
+
         $this->userDefinedAttributeCode = $this->getUserDefinedAttributeCode();
         $this->systemSelectedAttributesCode = $this->getSystemSelectedAttributeCode();
 
-        //$this->productsIds = array_column($products, 'productId');
-        // Alternative way for PHP array_column method which is available only on (PHP 5 >= 5.5.0, PHP 7)
-        $this->productsIds = array_map(function ($element) {
-            return $element['productId'];
-        }, $products);
-
-        $productsError = 0;
-        $checkQuoteItemQty = '';
         $productsFormated = array();
         foreach ($products as $product) {
-            // @codingStandardsIgnoreLine
-            $currentProduct = Mage::getModel('catalog/product')->load($product['productId']);
-
-            if ($isPreload) {
-                $product['quantity'] = 1;
+            if (isset($this->products[$product->getId()]['childProduct']) &&
+                ($childId = $this->products[$product->getId()]['childProduct']->getId())) {
+                $this->configurableProductChildId = $childId;
             }
 
-            // Validate Qty
-            if (array_key_exists('configurableProductChildId', $product)) {
-                $this->configurableProductChildId = $product['configurableProductChildId'];
-
-                /** @var Mage_Catalog_Model_Product $configurableProductChild */
-                // @codingStandardsIgnoreLine
-                $configurableProductChild = Mage::getModel('catalog/product')->load($this->configurableProductChildId);
-
-                /** @var Mage_CatalogInventory_Model_Stock_Item $stock */
-                $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($configurableProductChild);
-                $checkQuoteItemQty = $stock->checkQuoteItemQty($product['quantity'], $configurableProductChild->getQty());
-            } else {
-                /** @var Mage_CatalogInventory_Model_Stock_Item $stock */
-                $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($currentProduct);
-                $checkQuoteItemQty = $stock->checkQuoteItemQty($product['quantity'], $currentProduct->getQty());
-            }
-
-            if ($checkQuoteItemQty->getData('has_error')) {
-                $productsError++;
-            }
-
-            // Manage quantity error
-            if ($productsCount == $productsError) {
-                $message = $checkQuoteItemQty->getData('message');
-                $checkQuoteItemQty->setData(
-                    'message',
-                    str_replace('""', '"' . $currentProduct->getName() . '"', $message)
-                );
-
-                return array(
-                    'has_error' => $checkQuoteItemQty->getData('has_error'),
-                    'message' => $checkQuoteItemQty->getData('message')
-                );
-            }
-
-            if (!$isPreload && 0 === $product['quantity']) {
-                continue;
-            }
-
-            // Make OystProduct
-            $productsFormated[] = $this->format(array($currentProduct), $product['quantity']);
+            $quantity = $this->products[$product->getId()]['quantity'];
+            $productsFormated[] = $this->format(array($product), $quantity);
 
             // Book initial quantity
-            if (!$isPreload && $this->getConfig('should_ask_stock') && 0 !== $product['quantity']) {
-                $realProductId = $currentProduct->getId();
-
-                if (array_key_exists('configurableProductChildId', $product)) {
-                    $realProductId = $this->configurableProductChildId;
-                }
-
-                $this->stockItemToBook($realProductId, $product['quantity']);
+            if (!$this->isPreload && $this->getConfig('should_ask_stock') && 0 !== $quantity) {
+                $this->stockItemToBook($product->getId(), $quantity);
                 Mage::helper('oyst_oneclick')->log(
-                    sprintf('Book initial qty %s for productId %s', $product['quantity'], $realProductId)
+                    sprintf('Book initial qty %s for productId %s', $quantity, $product->getId())
                 );
             }
 
@@ -301,7 +317,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             // Add others attributes
             // Don't get price from child product
-            if (in_array($product->getId(), $this->productsIds)) {
+            if (in_array($product->getId(), array_keys($this->products))) {
                 $this->addAmount($product, $oystProduct);
             }
 
@@ -440,32 +456,35 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function addVariations(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
-        /** @var  $productAttributeCodeDefinedByUser */
-        $productAttributeCodeDefinedByUser = $this->getProductAttributeCodeDefinedByUser($product, $this->userDefinedAttributeCode);
+//        /** @var  $productAttributeCodeDefinedByUser */
+//        $productAttributeCodeDefinedByUser = $this->getProductAttributeCodeDefinedByUser($product, $this->userDefinedAttributeCode);
+//
+//        $requiredAttributesCode = array_unique(
+//            array_merge(
+//                array_keys($this->productAttrTranslate),
+//                $this->customAttributesCode,
+//                $this->systemSelectedAttributesCode,
+//                $productAttributeCodeDefinedByUser,
+//                $this->variationAttributesCode
+//            )
+//        );
+//
+//        $requiredAttributesIds = array();
+//        foreach ($requiredAttributesCode as $requiredAttributeCode) {
+//            $requiredAttributesIds[] = Mage::getResourceModel('eav/entity_attribute')->getIdByCode('catalog_product', $requiredAttributeCode);
+//        }
+//
+//        /** @var Mage_Catalog_Model_Product_Type_Configurable $childProducts */
+//        $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts($requiredAttributesIds, $product);
 
-        $requiredAttributesCode = array_unique(
-            array_merge(
-                array_keys($this->productAttrTranslate),
-                $this->customAttributesCode,
-                $this->systemSelectedAttributesCode,
-                $productAttributeCodeDefinedByUser,
-                $this->variationAttributesCode
-            )
-        );
 
-        $requiredAttributesIds = array();
-        foreach ($requiredAttributesCode as $requiredAttributeCode) {
-            $requiredAttributesIds[] = Mage::getResourceModel('eav/entity_attribute')->getIdByCode('catalog_product', $requiredAttributeCode);
+        if (!$this->isPreload && isset($this->products[$product->getId()]['childProduct'])) {
+            $variationProductsFormated = $this->format(array($this->products[$product->getId()]['childProduct']));
+            if (property_exists($variationProductsFormated, 'informations')) {
+                $oystProduct->__set('informations', $variationProductsFormated->__get('informations'));
+            }
         }
 
-        /** @var Mage_Catalog_Model_Product_Type_Configurable $childProducts */
-        $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts($requiredAttributesIds, $product);
-
-        $variationProductsFormated = $this->format($childProducts);
-
-        if (property_exists($variationProductsFormated, 'informations')) {
-            $oystProduct->__set('informations', $variationProductsFormated->__get('informations'));
-        }
     }
 
     /**
@@ -499,7 +518,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     {
         $store = Mage::app()->getStore($storeId);
         $priceIncludesTax = Mage::helper('tax')->priceIncludesTax($store);
-        $shippingPriceIncludesTax = Mage::helper('tax')->shippingPriceIncludesTax($store);
+
         $calculator = Mage::getSingleton('tax/calculation');
         $taxClassId = $product->getTaxClassId();
         $request = $calculator->getRateRequest(null, null, null, $store);
@@ -509,6 +528,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $finalPrice = $product->getFinalPrice();
 
         if ($product->isConfigurable()) {
+
             $price = $product->getPrice();
             $finalPrice = $product->getFinalPrice();
             $configurablePrice = 0;
@@ -519,10 +539,16 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             if ($attributes) {
                 foreach ($attributes as $attribute) {
                     $productAttribute = $attribute->getProductAttribute();
-                    $productAttributeId = $productAttribute->getId();
-                    // @codingStandardsIgnoreLine
-                    $configurableProductChild = Mage::getModel('catalog/product')->load($this->configurableProductChildId);
+
+                    if ($this->isPreload) {
+                        // @codingStandardsIgnoreLine
+                        $configurableProductChild = Mage::getModel('catalog/product')->load($this->configurableProductChildId);
+                    } else {
+                        $configurableProductChild = $this->products[$product->getId()]['childProduct'];
+                    }
+
                     $attributeValue = $configurableProductChild->getData($productAttribute->getAttributeCode());
+
                     // @codingStandardsIgnoreLine
                     if (count($attribute->getPrices()) > 0) {
                         foreach ($attribute->getPrices() as $priceChange) {
