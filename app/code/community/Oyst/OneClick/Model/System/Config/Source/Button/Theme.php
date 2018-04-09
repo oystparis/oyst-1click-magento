@@ -24,7 +24,7 @@ class Oyst_OneClick_Model_System_Config_Source_Button_Theme
     public function toOptionArray()
     {
         return array(
-            array('value' => 'normal', 'label' => Mage::helper('oyst_oneclick')->__('Normal')),
+            array('value' => 'default', 'label' => Mage::helper('oyst_oneclick')->__('Default')),
             array('value' => 'inversed', 'label' => Mage::helper('oyst_oneclick')->__('Inversed')),
         );
     }

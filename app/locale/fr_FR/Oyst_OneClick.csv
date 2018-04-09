@@ -43,7 +43,7 @@
 "Enable invoice auto-generation","Activer la génération automatique de la facture"
 "<b>Yes</b> creation of the invoice when the order is created, the ""Due amount"" will be 0.<br/><b>No</b> the order remains with a ""Due amount"" and the invoice is not created.","<b>Oui</b> création de la facture à la création de la commande, le ""Montant dû"" sera à 0.<br><b>Non</b> la commande reste avec un ""Montant dû"" et la facture n'est pas créée."
 "Button theme","Thème du bouton"
-"Normal","Normal"
+"Default","Par défaut"
 "Inversed","Inversé"
 "Button color","Couleur du bouton"
 "Please Click the text box to select color","Cliquez sur la zone de texte pour sélectionner la couleur"
@@ -171,10 +171,12 @@
 
 "Get configurable price from product","Prix du configurable à partir du produit"
 
-"Checkout cart button customization","Personnalisation du bouton la page panier"
+"Checkout cart button customization","Personnalisation du bouton sur la page panier"
 "Top","Haut"
 "Bottom","Bas"
 
 "Button Label","Texte du bouton"
 "Redirect loading message","Message de chargement de la redirection"
 "Success Page","Page de succès"
+
+"Allow discount coupon from OYST modal","Autoriser le coupon de réduction depuis la modale OYST"

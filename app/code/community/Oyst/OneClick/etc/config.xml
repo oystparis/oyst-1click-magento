@@ -214,6 +214,7 @@
                 <checkout_cart_button_position>disabled</checkout_cart_button_position>
                 <checkout_cart_cta_label><![CDATA[Retour boutique.]]></checkout_cart_cta_label>
                 <checkout_cart_cta_loading_message><![CDATA[Nous n’avons pas encore reçu la confirmation du paiement. Veuillez attendre quelques minutes pour rafraichir cette page.]]></checkout_cart_cta_loading_message>
+                <allow_discount_coupon_from_modal>0</allow_discount_coupon_from_modal>
             </oneclick>
             <order_settings>
                 <enable>0</enable>
