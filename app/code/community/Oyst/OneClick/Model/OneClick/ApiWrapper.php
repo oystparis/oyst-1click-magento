@@ -28,8 +28,8 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
 
     protected $type = OystApiClientFactory::ENTITY_ONECLICK;
 
-    /* @var int $quoteId */
-    private $quoteId;
+    /* @var Mage_Sales_Model_Quote $quote */
+    private $quote = null;
 
     public function __construct()
     {
@@ -62,10 +62,6 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     {
         Mage::helper('oyst_oneclick')->log('$dataFormated');
         Mage::helper('oyst_oneclick')->log($dataFormated);
-
-        if (isset($dataFormated['quoteId'])) {
-            $this->quoteId = $dataFormated['quoteId'];
-        }
 
         if (isset($dataFormated['isCheckoutCart'])) {
             $dataFormated['isCheckoutCart'] = filter_var($dataFormated['isCheckoutCart'], FILTER_VALIDATE_BOOLEAN);
@@ -154,6 +150,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             $orderParams->setIsCheckoutCart(true);
         }
 
+        if ($allowDiscountCoupon = Mage::getStoreConfig('oyst/oneclick/allow_discount_coupon_from_modal')) {
+            $orderParams->setAllowDiscountCoupon($allowDiscountCoupon);
+        }
+
         return $orderParams;
     }
 
@@ -168,8 +168,17 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             'id' => Mage::helper('oyst_oneclick')->generateId(),
             'remote_addr' => Mage::helper('core/http')->getRemoteAddr(),
             'store_id' => Mage::app()->getStore()->getStoreId(),
-            'quote_id' => $this->quoteId,
         );
+
+        if ($this->quote instanceof Mage_Sales_Model_Quote) {
+            $context['quote_id'] = $this->quote->getId();
+
+            // This is setted here because nothing allow us to set this in order yet
+            if (!is_null($this->quote->getCouponCode())) {
+                $context['applied_coupons'] = $this->quote->getCouponCode();
+            }
+        }
+
 
         if (Mage::getSingleton('customer/session')->isLoggedIn()) {
             $context['user_id'] = (string)Mage::getSingleton('customer/session')->getCustomer()->getId();
@@ -192,7 +201,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         if (isset($dataFormated['isCheckoutCart'])) {
             $customization->setCta(
                 Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_label', Mage::app()->getStore()->getStoreId()),
-                Mage::helper('oyst_oneclick')->getRedirectUrl($this->quoteId)
+                Mage::helper('oyst_oneclick')->getRedirectUrl($this->quote->getId())
             );
         }
 
@@ -208,8 +217,11 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     {
         $products = array();
 
+        /** @var Mage_Sales_Model_Quote quote */
+        $this->quote = Mage::getModel('sales/quote')->load($dataFormated['quoteId']);
+
         /** @var Mage_Sales_Model_Quote $items */
-        $items = Mage::getModel('sales/quote')->load($dataFormated['quoteId'])->getAllVisibleItems();
+        $items = $this->quote->getAllVisibleItems();
 
         $returnItems = array();
 

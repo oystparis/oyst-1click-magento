@@ -10,6 +10,7 @@
  */
 
 use Oyst\Classes\OneClickItem;
+use Oyst\Classes\OneClickMerchantDiscount;
 use Oyst\Classes\OneClickOrderCartEstimate;
 use Oyst\Classes\OneClickShipmentCatalogLess;
 use Oyst\Classes\OneClickStock;
@@ -782,7 +783,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     /**
      * Get cart estimate.
      *
-     * @param array $data
+     * @param array $apiData
      *
      * @return string
      */
@@ -790,10 +791,13 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     {
         /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
         $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $apiData);
+
         $magentoQuoteBuilder->buildQuote();
 
         // Object to format data of EndpointShipment
         $oneClickOrderCartEstimate = new OneClickOrderCartEstimate();
+
+        $this->getCartRules($magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
         $this->getShipments($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
@@ -891,6 +895,104 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         if (!$isPrimarySet) {
             $oneClickOrderCartEstimate->setDefaultPrimaryShipmentByType();
+        }
+    }
+
+    /**
+     * Get cart rules.
+     *
+     * @param Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder
+     * @param OneClickOrderCartEstimate $oneClickOrderCartEstimate
+     */
+    private function getCartRules(&$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
+    {
+        $discountRules = array();
+
+        if (is_null($quoteAppliedRuleIds = $magentoQuoteBuilder->getQuote()->getAppliedRuleIds())) {
+            return;
+        }
+
+        if (!is_null($couponCode = $magentoQuoteBuilder->getQuote()->getCouponCode())) {
+            Mage::helper('oyst_oneclick')->log('CouponCode: ' . $couponCode);
+        }
+
+        /** @var Mage_Sales_Model_Resource_Quote_Item_Collection $quoteItems */
+        $quoteItems = Mage::getResourceModel('sales/quote_item_collection')
+            ->setQuote($magentoQuoteBuilder->getQuote())
+            ->addFieldToFilter('parent_item_id', array('null' => true))
+        ;
+
+        /** @var Mage_Sales_Model_Quote_Item $quoteItem */
+        foreach ($quoteItems->getData() as $quoteItemData) {
+            // Manage gift product
+            if (0 == $quoteItemPrice = $quoteItemData['price']) {
+                $freeItem = new OneClickItem(
+                    $quoteItemData['product_id'],
+                    new OystPrice($quoteItemPrice, 'EUR'),
+                    $quoteItemData['qty']
+                );
+                $freeItem->__set('title', $quoteItemData['name']);
+
+                $oneClickOrderCartEstimate->addFreeItems($freeItem);
+
+                continue;
+            }
+
+            // Manage classic rules
+            if (is_null($quoteAppliedRuleIds = $quoteItemData['applied_rule_ids'])) {
+                continue;
+            }
+
+            /** @var Mage_SalesRule_Model_Resource_Rule_Collection $salesRuleCollection */
+            $salesRuleCollection = Mage::getModel('salesrule/rule')->getCollection();
+            $salesRules = $salesRuleCollection
+                ->addFieldToFilter('rule_id', array('in' => explode(',', $quoteAppliedRuleIds)))
+                ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);
+            ;
+
+            /** @var Mage_SalesRule_Model_Rule $salesRuleData */
+            foreach ($salesRules->getData() as $salesRuleData) {
+                Mage::helper('oyst_oneclick')->log('RuleId: ' . $salesRuleData['rule_id'] . ' - Type: ' . $salesRuleData['simple_action']);
+
+                if ($salesRuleData['simple_free_shipping'] || $salesRuleData['apply_to_shipping']) {
+                    Mage::helper('oyst_oneclick')->log('RuleId: '. $salesRuleData['rule_id'] . ' change only shipping fees.');
+
+                    continue;
+                }
+
+                if (0 == $discount = $quoteItemData['discount_amount']) {
+                    continue;
+                }
+
+                $priceIncludesTax = Mage::helper('tax')->priceIncludesTax($magentoQuoteBuilder->getQuote()->getStore());
+                if (!$priceIncludesTax) {
+                    $discount = $quoteItemData['discount_amount'] * (1 + $quoteItemData['tax_percent'] / 100);
+                }
+
+                $discountRules[$salesRuleData['rule_id']]['name'] = $salesRuleData['name'];
+
+                if (Mage_SalesRule_Model_Rule::CART_FIXED_ACTION == $salesRuleData['simple_action']) {
+                    $discountRules[$salesRuleData['rule_id']]['amount'][0] = $salesRuleData['discount_amount'];
+                } else {
+                    $discountRules[$salesRuleData['rule_id']]['amount'][] = $discount;
+                }
+
+                if ($salesRuleData['stop_rules_processing']) {
+                    Mage::helper('oyst_oneclick')->log('RuleId: '. $salesRuleData['rule_id'] . ' as a stop processing.');
+                    break;
+                }
+            }
+        }
+
+        foreach ($discountRules as $discountRule) {
+            $merchantDiscount = new OneClickMerchantDiscount(
+                new OystPrice(array_sum($discountRule['amount']), 'EUR'),
+                $discountRule['name']
+            );
+
+            $oneClickOrderCartEstimate->addMerchantDiscount($merchantDiscount);
+
+            Mage::helper('oyst_oneclick')->log(Zend_Json::encode($merchantDiscount->toArray()));
         }
     }
 
