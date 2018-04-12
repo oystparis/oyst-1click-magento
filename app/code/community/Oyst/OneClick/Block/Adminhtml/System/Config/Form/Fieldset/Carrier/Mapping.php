@@ -140,6 +140,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
                 'value' => $data,
                 'values' => Mage::getSingleton('oyst_oneclick/system_config_source_shipmentTypesList')
                     ->toOptionArray(),
+                'class' => 'validate-oyst-shipment-type',
                 'comment' => Mage::helper('oyst_oneclick')->__('To remove switch to disabled'),
                 'can_use_default_value' => $this->getForm()->canUseDefaultValue($dummyElement),
                 'can_use_website_value' => $this->getForm()->canUseWebsiteValue($dummyElement),

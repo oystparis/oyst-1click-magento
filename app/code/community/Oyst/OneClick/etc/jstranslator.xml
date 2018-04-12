@@ -21,5 +21,8 @@
     <validate-oyst-shipment-name translate="message" module="oyst_oneclick">
         <message>Please enter the shipment name</message>
     </validate-oyst-shipment-name>
+    <validate-oyst-shipment-type translate="message" module="oyst_oneclick">
+        <message>Shipment is set as default</message>
+    </validate-oyst-shipment-type>
     <!-- end validation.js -->
 </jstranslator>
