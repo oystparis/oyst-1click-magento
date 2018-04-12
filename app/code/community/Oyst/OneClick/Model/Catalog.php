@@ -780,7 +780,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get the shipping methods and apply cart rule
+     * Get cart estimate.
      *
      * @param array $data
      *
@@ -788,15 +788,31 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     public function cartEstimate($apiData)
     {
-        /** @var Mage_Core_Model_Store $storeId */
-        $storeId = Mage::getModel('core/store')->load($apiData['order']['context']['store_id']);
-
         /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
         $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $apiData);
         $magentoQuoteBuilder->buildQuote();
 
         // Object to format data of EndpointShipment
         $oneClickOrderCartEstimate = new OneClickOrderCartEstimate();
+
+        $this->getShipments($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
+
+        $magentoQuoteBuilder->getQuote()->setIsActive(false)->save();
+
+        return $oneClickOrderCartEstimate->toJson();
+    }
+
+    /**
+     * Get shipments.
+     *
+     * @param array $apiData
+     * @param Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder
+     * @param OneClickOrderCartEstimate $oneClickOrderCartEstimate
+     */
+    private function getShipments($apiData, &$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
+    {
+        /** @var Mage_Core_Model_Store $storeId */
+        $storeId = Mage::getModel('core/store')->load($apiData['order']['context']['store_id']);
 
         /** @var Mage_Sales_Model_Quote_Address $address */
         $address = $magentoQuoteBuilder->getQuote()->getShippingAddress();
@@ -876,10 +892,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         if (!$isPrimarySet) {
             $oneClickOrderCartEstimate->setDefaultPrimaryShipmentByType();
         }
-
-        $magentoQuoteBuilder->getQuote()->setIsActive(false)->save();
-
-        return $oneClickOrderCartEstimate->toJson();
     }
 
     /**
