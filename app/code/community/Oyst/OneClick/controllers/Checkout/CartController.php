@@ -46,9 +46,11 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
         }
 
         $this->getResponse()->setHttpResponseCode(200);
+
         if ('cgi-fcgi' === php_sapi_name()) {
             $this->getResponse()->setHeader('Content-type', 'application/json');
         }
+
         $this->getResponse()->setBody(Zend_Json::encode($response));
     }
 

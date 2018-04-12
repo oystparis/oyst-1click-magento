@@ -51,7 +51,16 @@ class Oyst_OneClick_Model_Magento_Quote
         try {
             // do not change invoke order
             // ---------------------------------------
-            $this->initializeQuote();
+            $storeId = null;
+
+            if (isset($this->apiData['order']) &&
+                $this->apiData['order']['context'] &&
+                $this->apiData['order']['context']['store_id'])
+            {
+                $storeId = $this->apiData['order']['context']['store_id'];
+            }
+
+            $this->initializeQuote($storeId);
             $this->initializeCustomer();
             $this->initializeAddresses();
 
@@ -217,8 +226,22 @@ class Oyst_OneClick_Model_Magento_Quote
      */
     private function initializeAddresses()
     {
+        $storeId = $this->apiData['order']['context']['store_id'];
+
+        $shippingMethod = Mage::getStoreConfig('oyst/oneclick/carrier_default', $storeId);
+        $shippingDescription = Mage::getStoreConfig('oyst_oneclick/carrier_name/' . $shippingMethod, $storeId);
+
+        $carrier = explode('_', $shippingMethod);
+
+        $isCarrier = false;
+
         // Bypass some info for EndpointShipment
-        if (isset($this->apiData['order']['shipment'])) {
+        if (isset($this->apiData['order']['shipment']) &&
+            isset($this->apiData['order']['shipment']['carrier']) &&
+            isset($this->apiData['order']['shipment']['carrier']['id']) &&
+            'SHIPMENT-404' != $this->apiData['order']['shipment']['id']
+        ) {
+            $isCarrier = true;
             $carrier = explode('_', $this->apiData['order']['shipment']['carrier']['id']);
         }
 
@@ -227,10 +250,16 @@ class Oyst_OneClick_Model_Magento_Quote
         $billingInfoFormated = $this->getAddressData($billingAddress);
         $billingAddress->addData($billingInfoFormated);
         $billingAddress->implodeStreetAddress();
-        if (isset($this->apiData['order']['shipment'])) {
-            $billingAddress->setLimitCarrier($carrier[0]);
+        $billingAddress->setLimitCarrier($carrier[0]);
+        if ($isCarrier) {
             $billingAddress->setShippingMethod($this->apiData['order']['shipment']['carrier']['id']); // bad api naming
+            $billingAddress->setShippingDescription($this->apiData['order']['shipment']['carrier']['name']);
+        } else {
+            $billingAddress->setShippingMethod($shippingMethod);
+            $billingAddress->setShippingDescription($shippingDescription);
         }
+        $billingAddress->save();
+
         $billingAddress->setSaveInAddressBook(false);
         $billingAddress->setShouldIgnoreValidation(true);
         $billingAddress->setCollectShippingRates(true);
@@ -242,10 +271,16 @@ class Oyst_OneClick_Model_Magento_Quote
         $shippingAddress->setSameAsBilling(0); // maybe just set same as billing?
         $shippingAddress->addData($shippingInfoFormated);
         $shippingAddress->implodeStreetAddress();
-        if (isset($this->apiData['order']['shipment'])) {
-            $shippingAddress->setLimitCarrier($carrier[0]);
+        $shippingAddress->setLimitCarrier($carrier[0]);
+        if ($isCarrier) {
             $shippingAddress->setShippingMethod($this->apiData['order']['shipment']['carrier']['id']); // bad api naming
+            $shippingAddress->setShippingDescription($this->apiData['order']['shipment']['carrier']['name']);
+        } else {
+            $shippingAddress->setShippingMethod($shippingMethod);
+            $shippingAddress->setShippingDescription($shippingDescription);
         }
+        $shippingAddress->save();
+
         $shippingAddress->setSaveInAddressBook(false);
         $shippingAddress->setShouldIgnoreValidation(true);
         $shippingAddress->setCollectShippingRates(true);
@@ -320,7 +355,11 @@ class Oyst_OneClick_Model_Magento_Quote
         );
 
         // @TODO EndpointShipment: improve this bad hack
-        if (isset($this->apiData['order']['shipment'])) {
+        if (isset($this->apiData['order']['shipment']) &&
+            isset($this->apiData['order']['shipment']['carrier']) &&
+            isset($this->apiData['order']['shipment']['carrier']['id']) &&
+            'SHIPMENT-404' != $this->apiData['order']['shipment']['id']
+        ) {
             // Get shipping cost with tax
             $shippingCost = $helper->getHumanAmount($this->apiData['order']['shipment']['amount']['value']);
         }
@@ -348,7 +387,11 @@ class Oyst_OneClick_Model_Magento_Quote
         }
 
         // @TODO EndpointShipment: improve this bad hack
-        if (isset($this->apiData['order']['shipment'])) {
+        if (isset($this->apiData['order']['shipment']) &&
+            isset($this->apiData['order']['shipment']['carrier']) &&
+            isset($this->apiData['order']['shipment']['carrier']['id']) &&
+            'SHIPMENT-404' != $this->apiData['order']['shipment']['id']
+        ) {
             // Set shipping price and shipping method for current order
             $this->quote->getShippingAddress()
                 ->setShippingPrice($shippingCost)
@@ -364,7 +407,9 @@ class Oyst_OneClick_Model_Magento_Quote
         // Re-adjust cents for item quote
         // Conversion Tax Include > Tax Exclude > Tax Include maybe make 0.01 amount error
         // @TODO EndpointShipment: improve this bad hack
-        if (isset($this->apiData['order']['shipment']) && !$priceIncludesTax && isset($this->apiData['order']['order_amount']['value'])) {
+        if (isset($this->apiData['order']['shipment']) &&
+            !$priceIncludesTax && isset($this->apiData['order']['order_amount']['value']))
+        {
             if ($this->quote->getGrandTotal() != $helper->getHumanAmount($this->apiData['order']['order_amount']['value'])) {
                 $quoteItems = $this->quote->getAllItems();
 
