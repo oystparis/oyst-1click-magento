@@ -28,6 +28,20 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     }
 
     /**
+     * Check if button is enabled
+     *
+     * @return bool
+     */
+    public function isButtonEnabled()
+    {
+        if ('disabled' === Mage::getStoreConfig('oyst/oneclick/product_page_button_position')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Retrieve product
      *
      * @return Mage_Catalog_Model_Product
@@ -118,7 +132,7 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
      */
     public function oneClickButtonPickToFirstAddToCartButtons()
     {
-        if ('before' === Mage::getStoreConfig('oyst/oneclick/button_before_addtocart')) {
+        if ('before' === Mage::getStoreConfig('oyst/oneclick/product_page_button_position')) {
             $class = Mage::getStoreConfig('oyst/oneclick/product_page_buttons_wrapper_class');
 
             return 'oneClickButtonPickToFirstAddToCartButtons("' . $class . '");';

@@ -328,12 +328,12 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <!-- button before addtocart button -->
-                        <button_before_addtocart translate="label">
+                        <!-- position -->
+                        <position translate="label">
                             <label>Button position</label>
                             <frontend_type>select</frontend_type>
                             <source_model>oyst_oneclick/system_config_source_catalog_product_button_position</source_model>
-                            <config_path>oyst/oneclick/button_before_addtocart</config_path>
+                            <config_path>oyst/oneclick/product_page_button_position</config_path>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -344,7 +344,7 @@
                                     <value>1</value>
                                 </enable>
                             </depends>
-                        </button_before_addtocart>
+                        </position>
 
                         <!-- product_page_buttons_wrapper_class -->
                         <product_page_buttons_wrapper_class translate="label">
