@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>1.8.0</version>
+            <version>1.9.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -204,7 +204,7 @@
                 <should_ask_stock>1</should_ask_stock>
                 <enable_invoice_auto_generation>1</enable_invoice_auto_generation>
                 <button_theme>normal</button_theme>
-                <button_before_addtocart>before</button_before_addtocart>
+                <product_page_button_position>disable</product_page_button_position>
                 <tracking>1</tracking>
                 <product_page_buttons_wrapper_class>add-to-cart-buttons</product_page_buttons_wrapper_class>
                 <button_rounded>1</button_rounded>

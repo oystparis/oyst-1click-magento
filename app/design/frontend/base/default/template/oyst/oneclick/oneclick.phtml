@@ -14,7 +14,7 @@
  */
 ?>
 <?php
-if ($this->isSupportedProduct()) :
+if ($this->isSupportedProduct() && $this->isButtonEnabled()) :
     ?>
     <?php echo $this->addCssStylesBlock(); ?>
 
