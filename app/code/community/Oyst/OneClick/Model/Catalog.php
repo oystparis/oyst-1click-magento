@@ -10,7 +10,7 @@
  */
 
 use Oyst\Classes\OneClickItem;
-use Oyst\Classes\OneClickShipmentCalculation;
+use Oyst\Classes\OneClickOrderCartEstimate;
 use Oyst\Classes\OneClickShipmentCatalogLess;
 use Oyst\Classes\OneClickStock;
 use Oyst\Classes\OystCarrier;
@@ -801,7 +801,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $magentoQuoteBuilder->buildQuote();
 
         // Object to format data of EndpointShipment
-        $oneClickShipmentCalculation = new OneClickShipmentCalculation();
+        $oneClickOrderCartEstimate = new OneClickOrderCartEstimate();
 
         /** @var Mage_Sales_Model_Quote_Address $address */
         $address = $magentoQuoteBuilder->getQuote()->getShippingAddress();
@@ -868,7 +868,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                     $isPrimarySet = true;
                 }
 
-                $oneClickShipmentCalculation->addShipment($shipment);
+                $oneClickOrderCartEstimate->addShipment($shipment);
             } catch (Exception $e) {
                 Mage::logException($e);
                 continue;
@@ -876,12 +876,12 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         }
 
         if (!$isPrimarySet) {
-            $oneClickShipmentCalculation->setDefaultPrimaryShipmentByType();
+            $oneClickOrderCartEstimate->setDefaultPrimaryShipmentByType();
         }
 
         $magentoQuoteBuilder->getQuote()->setIsActive(false)->save();
 
-        return $oneClickShipmentCalculation->toJson();
+        return $oneClickOrderCartEstimate->toJson();
     }
 
     /**
