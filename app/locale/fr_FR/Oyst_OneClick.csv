@@ -43,7 +43,7 @@
 "Enable invoice auto-generation","Activer la génération automatique de la facture"
 "<b>Yes</b> creation of the invoice when the order is created, the ""Due amount"" will be 0.<br/><b>No</b> the order remains with a ""Due amount"" and the invoice is not created.","<b>Oui</b> création de la facture à la création de la commande, le ""Montant dû"" sera à 0.<br><b>Non</b> la commande reste avec un ""Montant dû"" et la facture n'est pas créée."
 "Button theme","Thème du bouton"
-"Normal","Normal"
+"Default","Par défaut"
 "Inversed","Inversé"
 "Button color","Couleur du bouton"
 "Please Click the text box to select color","Cliquez sur la zone de texte pour sélectionner la couleur"
