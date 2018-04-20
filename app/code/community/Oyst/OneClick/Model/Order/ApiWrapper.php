@@ -68,13 +68,14 @@ class Oyst_OneClick_Model_Order_ApiWrapper extends Mage_Core_Model_Abstract
      *
      * @param Int $oystOrderId
      * @param string $status
+     * @param null|string
      *
      * @return array
      */
-    public function updateOrder($oystOrderId, $status)
+    public function updateOrder($oystOrderId, $status, $incrementId = null)
     {
         try {
-            $response = $this->_orderApi->updateStatus($oystOrderId, $status);
+            $response = $this->_orderApi->updateStatus($oystOrderId, $status, $incrementId);
             $this->_oystClient->validateResult($this->_orderApi);
         } catch (Exception $e) {
             Mage::logException($e);
