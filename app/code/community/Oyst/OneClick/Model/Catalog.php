@@ -782,7 +782,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     /**
      * Get the shipping methods and apply cart rule
      *
-     * @param $data
+     * @param array $data
      *
      * @return string
      */
@@ -806,7 +806,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             ->getShippingRatesCollection();
         $isPrimarySet = false;
 
+        /** @var Mage_Tax_Helper_Data $coreHelper */
         $taxHelper = Mage::helper('tax');
+
+        /** @var Mage_Core_Helper_Data $coreHelper */
         $coreHelper = Mage::helper('core');
 
         $ignoredShipments = Mage::helper('oyst_oneclick/shipments')->getIgnoredShipments();
@@ -816,7 +819,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                     continue;
                 }
 
-                $price = $coreHelper->currency($rateData['price'], true, false);
+                $price = $coreHelper->currency($rateData['price'], false, false);
                 if (!$taxHelper->shippingPriceIncludesTax()) {
                     $price = $taxHelper->getShippingPrice($price, true, $address);
                 }
