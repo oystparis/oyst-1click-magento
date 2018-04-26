@@ -801,6 +801,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $this->getShipments($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
+        $this->getCartAmount($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
+
         $magentoQuoteBuilder->getQuote()->setIsActive(false)->save();
 
         return $oneClickOrderCartEstimate->toJson();
@@ -995,6 +997,48 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             Mage::helper('oyst_oneclick')->log(Zend_Json::encode($merchantDiscount->toArray()));
         }
+    }
+
+    /**
+     * Get cart amount.
+     *
+     * @param array $apiData
+     * @param Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder
+     * @param OneClickOrderCartEstimate $oneClickOrderCartEstimate
+     */
+    private function getCartAmount($apiData, &$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
+    {
+        // Get order amount
+        $totals = $magentoQuoteBuilder->getQuote()->getTotals();
+        $grandTotal = $magentoQuoteBuilder->getQuote()->getGrandTotal();
+
+        if (!isset($totals['shipping'])) {
+            $shippingAmount = 0;
+
+            $cartEstimate = $oneClickOrderCartEstimate->toArray();
+            foreach ($cartEstimate['shipments'] as $shipment) {
+
+                if (is_null($apiData['order']['shipment']) && $shipment['primary']) {
+                    $shippingAmount = Mage::helper('oyst_oneclick')->getHumanAmount($shipment['amount']['value']);
+                    break;
+                }
+
+                // shipments changed in modal
+                if (!is_null($apiData['order']['shipment']) &&
+                    $apiData['order']['shipment']['id'] == $shipment['carrier']['id']
+                ) {
+                    $shippingAmount = Mage::helper('oyst_oneclick')->getHumanAmount($shipment['amount']['value']);
+                    break;
+                }
+            }
+
+            Mage::helper('oyst_oneclick')->log('$shippingAmount: ' . $shippingAmount);
+
+            $grandTotal = $totals['grand_total']->getValue() + $shippingAmount;
+        }
+
+        Mage::helper('oyst_oneclick')->log('$grandTotal: ' . $grandTotal);
+        $oneClickOrderCartEstimate->setCartAmount(new OystPrice($grandTotal, 'EUR'));
     }
 
     /**
