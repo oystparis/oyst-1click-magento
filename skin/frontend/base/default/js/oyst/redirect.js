@@ -26,10 +26,12 @@ function RedirectCart(url, oystParam) {
     this.oystParam = oystParam;
     this.form = new FormData();
     this.xhr = new XMLHttpRequest();
-    this.data = null;
+    this.data = {};
 
     this.prepare = function () {
-        self.form.append("oystParam", self.oystParam);
+        if (!self.form.get("oystParam")) {
+            self.form.append("oystParam", self.oystParam);
+        }
 
         self.xhr.open("POST", self.url, true);
         self.xhr.setRequestHeader("cache-control", "no-cache");
@@ -51,7 +53,7 @@ function RedirectCart(url, oystParam) {
 
     this.send = function () {
         setTimeout(function () {
-            if (null === self.data) {
+            if (!self.data.check_order_url) {
                 self.xhr.onload = self.nullResponse;
             } else {
                 self.url = self.data.check_order_url;
