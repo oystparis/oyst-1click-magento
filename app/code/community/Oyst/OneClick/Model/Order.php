@@ -182,7 +182,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
             $orderApiClient = Mage::getModel('oyst_oneclick/order_apiWrapper');
 
             try {
-                $response = $orderApiClient->updateOrder($this->orderResponse['order']['id'], OystOrderStatus::ACCEPTED);
+                $response = $orderApiClient->updateOrder($this->orderResponse['order']['id'], OystOrderStatus::ACCEPTED, $order->getIncrementId());
                 Mage::helper('oyst_oneclick')->log($response);
 
                 $this->initTransaction($order);
