@@ -70,7 +70,12 @@ class Oyst_OneClick_Model_Magento_Quote
             $this->initializeQuoteItems();
             $this->initializePaymentMethodData();
 
-            $this->quote->collectTotals()->save();
+            $this->quote->setTotalsCollectedFlag(false)->collectTotals()->save();
+
+            if (isset($this->apiData['order']['context']['applied_coupons'])) {
+                $this->quote->setCouponCode($this->apiData['order']['context']['applied_coupons']);
+                $this->quote->setTotalsCollectedFlag(false)->collectTotals()->save();
+            }
         } catch (Exception $e) {
             $this->quote->setIsActive(false)->save();
             Mage::helper('oyst_oneclick')->log('Error build quote: ' . $e->getMessage());
@@ -92,7 +97,14 @@ class Oyst_OneClick_Model_Magento_Quote
         $this->quote->setStore($store);
         $this->quote->getStore()->setCurrentCurrencyCode($this->apiData['order']['order_amount']['currency']);
         $this->quote->setRemoteIp($this->apiData['order']['context']['remote_addr']);
-        $this->quote->setQuoteId($this->apiData['order']['context']['quote_id']);
+
+        // This is for the redirect checkout cart
+        if (isset($this->apiData['order']['context']['quote_id'])) {
+            Mage::getModel('sales/quote')
+                ->load($this->apiData['order']['context']['quote_id'])
+                ->setData('oyst_order_id', $this->apiData['order']['id'])
+                ->save();
+        }
 
         $this->quote->setIsMultiShipping(false);
         $this->quote->setIsSuperMode(true);
