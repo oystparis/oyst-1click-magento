@@ -128,4 +128,60 @@ class Oyst_OneClick_Model_Observer
             }
         }
     }
+
+    /**
+     * Tag conversion.
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function tagConversion(Varien_Event_Observer $observer)
+    {
+        $order = $observer->getOrder();
+        $url = Mage::app()->getStore($order->getStoreId())->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK);
+
+        if ($order->getOystOrderId()) {
+            $url .= 'oyst_oneclick/notifications/index';
+        } else {
+            $url .= 'checkout/onepage/success/';
+        }
+
+        $cookie = str_replace('\n', '', $this->execute('https://api.oyst.com/session'));
+
+        $json_array = array(
+            'referer' => $url,
+            'tag' => 'merchantconfirmationpage:display',
+            'oyst_cookie' => $cookie,
+            'user_agent' => Mage::helper('core/http')->getHttpUserAgent(),
+            'cart_amount' => $order->getGrandTotal(),
+            'timestamp' => strtotime($order->getCreatedAt()),
+        );
+
+        $this->execute('https://api.staging.oyst.eu/events/oneclick', $json_array);
+    }
+
+    /**
+     * Execute http request.
+     *
+     * @param $url
+     * @param null $data
+     *
+     * @return null|mixed
+     */
+    private function execute($url, $data = null)
+    {
+        $client = new Zend_Http_Client($url);
+
+        if ($data) {
+            $data = Zend_Json::encode($data);
+            $client->setRawData($data, 'application/json');
+        }
+
+        $response = $client->request(Zend_Http_Client::POST);
+
+        if ($response->isError()) {
+            Mage::helper('oyst_oneclick')->log('Error: ' . $response->getMessage());
+        }
+
+        return $response->getBody();
+    }
 }
