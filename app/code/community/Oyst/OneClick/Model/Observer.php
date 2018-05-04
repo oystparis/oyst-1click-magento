@@ -128,4 +128,21 @@ class Oyst_OneClick_Model_Observer
             }
         }
     }
+
+    /**
+     * Activate tabs when api key is entered.
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function activateTabs(Varien_Event_Observer $observer)
+    {
+        $flag = Mage::getStoreConfigFlag('oyst/oneclick/api_login');
+        $groups = $observer->getConfig()->getNode('sections/oyst_oneclick/groups');
+
+        foreach ($groups->asArray() as $key => $group) {
+            if (!$flag && 'informations' != $key && 'general' != $key) {
+                $observer->getConfig()->setNode('sections/oyst_oneclick/groups/' . $key, '');
+            }
+        }
+    }
 }

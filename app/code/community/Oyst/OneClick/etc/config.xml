@@ -187,6 +187,16 @@
                     </bind_locale>
                 </observers>
             </controller_action_predispatch_adminhtml_system_config_edit>
+
+            <!-- Activate config tabs -->
+            <adminhtml_init_system_config>
+                <observers>
+                    <activate_tabs>
+                        <class>Oyst_OneClick_Model_Observer</class>
+                        <method>activateTabs</method>
+                    </activate_tabs>
+                </observers>
+            </adminhtml_init_system_config>
         </events>
     </adminhtml>
     <!-- Default configuration values -->
