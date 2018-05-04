@@ -48,6 +48,18 @@ if (Validation) {
 
         return true;
     });
+
+    Validation.add("validate-oyst-shipment-type", "Shipment is set as default", function (v, element) {
+
+        var shipment = document.getElementById("oyst_oneclick_shipments_default_carrier").value;
+        var carrier = document.getElementById("oyst_oneclick_carrier_mapping_" + shipment);
+
+        if (carrier.getAttribute("id") === element.getAttribute("id") && "0" === carrier.value) {
+            return false;
+        }
+
+        return true;
+    });
 }
 
 function getUrl(url) {
