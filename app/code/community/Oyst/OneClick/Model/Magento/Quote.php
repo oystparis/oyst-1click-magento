@@ -270,7 +270,7 @@ class Oyst_OneClick_Model_Magento_Quote
             $billingAddress->setShippingMethod($shippingMethod);
             $billingAddress->setShippingDescription($shippingDescription);
         }
-        $billingAddress->save();
+        $billingAddress->save()->isObjectNew(false);
 
         $billingAddress->setSaveInAddressBook(false);
         $billingAddress->setShouldIgnoreValidation(true);
@@ -291,7 +291,7 @@ class Oyst_OneClick_Model_Magento_Quote
             $shippingAddress->setShippingMethod($shippingMethod);
             $shippingAddress->setShippingDescription($shippingDescription);
         }
-        $shippingAddress->save();
+        $shippingAddress->save()->isObjectNew(false);
 
         $shippingAddress->setSaveInAddressBook(false);
         $shippingAddress->setShouldIgnoreValidation(true);
