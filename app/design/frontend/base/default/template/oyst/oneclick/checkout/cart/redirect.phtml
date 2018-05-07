@@ -13,6 +13,10 @@
  * @var Oyst_OneClick_Block_Checkout_Cart_Redirect $this
  */
 ?>
+<?php
+$quoteUrl = $this->escapeUrl($this->getQuoteUrl());
+$quoteId = $this->getQuoteId();
+?>
 
 <div class="sk-fading-circle">
     <div class="sk-circle1 sk-circle"></div>
@@ -34,9 +38,6 @@
 </div>
 
 <script>
-    var redirectCart = new redirectCart(
-        "<?php echo $this->escapeUrl($this->getQuoteUrl()); ?>",
-        <?php echo $this->getQuoteId(); ?>
-    );
+    var redirectCart = new RedirectCart("<?php echo $quoteUrl ?>", <?php echo $quoteId; ?>);
     redirectCart.send();
 </script>

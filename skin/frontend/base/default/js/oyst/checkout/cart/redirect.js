@@ -19,7 +19,7 @@
  * @param {String} url Loading page url
  * @param {int} oystParam cart id
  */
-function redirectCart(url, oystParam) {
+function RedirectCart(url, oystParam) {
     var self = this;
 
     this.url = url;
