@@ -24,6 +24,8 @@ use Oyst\Classes\OystProduct;
  */
 class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 {
+    const C4B_FREEPRODUCT_ADD_GIFT_ACTION = 'add_gift';
+
     /**
      * Supported type of product
      *
@@ -949,7 +951,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $salesRuleCollection = Mage::getModel('salesrule/rule')->getCollection();
             $salesRules = $salesRuleCollection
                 ->addFieldToFilter('rule_id', array('in' => explode(',', $quoteAppliedRuleIds)))
-                ->addFieldToFilter('simple_action', array('neq' => C4B_Freeproduct_Model_Consts::ADD_GIFT_ACTION))
+                ->addFieldToFilter('simple_action', array('neq' => self::C4B_FREEPRODUCT_ADD_GIFT_ACTION))
                 ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);
             ;
 
