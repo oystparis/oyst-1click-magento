@@ -301,9 +301,11 @@ class Oyst_OneClick_Model_Magento_Quote
     /**
      * Transform Magento address to formatted array
      *
+     * @param $address Mage_Sales_Model_Quote_Address
+     *
      * @return array
      */
-    private function getAddressData()
+    private function getAddressData(Mage_Sales_Model_Quote_Address $address)
     {
         $customerAddress = $this->apiData['order']['user']['address'];
 
@@ -327,6 +329,17 @@ class Oyst_OneClick_Model_Magento_Quote
             'name' => (isset($customerAddress['label']) && 'N/A' != $customerAddress['label']) ? $customerAddress['label'] : '',
             'save_in_address_book' => 0,
         );
+
+        if ('shipping' == $address->getAddressType() &&
+            isset($this->apiData['order']['shipment']['pickup_store']) &&
+            isset($this->apiData['order']['shipment']['pickup_store']['address'])
+        ) {
+            $pickupStoreAddress = $this->apiData['order']['shipment']['pickup_store']['address'];
+            $formattedAddress['city'] = $pickupStoreAddress['city'];
+            $formattedAddress['company'] = $pickupStoreAddress['name'] . ' / ' . $formattedAddress['company'];
+            $formattedAddress['street'] = $pickupStoreAddress['name'] . ' - ' . $pickupStoreAddress['street'];
+            $formattedAddress['postcode'] = $pickupStoreAddress['postal_code'];
+        }
 
         return $formattedAddress;
     }
