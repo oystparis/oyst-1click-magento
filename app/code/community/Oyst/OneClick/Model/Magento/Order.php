@@ -63,7 +63,9 @@ class Oyst_OneClick_Model_Magento_Order
         }
 
         // Remove ordered items from customer cart
-        $this->quote->setIsActive(false)->save();
+        $resourceHelper = Mage::getResourceModel('oyst_oneclick/helper');
+        $resourceHelper->inactiveAllCustomerQuotes($this->quote->getCustomerId());
+        $resourceHelper->inactiveAllOystOrderRelatedQuotes($this->quote->getOystOrderId());
     }
 
     private function placeOrder()
