@@ -24,16 +24,19 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
 
     const SUCCESS_URL = 'checkout/onepage/success';
 
+    const XML_PATH_RESTRICT_ALLOW_IPS = 'restrict_allow_ips';
+
     /**
      * Get config from Magento
      *
      * @param string $code
+     * @param int $storeId
      *
      * @return mixed
      */
-    public function getConfig($code)
+    public function getConfig($code, $storeId = null)
     {
-        return Mage::getStoreConfig("oyst/oneclick/$code");
+        return Mage::getStoreConfig("oyst/oneclick/$code", $storeId);
     }
 
     /**
@@ -255,5 +258,30 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     public function getRedirectUrl($cartId)
     {
         return Mage::getBaseUrl() . self::LOADING_URL . 'cart_id/' . $cartId;
+    }
+
+    /**
+     * @param int $storeId
+     *
+     * @return bool
+     */
+    public function isIpAllowed($storeId = null)
+    {
+        $allow = true;
+
+        $allowedIps = $this->getConfig(self::XML_PATH_RESTRICT_ALLOW_IPS, $storeId);
+        $clientIps = Mage::app()->getRequest()->getClientIp();
+        if (!empty($allowedIps) && !empty($clientIps)) {
+            $allowedIps = preg_split('#\s*,\s*#', $allowedIps, null, PREG_SPLIT_NO_EMPTY);
+            $clientIps = preg_split('#\s*,\s*#', $clientIps, null, PREG_SPLIT_NO_EMPTY);
+
+            $allowedIp = array_intersect($allowedIps, $clientIps);
+
+            if (empty($allowedIp)) {
+                $allow = false;
+            }
+        }
+
+        return $allow;
     }
 }
