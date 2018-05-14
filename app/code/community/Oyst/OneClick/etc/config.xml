@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>1.9.1</version>
+            <version>1.10.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -61,6 +61,16 @@
                     </oyst_lib_load>
                 </observers>
             </controller_front_init_before>
+
+            <!-- Oneclick enable and restrict allow ips -->
+            <controller_action_layout_load_before>
+                <observers>
+                    <oyst_oneclick_is_enable>
+                        <class>Oyst_OneClick_Model_Observer</class>
+                        <method>isEnable</method>
+                    </oyst_oneclick_is_enable>
+                </observers>
+            </controller_action_layout_load_before>
         </events>
     </global>
     <admin>
