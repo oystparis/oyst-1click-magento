@@ -18,6 +18,10 @@ class Oyst_OneClick_Model_Observer
      */
     const NOTIFICATIONS_SECTION = 'oyst_notifications';
 
+    const XML_PATH_ONECLICK_ENABLE = 'oyst/oneclick/enable';
+
+    const XML_PATH_ONECLICK_ENABLE_AND_RESTRICT_ALLOW_IPS = 'oyst/oneclick/is_enable';
+
     /**
      * Change order status after partial refund.
      *
@@ -143,6 +147,23 @@ class Oyst_OneClick_Model_Observer
             if (!$flag && 'informations' != $key && 'general' != $key) {
                 $observer->getConfig()->setNode('sections/oyst_oneclick/groups/' . $key, '');
             }
+        }
+    }
+
+    /**
+     * Check if the module must be considered as enable
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function isEnable(Varien_Event_Observer $observer)
+    {
+        $oneclickEnable = Mage::getStoreConfig(self::XML_PATH_ONECLICK_ENABLE);
+
+        /** @var Oyst_OneClick_Helper_Data $oystHelper */
+        $oystHelper = Mage::helper('oyst_oneclick');
+
+        if ($oneclickEnable && $oystHelper->isIpAllowed()) {
+            Mage::app()->getStore()->setConfig(self::XML_PATH_ONECLICK_ENABLE_AND_RESTRICT_ALLOW_IPS, true);
         }
     }
 }

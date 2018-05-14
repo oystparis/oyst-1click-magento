@@ -15,7 +15,7 @@
     <default>
         <block type="oyst_oneclick/oneClick" name="oyst.oneclick.express.checkout" template="oyst/oneclick/oneclick.phtml"/>
         <reference name="head">
-            <block type="core/text" name="oyst-oneclick-metadata">
+            <block type="core/text" name="oyst.oneclick.metadata">
                 <action method="setText">
                     <text helper="oyst_oneclick/getTrackingMeta"/>
                 </action>
@@ -25,12 +25,12 @@
 
     <catalog_product_view>
         <reference name="head">
-            <action method="addCss" ifconfig="oyst/oneclick/enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
-            <action method="addItem" ifconfig="oyst/oneclick/enable"><type>skin_js</type><name>js/oyst/oneclick.js</name></action>
+            <action method="addCss" ifconfig="oyst/oneclick/is_enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
+            <action method="addItem" ifconfig="oyst/oneclick/is_enable"><type>skin_js</type><name>js/oyst/oneclick.js</name></action>
         </reference>
 
         <reference name="product.info.addtocart">
-            <action method="append" ifconfig="oyst/oneclick/enable"><block>oyst.oneclick.express.checkout</block></action>
+            <action method="append" ifconfig="oyst/oneclick/is_enable"><block>oyst.oneclick.express.checkout</block></action>
         </reference>
     </catalog_product_view>
 
@@ -38,20 +38,20 @@
         <block type="oyst_oneclick/oneClick" name="oyst.oneclick.checkout.cart" template="oyst/oneclick/checkout/cart/oneclick.phtml" />
 
         <reference name="head">
-            <action method="addCss" ifconfig="oyst/oneclick/enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
-            <action method="addItem" ifconfig="oyst/oneclick/enable"><type>skin_js</type><name>js/oyst/checkout/cart/oneclick.js</name></action>
+            <action method="addCss" ifconfig="oyst/oneclick/is_enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
+            <action method="addItem" ifconfig="oyst/oneclick/is_enable"><type>skin_js</type><name>js/oyst/checkout/cart/oneclick.js</name></action>
         </reference>
     </checkout_cart_index>
 
     <oneclick_checkout_cart_top>
         <reference name="checkout.cart.top_methods">
-            <action method="insert" ifconfig="oyst/oneclick/enable"><block>oyst.oneclick.checkout.cart</block></action>
+            <action method="insert" ifconfig="oyst/oneclick/is_enable"><block>oyst.oneclick.checkout.cart</block></action>
         </reference>
     </oneclick_checkout_cart_top>
 
     <oneclick_checkout_cart_bottom>
         <reference name="checkout.cart.methods">
-            <action method="insert" ifconfig="oyst/oneclick/enable"><block>oyst.oneclick.checkout.cart</block></action>
+            <action method="insert" ifconfig="oyst/oneclick/is_enable"><block>oyst.oneclick.checkout.cart</block></action>
         </reference>
     </oneclick_checkout_cart_bottom>
 

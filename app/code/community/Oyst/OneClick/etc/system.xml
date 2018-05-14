@@ -790,6 +790,18 @@
                             </depends>
                         </allow_discount_coupon_from_modal>
 
+                        <!-- restrict allow ips -->
+                        <restrict_allow_ips translate="label comment">
+                            <label>Allowed IPs (comma separated)</label>
+                            <comment>Leave empty for access from any location.</comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/restrict_allow_ips</config_path>
+                            <sort_order>49</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </restrict_allow_ips>
+
                         <!-- log actions -->
                         <log_actions translate="label">
                             <label>Download/Delete log files</label>
