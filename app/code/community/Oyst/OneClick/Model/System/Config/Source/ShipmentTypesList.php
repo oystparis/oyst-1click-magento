@@ -22,7 +22,7 @@ class Oyst_OneClick_Model_System_Config_Source_ShipmentTypesList extends Mage_Co
     public function toOptionArray()
     {
         /** @var Oyst_OneClick_Model_OneClick_ApiWrapper $oneclickApi */
-        $oneclickApi = Mage::getModel('oyst_oneclick/catalog_apiWrapper');
+        $oneclickApi = Mage::getSingleton('oyst_oneclick/catalog_apiWrapper');
         $shipmentTypes = $oneclickApi->getShipmentTypes();
 
         $shipmentTypesList = array(

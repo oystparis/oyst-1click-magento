@@ -28,6 +28,9 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
 
     protected $_type = OystApiClientFactory::ENTITY_CATALOG;
 
+    /** @var array */
+    protected $_shipmentTypes;
+
     public function __construct()
     {
         $this->_oystClient = Mage::getModel('oyst_oneclick/api');
@@ -54,12 +57,14 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
     public function getShipmentTypes()
     {
         try {
-            $response = $this->_catalogApi->getShipmentTypes();
-            $this->_oystClient->validateResult($this->_catalogApi);
+            if(!isset($this->_shipmentTypes)) {
+                $this->_shipmentTypes = $this->_catalogApi->getShipmentTypes();
+                $this->_oystClient->validateResult($this->_catalogApi);
+            }
         } catch (Exception $e) {
             Mage::logException($e);
         }
 
-        return $response;
+        return $this->_shipmentTypes;
     }
 }
