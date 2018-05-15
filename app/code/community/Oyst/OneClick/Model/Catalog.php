@@ -941,57 +941,35 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
                 continue;
             }
+        }
 
-            // Manage classic rules
-            if (is_null($quoteAppliedRuleIds = $quoteItemData['applied_rule_ids'])) {
+        // Handle Classic discount rules
+        foreach ($magentoQuoteBuilder->getQuote()->getTotals() as $total) {
+            if ($total->getCode() != 'discount') {
                 continue;
             }
 
             /** @var Mage_SalesRule_Model_Resource_Rule_Collection $salesRuleCollection */
             $salesRuleCollection = Mage::getModel('salesrule/rule')->getCollection();
             $salesRules = $salesRuleCollection
-                ->addFieldToFilter('rule_id', array('in' => explode(',', $quoteAppliedRuleIds)))
+                ->addFieldToFilter('rule_id', array('in' => array_keys($total->getFullInfo())))
                 ->addFieldToFilter('simple_action', array('neq' => self::C4B_FREEPRODUCT_ADD_GIFT_ACTION))
-                ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);
-            ;
+                ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);;
 
-            /** @var Mage_SalesRule_Model_Rule $salesRuleData */
-            foreach ($salesRules->getData() as $salesRuleData) {
-                Mage::helper('oyst_oneclick')->log('RuleId: ' . $salesRuleData['rule_id'] . ' - Type: ' . $salesRuleData['simple_action']);
+            foreach ($total->getFullInfo() as $salesRuleId => $discountInfo) {
+                $salesRule = $salesRules->getItemById($salesRuleId);
+                Mage::helper('oyst_oneclick')->log('RuleId: ' . $salesRule->getRuleId() . ' - Type: ' . $salesRule->getSimpleAction());
 
-                if ($salesRuleData['simple_free_shipping'] || $salesRuleData['apply_to_shipping']) {
-                    Mage::helper('oyst_oneclick')->log('RuleId: '. $salesRuleData['rule_id'] . ' change only shipping fees.');
-
-                    continue;
-                }
-
-                if (0 == $discount = $quoteItemData['discount_amount']) {
-                    continue;
-                }
-
-                $priceIncludesTax = Mage::helper('tax')->priceIncludesTax($magentoQuoteBuilder->getQuote()->getStore());
-                if (!$priceIncludesTax) {
-                    $discount = $quoteItemData['discount_amount'] * (1 + $quoteItemData['tax_percent'] / 100);
-                }
-
-                $discountRules[$salesRuleData['rule_id']]['name'] = $salesRuleData['name'];
-
-                if (Mage_SalesRule_Model_Rule::CART_FIXED_ACTION == $salesRuleData['simple_action']) {
-                    $discountRules[$salesRuleData['rule_id']]['amount'][0] = $salesRuleData['discount_amount'];
-                } else {
-                    $discountRules[$salesRuleData['rule_id']]['amount'][] = $discount;
-                }
-
-                if ($salesRuleData['stop_rules_processing']) {
-                    Mage::helper('oyst_oneclick')->log('RuleId: '. $salesRuleData['rule_id'] . ' as a stop processing.');
-                    break;
-                }
+                $discountRules[] = array(
+                    'name' => $salesRule->getName(),
+                    'amount' => $discountInfo['amount']
+                );
             }
         }
 
         foreach ($discountRules as $discountRule) {
             $merchantDiscount = new OneClickMerchantDiscount(
-                new OystPrice(array_sum($discountRule['amount']), 'EUR'),
+                new OystPrice($discountRule['amount'], 'EUR'),
                 $discountRule['name']
             );
 
