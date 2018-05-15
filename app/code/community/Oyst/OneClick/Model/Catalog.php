@@ -294,9 +294,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             // Book initial quantity
             if (!$this->isPreload && $this->getConfig('should_ask_stock') && 0 !== $quantity) {
-                $this->stockItemToBook($product->getId(), $quantity);
+                $productId = isset($this->configurableProductChildId) ? $this->configurableProductChildId : $product->getId();
+                $this->stockItemToBook($productId, $quantity);
                 Mage::helper('oyst_oneclick')->log(
-                    sprintf('Book initial qty %s for productId %s', $quantity, $product->getId())
+                    sprintf('Book initial qty %s for productId %s', $quantity, $productId)
                 );
             }
 
