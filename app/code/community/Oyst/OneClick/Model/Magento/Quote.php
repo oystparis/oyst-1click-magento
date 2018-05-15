@@ -240,21 +240,16 @@ class Oyst_OneClick_Model_Magento_Quote
     {
         $storeId = $this->apiData['order']['context']['store_id'];
 
-        $shippingMethod = Mage::getStoreConfig('oyst/oneclick/carrier_default', $storeId);
-        $shippingDescription = Mage::getStoreConfig('oyst_oneclick/carrier_name/' . $shippingMethod, $storeId);
+        $billingMethod = $shippingMethod = Mage::getStoreConfig('oyst/oneclick/carrier_default', $storeId);
+        $billingDescription = $shippingDescription = Mage::getStoreConfig('oyst_oneclick/carrier_name/' . $shippingMethod, $storeId);
 
-        $carrier = explode('_', $shippingMethod);
-
-        $isCarrier = false;
-
-        // Bypass some info for EndpointShipment
         if (isset($this->apiData['order']['shipment']) &&
             isset($this->apiData['order']['shipment']['carrier']) &&
             isset($this->apiData['order']['shipment']['carrier']['id']) &&
             'SHIPMENT-404' != $this->apiData['order']['shipment']['id']
         ) {
-            $isCarrier = true;
-            $carrier = explode('_', $this->apiData['order']['shipment']['carrier']['id']);
+            $billingMethod = $shippingMethod = $this->apiData['order']['shipment']['carrier']['id'];
+            $billingDescription = $shippingDescription = $this->apiData['order']['shipment']['carrier']['name'];
         }
 
         /** @var Mage_Sales_Model_Quote_Address $billingAddress */
@@ -262,14 +257,8 @@ class Oyst_OneClick_Model_Magento_Quote
         $billingInfoFormated = $this->getAddressData($billingAddress);
         $billingAddress->addData($billingInfoFormated);
         $billingAddress->implodeStreetAddress();
-        $billingAddress->setLimitCarrier($carrier[0]);
-        if ($isCarrier) {
-            $billingAddress->setShippingMethod($this->apiData['order']['shipment']['carrier']['id']); // bad api naming
-            $billingAddress->setShippingDescription($this->apiData['order']['shipment']['carrier']['name']);
-        } else {
-            $billingAddress->setShippingMethod($shippingMethod);
-            $billingAddress->setShippingDescription($shippingDescription);
-        }
+        $billingAddress->setShippingMethod($billingMethod);
+        $billingAddress->setShippingDescription($billingDescription);
         $billingAddress->save()->isObjectNew(false);
 
         $billingAddress->setSaveInAddressBook(false);
@@ -283,14 +272,8 @@ class Oyst_OneClick_Model_Magento_Quote
         $shippingAddress->setSameAsBilling(0); // maybe just set same as billing?
         $shippingAddress->addData($shippingInfoFormated);
         $shippingAddress->implodeStreetAddress();
-        $shippingAddress->setLimitCarrier($carrier[0]);
-        if ($isCarrier) {
-            $shippingAddress->setShippingMethod($this->apiData['order']['shipment']['carrier']['id']); // bad api naming
-            $shippingAddress->setShippingDescription($this->apiData['order']['shipment']['carrier']['name']);
-        } else {
-            $shippingAddress->setShippingMethod($shippingMethod);
-            $shippingAddress->setShippingDescription($shippingDescription);
-        }
+        $shippingAddress->setShippingMethod($shippingMethod);
+        $shippingAddress->setShippingDescription($shippingDescription);
         $shippingAddress->save()->isObjectNew(false);
 
         $shippingAddress->setSaveInAddressBook(false);
