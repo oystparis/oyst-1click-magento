@@ -604,7 +604,13 @@ class Oyst_OneClick_Model_Magento_Quote
         /** @var Oyst_OneClick_Model_Payment_Method_Oneclick $paymentMethod */
         $paymentMethod = Mage::getModel('oyst_oneclick/payment_method_oneclick');
 
-        $this->quote->getPayment()->importData(array('method' => $paymentMethod->getCode()));
+        /** @var Mage_Sales_Model_Quote_Payment $payment */
+        $payment = $this->quote->getPayment();
+
+        $payment
+            ->importData(array('method' => $paymentMethod->getCode()))
+            ->setCcLast4(substr($this->apiData['order']['user']['card']['preview'], -4))
+            ->save();
     }
 
     /**
