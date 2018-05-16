@@ -207,6 +207,16 @@
                     </activate_tabs>
                 </observers>
             </adminhtml_init_system_config>
+
+            <!-- OneClick payment info -->
+            <payment_info_block_prepare_specific_information>
+                <observers>
+                    <oneclick>
+                        <class>Oyst_OneClick_Model_Observer</class>
+                        <method>oneclickPaymentInfoSpecificInformation</method>
+                    </oneclick>
+                </observers>
+            </payment_info_block_prepare_specific_information>
         </events>
     </adminhtml>
     <!-- Default configuration values -->
