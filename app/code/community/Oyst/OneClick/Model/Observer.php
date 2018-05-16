@@ -22,6 +22,8 @@ class Oyst_OneClick_Model_Observer
 
     const XML_PATH_ONECLICK_ENABLE_AND_RESTRICT_ALLOW_IPS = 'oyst/oneclick/is_enable';
 
+    const PAYMENT_METHOD = 'oyst_oneclick';
+
     /**
      * Change order status after partial refund.
      *
@@ -165,5 +167,28 @@ class Oyst_OneClick_Model_Observer
         if ($oneclickEnable && $oystHelper->isIpAllowed()) {
             Mage::app()->getStore()->setConfig(self::XML_PATH_ONECLICK_ENABLE_AND_RESTRICT_ALLOW_IPS, true);
         }
+    }
+
+    /**
+     * OneClick payment info.
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function oneclickPaymentInfoSpecificInformation(Varien_Event_Observer $observer)
+    {
+        /* @var $payment Mage_Payment_Model_Info */
+        $payment = $observer->getEvent()->getPayment();
+
+        if (self::PAYMENT_METHOD != $payment->getMethodInstance()->getCode()
+            && 'info' != $observer->getEvent()->getBlock()->getBlockAlias()
+        ) {
+            return;
+        }
+
+        $observer->getEvent()->getTransport()->setData(array(
+            Mage::helper('oyst_oneclick')->__('Credit Card No Last 4') => $payment->getCcLast4(),
+        ));
+
+        return;
     }
 }
