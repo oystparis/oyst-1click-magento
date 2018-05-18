@@ -200,7 +200,7 @@ function oneClickButtonPickToFirstAddToCartButtons(addtocartButtonsClass) {
 }
 
 /**
- * Apply add to cart size on OneClick button
+ * Apply add to cart button size on OneClick button
  */
 function smartButtonData(addtocartButtonsClass) {
     if (document.getElementById("oyst-1click-button").getAttribute("data-smart")) {

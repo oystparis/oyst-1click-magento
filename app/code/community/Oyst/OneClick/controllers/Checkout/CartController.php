@@ -9,13 +9,15 @@
  * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
  */
 
+use Oyst\Classes\Enum\AbstractOrderState;
+
 /**
  * Cart Controller
  */
 class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_Action
 {
-    /* @var mixed $data */
-    private $data = null;
+    /* @var array $data */
+    private $data = array();
 
     /**
      * Loading page action
@@ -27,18 +29,22 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
     }
 
     /**
-     * Login customer and redirect to success page
+     * Redirect customer if Oyst order exist ; if success auto-login
      */
     public function returnAction()
     {
-        $order = Mage::getModel('sales/order')->load(Mage::getSingleton('checkout/session')->getOystRelatedQuoteId(), 'quote_id');
+        /** @var Mage_Checkout_Model_Session $oystRelatedQuoteId */
+        $oystRelatedQuoteId = Mage::getSingleton('checkout/session')->getOystRelatedQuoteId();
+
+        $order = Mage::getModel('sales/order')->load($oystRelatedQuoteId, 'quote_id');
 
         if ($order->getId()) {
             $websiteId = Mage::app()->getWebsite()->getId();
             $customer = Mage::getModel('customer/customer')->setWebsiteId($websiteId)
                 ->loadByEmail($order->getCustomerEmail());
 
-            $session = Mage::getSingleton("customer/session");
+            /** @var Mage_Customer_Model_Session $session */
+            $session = Mage::getSingleton('customer/session');
             $session->loginById($customer->getId());
             $session->setCustomerAsLoggedIn($customer);
 
@@ -54,6 +60,13 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
             }
 
             $this->data = $successUrl;
+        } else {
+            /** @var Mage_Sales_Model_Quote $oystOrderId */
+            $oystOrderId = Mage::getModel('sales/quote')->load($oystRelatedQuoteId)->getOystOrderId();
+
+            if (!Mage::getModel('oyst_oneclick/oneclick_apiWrapper')->isOystOrderStatusValid($oystOrderId)) {
+                $this->data = Mage::getBaseUrl() . Oyst_OneClick_Helper_Data::FAILURE_URL;
+            }
         }
 
         $this->sendResponse();
@@ -65,9 +78,11 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
     private function sendResponse()
     {
         $this->getResponse()->setHttpResponseCode(200);
+
         if ('cgi-fcgi' === php_sapi_name()) {
             $this->getResponse()->setHeader('Content-type', 'application/json');
         }
+
         $this->getResponse()->setBody(Zend_Json::encode($this->data));
     }
 
