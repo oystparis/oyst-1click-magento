@@ -254,7 +254,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     {
         $stockItems = Mage::getModel('cataloginventory/stock_item')
             ->getCollection()
-            ->addFieldToFilter('product_id', array('in' => array_keys($data)));
+            ->addFieldToFilter('product_id', array('in' => array_keys($data)))
+            ->addStockFilter(Mage::getModel('cataloginventory/stock'));
 
         foreach ($stockItems as $stockItem) {
             $checkQuoteItemQty = $stockItem->checkQuoteItemQty($data[$stockItem->getProductId()], $stockItem->getQty());
@@ -1096,7 +1097,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
                 if (!$this->stockItem->getId()) {
                     $this->stockItem->setProductId($productId);
-                    $this->stockItem->setStockId(1);
+                    $this->stockItem->setStockId(Mage::getModel('cataloginventory/stock')->getId());
                 }
 
                 if ($this->stockItem->getManageStock()) {
