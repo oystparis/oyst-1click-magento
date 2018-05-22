@@ -13,7 +13,7 @@
 <layout version="0.1.0">
 
     <default>
-        <block type="oyst_oneclick/oneClick" name="oyst.oneclick.express.checkout"/>
+        <block type="oyst_oneclick/oneClick" name="oyst.oneclick.express.checkout" output="toHtml"/>
         <reference name="head">
             <block type="core/text" name="oyst.oneclick.metadata">
                 <action method="setText">
@@ -41,7 +41,7 @@
         <reference name="oyst.oneclick.express.checkout">
             <action method="setTemplate" ifconfig="oyst/oneclick/is_enable"><template>oyst/oneclick/checkout/cart/oneclick.phtml</template></action>
         </reference>
-        
+
         <reference name="head">
             <action method="addCss" ifconfig="oyst/oneclick/is_enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
             <action method="addItem" ifconfig="oyst/oneclick/is_enable"><type>skin_js</type><name>js/oyst/oneclick.js</name></action>
@@ -72,5 +72,17 @@
             <block type="oyst_oneclick/checkout_cart_redirect" name="cart_return_message" template="oyst/oneclick/checkout/redirect.phtml" />
         </reference>
     </oyst_oneclick_checkout_cart_loading>
+
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addCss" ifconfig="oyst/oneclick/is_enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
+            <action method="addItem" ifconfig="oyst/oneclick/is_enable"><type>skin_js</type><name>js/oyst/lib/wgxpath.install.js</name></action>
+            <action method="addItem" ifconfig="oyst/oneclick/is_enable"><type>skin_js</type><name>js/oyst/oneclick.js</name></action>
+        </reference>
+
+        <reference name="oyst.oneclick.express.checkout">
+            <action method="setTemplate" ifconfig="oyst/oneclick/is_enable"><template>oyst/oneclick/checkout/cart/oneclick.phtml</template></action>
+        </reference>
+    </checkout_onepage_index>
 
 </layout>

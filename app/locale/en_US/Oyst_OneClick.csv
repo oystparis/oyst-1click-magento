@@ -178,6 +178,8 @@
 "Button Label","Button Label"
 "Redirect loading message","Redirect loading message"
 "Success Page","Success Page"
+"Checkout onepage XPath(s) where append the button","Checkout onepage XPath(s) where append the button"
+"Separate by "",""","Separate by "","""
 
 "Shipment is set as default","Shipment is set as default"
 

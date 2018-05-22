@@ -15,7 +15,7 @@
 ?>
 <?php echo $this->addCssStylesBlock(); ?>
 
-<div id="oyst-1click-button-wrapper">
+<div id="oyst-1click-button-wrapper" data-place-to-append="<?php echo $this->getCheckoutOnepagePlacesToAppendOneClickButton(); ?>">
     <!--<?php echo $this->escapeHtml($this->getButtonCustomization('checkout_cart_')); ?> -->
     <div id="oyst-1click-button" <?php echo $this->escapeHtml($this->getButtonCustomization('checkout_cart_')); ?>></div>
 </div>
@@ -27,7 +27,7 @@
                 'oneClickUrl': <?php echo $this->getOneClickUrl(); ?>,
                 'isCheckoutCart': true
             };
-            
+
             oystOneClick(oystOneClickConfig);
         } else {
             console.error("Missing function oystOneClick");
