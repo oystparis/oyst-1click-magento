@@ -191,4 +191,20 @@ class Oyst_OneClick_Model_Observer
 
         return;
     }
+
+    /**
+     * Update notifications status.
+     *
+     * @return Oyst_OneClick_Model_Observer
+     */
+    public function updateNotificationsStatus()
+    {
+        try {
+            /** @var Oyst_OneClick_Model_Notification $notification */
+            $notification = Mage::getModel('oyst_oneclick/notification');
+            $notification->updateNotificationsStatus();
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+    }
 }

@@ -50,9 +50,11 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         $lastNotification = $lastNotification->getLastNotification('order', $oystOrderId);
 
         // If last notification is not finished
-        if ($lastNotification->getId() && 'finished' !== $lastNotification->getStatus()) {
+        if ($lastNotification->getId()
+            && Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_START === $lastNotification->getStatus()
+        ) {
             Mage::throwException(Mage::helper('oyst_oneclick')->__(
-                'Last Notification with order id "%s" is not finished.',
+                'Last Notification with order id "%s" is still processing.',
                 $oystOrderId)
             );
         }
@@ -63,7 +65,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
             array(
                 'event' => $this->eventNotification,
                 'oyst_data' => Zend_Json::encode($apiData),
-                'status' => 'start',
+                'status' => Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_START,
                 'created_at' => Mage::getModel('core/date')->gmtDate(),
                 'executed_at' => Mage::getModel('core/date')->gmtDate(),
             )
@@ -89,7 +91,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         }
 
         // Save new status and result in db
-        $notification->setStatus('finished')
+        $notification->setStatus(Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_FINISHED)
             ->setMageResponse($response)
             ->setOrderId($magentoOrderId)
             ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
