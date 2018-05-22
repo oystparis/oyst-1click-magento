@@ -148,7 +148,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $notification->setData(array(
             'event' => $event,
             'oyst_data' => Zend_Json::encode($apiData),
-            'status' => 'start',
+            'status' => Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_START,
             'created_at' => Mage::getModel('core/date')->gmtDate(),
             'executed_at' => Mage::getModel('core/date')->gmtDate(),
         ));
@@ -178,7 +178,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         }
 
         // Save new status and result in db
-        $notification->setStatus('finished')
+        $notification->setStatus(Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_FINISHED)
             ->setMageResponse($response)
             ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
             ->save();
