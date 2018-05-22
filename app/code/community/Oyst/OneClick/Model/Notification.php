@@ -14,6 +14,14 @@
  */
 class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
 {
+    const NOTIFICATION_STATUS_START = 'start';
+
+    const NOTIFICATION_STATUS_FINISHED = 'finished';
+
+    const NOTIFICATION_STATUS_ZOMBIE = 'zombie';
+
+    const XML_PATH_NOTIFICATIONS_UPDATE_MAX_DELAY = 'oyst/oneclick/notifications_update_max_delay';
+
     /**
      * Object construct
      *
@@ -55,7 +63,7 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
     {
         $collection = $this->getCollection()
             ->addDataIdToFilter($type, $dataId)
-            ->addFieldToFilter('status', array('like' => 'finished'))
+            ->addFieldToFilter('status', array('like' => self::NOTIFICATION_STATUS_FINISHED))
             ->setPageSize(1)
             ->setCurPage(1)
             ->load();
@@ -74,12 +82,42 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
     {
         $collection = $this->getCollection()
             ->addDataIdToFilter('order', $oystOrderId)
-            ->addFieldToFilter('status', array('like' => 'finished'))
+            ->addFieldToFilter('status', array('like' => self::NOTIFICATION_STATUS_FINISHED))
             ->addFieldToFilter('order_id', array('notnull' => true))
             ->setPageSize(1)
             ->setCurPage(1)
             ->load();
 
         return $collection->getFirstItem()->getOrderId();
+    }
+
+    /**
+     * Update notifications status.
+     *
+     * @return Oyst_OneClick_Model_Observer
+     */
+    public function updateNotificationsStatus()
+    {
+        $notificationUpdateMaxDelay = Mage::getStoreConfig(self::XML_PATH_NOTIFICATIONS_UPDATE_MAX_DELAY);
+
+        /** @var Oyst_OneClick_Model_Notification $notifications */
+        $notifications = $this->getCollection()
+            ->addFieldToFilter('status', array('like' => self::NOTIFICATION_STATUS_START))
+            ->addFieldToFilter('created_at', array(
+                    'to' => strtotime($notificationUpdateMaxDelay, time()),
+                    'datetime' => true,
+                )
+            )
+            ->load();
+
+        foreach ($notifications as $notification) {
+            try {
+                $notification->setStatus(self::NOTIFICATION_STATUS_ZOMBIE);
+                // @codingStandardsIgnoreLine
+                $notification->save();
+            } catch (Exception $e) {
+                Mage::logException($e);
+            }
+        }
     }
 }

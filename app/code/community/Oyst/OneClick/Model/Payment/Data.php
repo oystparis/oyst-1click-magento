@@ -52,7 +52,9 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
         $lastNotification = $lastNotification->getLastNotification('payment', $data['payment_id']);
 
         // If last notification is not finished
-        if ($lastNotification->getId() && 'finished' != $lastNotification->getStatus()) {
+        if ($lastNotification->getId()
+            && Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_FINISHED != $lastNotification->getStatus()
+        ) {
             Mage::throwException($this->__('Last Notification payment id %s is not finished', $data['payment_id']));
         }
 
@@ -62,7 +64,7 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
             array(
                 'event' => $event,
                 'oyst_data' => Zend_Json::encode($data),
-                'status' => 'start',
+                'status' => Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_START,
                 'created_at' => Mage::getSingleton('core/date')->gmtDate(),
                 'executed_at' => Mage::getSingleton('core/date')->gmtDate(),
             )
@@ -91,7 +93,7 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
         // If data asynchronous payment notification is success, we invoice the order, else we cancel
         if (Oyst_OneClick_Model_Payment_Method_Freepay::EVENT_CODE_FRAUD_VALIDATION == $data['event_code'] && $data['success']) {
             //save new status and result in db
-            $notification->setStatus('finished')
+            $notification->setStatus(Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_FINISHED)
                 ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
                 ->save();
 
@@ -121,7 +123,7 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
         }
 
         //save new status and result in db
-        $notification->setStatus('finished')
+        $notification->setStatus(Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_FINISHED)
             ->setOrderId($result['order_id'])
             ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
             ->save();

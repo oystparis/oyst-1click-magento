@@ -245,6 +245,7 @@
                 <checkout_cart_cta_label><![CDATA[Retour boutique.]]></checkout_cart_cta_label>
                 <checkout_cart_cta_loading_message><![CDATA[Nous n’avons pas encore reçu la confirmation du paiement. Veuillez attendre quelques minutes pour rafraichir cette page.]]></checkout_cart_cta_loading_message>
                 <allow_discount_coupon_from_modal>0</allow_discount_coupon_from_modal>
+                <notifications_update_max_delay>-5 minutes</notifications_update_max_delay>
             </oneclick>
             <order_settings>
                 <enable>0</enable>
@@ -291,6 +292,14 @@
             </oyst_freepay>
         </payment>
     </default>
+    <crontab>
+        <jobs>
+            <oyst_update_notifications_status>
+                <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
+                <run><model>oyst_oneclick/observer::updateNotificationsStatus</model></run>
+            </oyst_update_notifications_status>
+        </jobs>
+    </crontab>
     <phpunit>
         <suite>
             <modules>
