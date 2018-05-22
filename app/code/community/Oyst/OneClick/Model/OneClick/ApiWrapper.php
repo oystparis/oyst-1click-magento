@@ -63,15 +63,14 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         Mage::helper('oyst_oneclick')->log('$dataFormated');
         Mage::helper('oyst_oneclick')->log($dataFormated);
 
-        if (isset($dataFormated['isCheckoutCart'])) {
-            $dataFormated['isCheckoutCart'] = filter_var($dataFormated['isCheckoutCart'], FILTER_VALIDATE_BOOLEAN);
-
             $this->getCartItems($dataFormated);
-        }
 
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
         $oystProducts = $oystCatalog->getOystProducts($dataFormated);
+        if(count($oystProducts) == 0) {
+            $oystProducts[] = $oystCatalog->addDummyOystProduct();
+        }
 
         if (isset($oystProducts['has_error'])) {
             return $oystProducts;

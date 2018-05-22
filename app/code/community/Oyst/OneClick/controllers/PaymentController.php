@@ -16,23 +16,12 @@ class Oyst_OneClick_PaymentController extends Mage_Core_Controller_Front_Action
 {
     /**
      * Return the OneClick payment Url
-     *
+     * @deprecated since version 1.12.0
      * @return
      */
     public function urlAction()
     {
-        /** @var Zend_Controller_Request_Http $rawData */
-        $rawData = Mage::app()->getRequest()->getPost();
-
-        /** @var Oyst_OneClick_Model_OneClick_ApiWrapper $oneclickApi */
-        $oneclickApi = Mage::getModel('oyst_oneclick/oneClick_apiWrapper');
-        $response = $oneclickApi->authorizeOrder($rawData);
-
-        $this->getResponse()->setHttpResponseCode(200);
-        if ('cgi-fcgi' === php_sapi_name()) {
-            $this->getResponse()->setHeader('Content-type', 'application/json');
-        }
-        $this->getResponse()->setBody(Zend_Json::encode($response));
+        $this->_forward('initOystCheckout', 'checkout_cart');
     }
 
     /**

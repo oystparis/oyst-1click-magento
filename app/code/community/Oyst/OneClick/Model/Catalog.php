@@ -1188,4 +1188,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         return $stockItemToBook;
     }
+
+    public function addDummyOystProduct()
+    {
+        $price = new OystPrice(1, 'EUR');
+        return new OystProduct(1, 'Dummy Product', $price, 1);
+    }
 }
