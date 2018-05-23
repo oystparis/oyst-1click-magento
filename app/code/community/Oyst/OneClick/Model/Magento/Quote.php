@@ -307,7 +307,7 @@ class Oyst_OneClick_Model_Magento_Quote
 
         foreach($items as $item) {
             foreach(explode(';', $item['product']['reference']) as $productReference) {
-                $productReferences[] = array('ref' => $productReference, 'qty' => $item['product']['quantity']);
+                $productReferences[] = array('ref' => $productReference, 'qty' => $item['quantity']);
             }
 
             if(isset($item['product']['variation_reference'])) {
