@@ -22,9 +22,6 @@ class Oyst_OneClick_Model_Magento_Quote
     /** @var string[] API response */
     private $apiData = null;
 
-    /** @var array */
-    private $rowTotalOyst = array();
-
     /** @var int Website id */
     private $websiteId = null;
 
@@ -51,33 +48,21 @@ class Oyst_OneClick_Model_Magento_Quote
         try {
             // do not change invoke order
             // ---------------------------------------
-            $storeId = null;
+            $quoteId = $this->apiData['order']['context']['quote_id'];
+            $storeId = $this->apiData['order']['context']['store_id'];
 
-            if (isset($this->apiData['order']) &&
-                $this->apiData['order']['context'] &&
-                $this->apiData['order']['context']['store_id'])
-            {
-                $storeId = $this->apiData['order']['context']['store_id'];
-            }
-
-            $this->initializeQuote($storeId);
-            $this->initializeCustomer();
-            $this->initializeAddresses();
-
-            $this->configureTaxCalculation();
-
-            $this->initializeCurrency();
-            $this->initializeQuoteItems();
-            $this->initializePaymentMethodData();
-
-            $this->quote->setTotalsCollectedFlag(false)->collectTotals()->save();
+            $this->syncQuote($quoteId, $storeId);
+            $this->syncCustomer();
+            $this->syncAddresses();
+            $this->syncQuoteItems();
+            $this->syncPaymentMethodData();
 
             if (isset($this->apiData['order']['context']['applied_coupons'])) {
                 $this->quote->setCouponCode($this->apiData['order']['context']['applied_coupons']);
-                $this->quote->setTotalsCollectedFlag(false)->collectTotals()->save();
             }
+
+            $this->quote->setTotalsCollectedFlag(false)->collectTotals()->save();
         } catch (Exception $e) {
-            $this->quote->setIsActive(false)->save();
             Mage::helper('oyst_oneclick')->log('Error build quote: ' . $e->getMessage());
             throw $e;
         }
@@ -86,9 +71,9 @@ class Oyst_OneClick_Model_Magento_Quote
     /**
      * @param int $storeId
      */
-    private function initializeQuote($storeId = null)
+    private function syncQuote($quoteId, $storeId = null)
     {
-        $this->quote = Mage::getModel('sales/quote');
+        $this->quote = Mage::getModel('sales/quote')->load($quoteId);
 
         $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_GUEST);
 
@@ -98,24 +83,13 @@ class Oyst_OneClick_Model_Magento_Quote
         $this->quote->getStore()->setCurrentCurrencyCode($this->apiData['order']['order_amount']['currency']);
         $this->quote->setRemoteIp($this->apiData['order']['context']['remote_addr']);
 
-        // This is for the redirect checkout cart
-        if (isset($this->apiData['order']['context']['quote_id'])) {
-            Mage::getModel('sales/quote')
-                ->load($this->apiData['order']['context']['quote_id'])
-                ->setData('oyst_order_id', $this->apiData['order']['id'])
-                ->save();
-        }
-
         $this->quote->setIsMultiShipping(false);
         $this->quote->setIsSuperMode(true);
         $this->quote->setCreatedAt($this->apiData['order']['created_at']);
         $this->quote->setUpdatedAt($this->apiData['order']['created_at']);
         $this->quote->setOystOrderId($this->apiData['order']['id']);
 
-        $this->quote->save();
-
-        /** @var Mage_Checkout_Model_Session */
-        Mage::getSingleton('checkout/session')->replaceQuote($this->quote);
+        Mage::getSingleton('checkout/cart')->setQuote($this->quote);
     }
 
     /**
@@ -166,13 +140,12 @@ class Oyst_OneClick_Model_Magento_Quote
         return $customer;
     }
 
-    private function initializeCustomer()
+    private function syncCustomer()
     {
         // Already customer ; Check by website
         if ($customer = $this->getCustomer()) {
             if ($customer instanceof Mage_Customer_Model_Customer) {
                 $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER);
-                $this->quote->assignCustomer($customer);
                 $this->quote->setCustomer($customer);
             }
         }
@@ -206,8 +179,6 @@ class Oyst_OneClick_Model_Magento_Quote
 
             $this->quote->setCheckoutMethod($checkoutMethod);
         }
-
-        $this->quote->save();
     }
 
     /**
@@ -236,7 +207,7 @@ class Oyst_OneClick_Model_Magento_Quote
     /**
      * Consider all address info only from API same as New guest
      */
-    private function initializeAddresses()
+    private function syncAddresses()
     {
         $storeId = $this->apiData['order']['context']['store_id'];
 
@@ -259,7 +230,7 @@ class Oyst_OneClick_Model_Magento_Quote
         $billingAddress->implodeStreetAddress();
         $billingAddress->setShippingMethod($billingMethod);
         $billingAddress->setShippingDescription($billingDescription);
-        $billingAddress->save()->isObjectNew(false);
+        $billingAddress->isObjectNew(false);
 
         $billingAddress->setSaveInAddressBook(false);
         $billingAddress->setShouldIgnoreValidation(true);
@@ -274,7 +245,7 @@ class Oyst_OneClick_Model_Magento_Quote
         $shippingAddress->implodeStreetAddress();
         $shippingAddress->setShippingMethod($shippingMethod);
         $shippingAddress->setShippingDescription($shippingDescription);
-        $shippingAddress->save()->isObjectNew(false);
+        $shippingAddress->isObjectNew(false);
 
         $shippingAddress->setSaveInAddressBook(false);
         $shippingAddress->setShouldIgnoreValidation(true);
@@ -327,297 +298,87 @@ class Oyst_OneClick_Model_Magento_Quote
         return $formattedAddress;
     }
 
-    private function configureTaxCalculation()
+    private function syncQuoteItems()
     {
-        // This prevents customer session initialization (which affects cookies)
-        // see Mage_Tax_Model_Calculation::getCustomer()
-        Mage::getSingleton('tax/calculation')->setCustomer($this->quote->getCustomer());
-    }
+        $items = $this->apiData['order']['items'];
+        $productReferences = array();
 
-    private function initializeCurrency()
-    {
-        // @TODO : remove this if all is ok with apiData
-        // Default API currency
-        $currentCurrency = 'EUR';
+        foreach($items as $item) {
+            foreach(explode(';', $item['product']['reference']) as $productReference) {
+                $productReferences[] = array('ref' => $productReference, 'qty' => $item['product']['quantity']);
+            }
 
-        if ($this->apiData['order']['order_amount']) {
-            $currentCurrency = $this->apiData['order']['order_amount']['currency'];
-        }
-
-        $this->quote->getStore()->setCurrentCurrencyCode($currentCurrency);
-    }
-
-    private function initializeQuoteItems()
-    {
-        /** @var Oyst_OneClick_Helper_Data $helper */
-        $helper = Mage::helper('oyst_oneclick');
-
-        // Check if store include tax (Product and shipping cost)
-        $priceIncludesTax = Mage::helper('tax')->priceIncludesTax($this->quote->getStore());
-        $shippingIncludeTax = Mage::helper('tax')->shippingPriceIncludesTax($this->quote->getStore());
-
-        // Add product in quote
-        $this->addOystProducts(
-            $this->apiData['order']['items'],
-            $priceIncludesTax
-        );
-
-        // @TODO EndpointShipment: improve this bad hack
-        if (isset($this->apiData['order']['shipment']) &&
-            isset($this->apiData['order']['shipment']['carrier']) &&
-            isset($this->apiData['order']['shipment']['carrier']['id']) &&
-            'SHIPMENT-404' != $this->apiData['order']['shipment']['id']
-        ) {
-            // Get shipping cost with tax
-            $shippingCost = $helper->getHumanAmount($this->apiData['order']['shipment']['amount']['value']);
-        }
-        // If shipping cost not include tax -> get shipping cost without tax
-        if (!$shippingIncludeTax) {
-            $basedOn = Mage::getStoreConfig(Mage_Tax_Model_Config::CONFIG_XML_PATH_BASED_ON, $this->quote->getStore());
-            $countryId = (Mage_Sales_Model_Quote_Address::TYPE_SHIPPING == $basedOn)
-                ? $this->quote->getCountryId()
-                : $this->quote->getCountryId();
-            $shippingTaxClass = Mage::getStoreConfig(
-                Mage_Tax_Model_Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS,
-                $this->quote->getStore()
-            );
-            $taxCalculator = Mage::getModel('tax/calculation');
-            $taxRequest = new Varien_Object();
-            $taxRequest->setCountryId($countryId)
-                ->setCustomerClassId($this->quote->getCustomer()->getTaxClassId())
-                ->setProductClassId($shippingTaxClass);
-            $taxRate = (float)$taxCalculator->getRate($taxRequest);
-
-            if (isset($shippingCost)) {
-                $taxShippingCost = (float)$taxCalculator->calcTaxAmount($shippingCost, $taxRate, true);
-                $shippingCost = $shippingCost - $taxShippingCost;
+            if(isset($item['product']['variation_reference'])) {
+                $this->handleIncreaseStock($item['product']['variation_reference']);
+            } else {
+                $this->handleIncreaseStock($item['product']['reference']);
             }
         }
 
-        // @TODO EndpointShipment: improve this bad hack
-        if (isset($this->apiData['order']['shipment']) &&
-            isset($this->apiData['order']['shipment']['carrier']) &&
-            isset($this->apiData['order']['shipment']['carrier']['id']) &&
-            'SHIPMENT-404' != $this->apiData['order']['shipment']['id']
-        ) {
-            // Set shipping price and shipping method for current order
-            $this->quote->getShippingAddress()
-                ->setShippingPrice($shippingCost)
-                ->setShippingMethod($this->apiData['order']['shipment']['carrier']['id']);
+        $cartData = array();
+
+        foreach($this->quote->getAllItems() as $item) {
+            if($item->getParentItemId()) {
+                continue;
+            }
+
+            foreach($productReferences as $productReference) {
+                if($item->getProductId() == $productReference['ref']) {
+                    $cartData[$item->getId()]['qty'] = $productReference['qty'];
+                    break;
+                }
+            }
+
+            if(!isset($cartData[$item->getId()]['qty'])) {
+                $cartData[$item->getId()]['qty'] = 0;
+            }
         }
 
-        $this->quote->setTotalsCollectedFlag(false);
-        $this->quote->save();
-        $this->clearQuoteItemsCache();
-        // Collect totals
-        $this->quote->collectTotals();
+        $cart = Mage::getSingleton('checkout/cart');
+        $cartData = $cart->suggestItemsQty($cartData);
+        $cart->updateItems($cartData)->save();
 
-        // Re-adjust cents for item quote
-        // Conversion Tax Include > Tax Exclude > Tax Include maybe make 0.01 amount error
-        // @TODO EndpointShipment: improve this bad hack
-        if (isset($this->apiData['order']['shipment']) &&
-            !$priceIncludesTax && isset($this->apiData['order']['order_amount']['value']))
+        return $this;
+    }
+
+    private function handleIncreaseStock($productId)
+    {
+        // Increase stock with qty decreased when order was made if should_ask_stock is enabled
+        if (Mage::getStoreConfig('oyst/oneclick/should_ask_stock') &&
+            isset($this->apiData['event']) &&
+            'order.v2.new' === $this->apiData['event'])
         {
-            if ($this->quote->getGrandTotal() != $helper->getHumanAmount($this->apiData['order']['order_amount']['value'])) {
-                $quoteItems = $this->quote->getAllItems();
+            Mage::helper('oyst_oneclick')->log(
+                sprintf(
+                    'Increase stock of product_id %s (%s) with %s',
+                    $productId,
+                    $item['quantity']
+                )
+            );
 
-                foreach ($quoteItems as $item) {
-                    $rowTotalOyst = $this->rowTotalOyst[$item->getProduct()->getId()];
-                    if ($rowTotalOyst != $item->getRowTotalInclTax()) {
-                        $diff = $rowTotalOyst - $item->getRowTotalInclTax();
-                        $item->setPriceInclTax($item->getPriceInclTax() + ($diff / $item->getQty()));
-                        $item->setBasePriceInclTax($item->getPriceInclTax());
-                        $item->setPrice($item->getPrice() + ($diff / $item->getQty()));
-                        $item->setOriginalPrice($item->getPrice());
-                        $item->setRowTotal($item->getRowTotal() + $diff);
-                        $item->setBaseRowTotal($item->getRowTotal());
-                        $item->setRowTotalInclTax((float)$rowTotalOyst);
-                        $item->setBaseRowTotalInclTax($item->getRowTotalInclTax());
-                    }
-                }
-            }
-        }
+            /** @var Mage_CatalogInventory_Model_Stock_Item $stockItem */
+            $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productId);
 
-        $this->quote->save();
-    }
+            $isStockManaged = $stockItem->getData('use_config_manage_stock') ?
+                Mage::getStoreConfig('cataloginventory/item_options/manage_stock') :
+                $stockItem->getData('manage_stock');
 
-    /**
-     * Add products from API to current quote
-     *
-     * @param $items product list to be added
-     * @param boolean $priceIncludesTax
-     *
-     * @return  Oyst_Sync_Model_Quote
-     */
-    private function addOystProducts($items, $priceIncludesTax = true)
-    {
-        /** @var Oyst_OneClick_Helper_Data $helper */
-        $helper = Mage::helper('oyst_oneclick');
-
-        foreach ($items as $item) {
-            if (isset($item['product_reference'])) {
-                $productId = $item['product_reference'];
-            }
-            // @TODO EndpointShipment: need improvement
-            if (isset($item['reference'])) {
-                $productId = $item['reference'];
-            }
-
-            // @TODO Temporary code, waiting to allow any kind of field in product e.g. variation_reference
-            if (false !== strpos($productId, ';')) {
-                $p = explode(';', $productId);
-                $productId = $p[0];
-                $item['variation_reference'] = $p[1];
-            }
-
-            // @TODO EndpointShipment: to remove with AuthorizeV2 / order.cart.estimate
-            if (isset($item['variation_reference'])) {
-                $configurableProductChildId = $item['variation_reference'];
-                /** @var Mage_Catalog_Model_Product $configurableProductChild */
+            if ($isStockManaged) {
+                $stockItem->setData('is_in_stock', 1); // Set the Product to InStock
+                $stockItem->addQty($item['quantity']);
                 // @codingStandardsIgnoreLine
-                $configurableProductChild = Mage::getModel('catalog/product')->load($configurableProductChildId);
+                $stockItem->save();
             }
-
-            /** @var Mage_Catalog_Model_Product $product */
-            // @codingStandardsIgnoreLine
-            if ($product = Mage::getModel('catalog/product')->load($productId)) {
-                // Get unit price with tax for order.v2.new
-                if (isset($item['product_reference'])) {
-                    $price = $product->getPrice();
-                    $this->rowTotalOyst[$product->getId()] = $price * $item['quantity'];
-                }
-                // @TODO EndpointShipment: need improvement
-                if (isset($item['reference'])) {
-                    $price = $product->getPrice();
-                    $this->rowTotalOyst[$product->getId()] = $price * $item['quantity'];
-                }
-                // @TODO EndpointShipment: to remove with AuthorizeV2 / order.cart.estimate
-                if (isset($item['variation_reference'])) {
-                    $price = $configurableProductChild->getPrice();
-                    $this->rowTotalOyst[$configurableProductChildId] = $price * $item['quantity'];
-                }
-
-                // If price not include tax -> get shipping cost without tax
-                if (!$priceIncludesTax) {
-                    $basedOn = Mage::getStoreConfig(
-                        Mage_Tax_Model_Config::CONFIG_XML_PATH_BASED_ON,
-                        $this->quote->getStore()
-                    );
-                    $countryId = (Mage_Sales_Model_Quote_Address::TYPE_SHIPPING == $basedOn)
-                        ? $this->quote->getShippingAddress()->getCountryId()
-                        : $this->quote->getBillingAddress()->getCountryId();
-
-                    $taxCalculator = Mage::getModel('tax/calculation');
-                    $taxRequest = new Varien_Object();
-                    $taxRequest->setCountryId($countryId)
-                        ->setCustomerClassId($this->quote->getCustomer()->getTaxClassId())
-                        ->setProductClassId($product->getTaxClassId());
-                    $taxRate = $taxCalculator->getRate($taxRequest);
-                    $tax = (float)$taxCalculator->calcTaxAmount($price, $taxRate, true);
-                    $price = $price - $tax;
-                }
-
-                $request = array('qty' => $item['quantity']);
-
-                // Increase stock with qty decreased when order was made if should_ask_stock is enabled
-                if (Mage::getStoreConfig('oyst/oneclick/should_ask_stock') &&
-                    isset($this->apiData['event']) &&
-                    'order.v2.new' === $this->apiData['event'])
-                {
-                    $productForStock = isset($configurableProductChild) ? $configurableProductChild : $product;
-                    Mage::helper('oyst_oneclick')->log(
-                        sprintf(
-                            'Increase stock of %s (%s) with %s',
-                            $productForStock->getName(),
-                            $productForStock->getSku(),
-                            $item['quantity']
-                        )
-                    );
-
-                    /** @var Mage_CatalogInventory_Model_Stock_Item $stockItem */
-                    $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productForStock->getId());
-
-                    $isStockManaged = $stockItem->getData('use_config_manage_stock') ?
-                        Mage::getStoreConfig('cataloginventory/item_options/manage_stock') :
-                        $stockItem->getData('manage_stock');
-
-                    if ($isStockManaged) {
-                        $stockItem->setData('is_in_stock', 1); // Set the Product to InStock
-                        $stockItem->addQty($item['quantity']);
-                        // @codingStandardsIgnoreLine
-                        $stockItem->save();
-                    }
-                }
-
-                if (Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE == $product->getTypeId()) {
-                    /** @var Mage_Downloadable_Model_Product_Type $links */
-                    $links = Mage::getModel('downloadable/product_type')->getLinks($product);
-                    $linkId = 0;
-                    foreach ($links as $link) {
-                        $linkIds[] = $link->getId();
-                    }
-
-                    $request = array_merge(
-                        $request,
-                        array(
-                            'links' => $linkIds,
-                            'is_downloadable' => true,
-                            'real_product_type' => Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE,
-                        )
-                    );
-                }
-
-                if (isset($item['variation_reference'])) {
-                    // Collect options applicable to the configurable product
-                    // @codingStandardsIgnoreLine
-                    $productAttributeOptions = $product->getTypeInstance(true)->getConfigurableAttributesAsArray($product);
-
-                    $options = array();
-                    foreach ($productAttributeOptions as $productAttribute) {
-                        //$allValues = array_column($productAttribute['values'], 'value_index');
-                        // Alternative way for PHP array_column method which is available only on (PHP 5 >= 5.5.0, PHP 7)
-                        $allValues = array_map(function ($element) {
-                            return $element['value_index'];
-                        }, $productAttribute['values']);
-
-                        $currentProductValue = $configurableProductChild->getData($productAttribute['attribute_code']);
-                        if (in_array($currentProductValue, $allValues)) {
-                            $options[$productAttribute['attribute_id']] = $currentProductValue;
-                        }
-                    }
-
-                    // hack: for child product weight was not load
-                    $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', 'weight');
-                    $options[$attribute->getId()] = $configurableProductChild->getWeight();
-
-                    $request = array_merge($request, array('super_attribute' => $options));
-                }
-
-                $this->quote->addProduct($product, new Varien_Object($request));
-            }
-            unset($configurableProductChild);
         }
+
+        return $this;
     }
 
-    private function initializePaymentMethodData()
+    private function syncPaymentMethodData()
     {
         /** @var Oyst_OneClick_Model_Payment_Method_Oneclick $paymentMethod */
         $paymentMethod = Mage::getModel('oyst_oneclick/payment_method_oneclick');
 
         $this->quote->getPayment()->importData(array('method' => $paymentMethod->getCode()));
-    }
-
-    /**
-     * Mage_Sales_Model_Quote_Address caches items after each collectTotals call. Some extensions calls collectTotals
-     * after adding new item to quote in observers. So we need clear this cache before adding new item to quote.
-     */
-    private function clearQuoteItemsCache()
-    {
-        foreach ($this->quote->getAllAddresses() as $address) {
-            /** @var $address Mage_Sales_Model_Quote_Address */
-            $address->unsetData('cached_items_all');
-            $address->unsetData('cached_items_nominal');
-            $address->unsetData('cached_items_nonominal');
-        }
     }
 }

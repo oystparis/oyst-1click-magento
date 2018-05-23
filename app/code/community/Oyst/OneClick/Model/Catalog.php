@@ -806,8 +806,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $this->getCartAmount($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
-        $magentoQuoteBuilder->getQuote()->setIsActive(false)->save();
-
         return $oneClickOrderCartEstimate->toJson();
     }
 

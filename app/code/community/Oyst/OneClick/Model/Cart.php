@@ -10,6 +10,7 @@ class Oyst_OneClick_Model_Cart
         if(!empty($params['add_to_cart_form'])
         && !$params['isPreload']) {
             $this->_addToCart($params['add_to_cart_form']);
+            unset($params['form_key']);
         }
 
         $response = $this->_authorizeOrder($params);

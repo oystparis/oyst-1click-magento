@@ -120,17 +120,4 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
             throw new Exception($e);
         }
     }
-
-    public function resetQuoteAction()
-    {
-        try {
-            $oystCart = Mage::getModel('oyst_oneclick/cart');
-            $oystCart->resetQuote();
-            $this->data = 'OK';
-            $this->sendResponse();
-        } catch (Exception $e) {
-            // TODO
-            throw new Exception($e);
-        }
-    }
 }
