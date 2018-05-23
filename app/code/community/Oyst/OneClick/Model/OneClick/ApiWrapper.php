@@ -63,7 +63,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         Mage::helper('oyst_oneclick')->log('$dataFormated');
         Mage::helper('oyst_oneclick')->log($dataFormated);
 
-            $this->getCartItems($dataFormated);
+        $this->getCartItems($dataFormated);
 
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
@@ -217,7 +217,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         $products = array();
 
         /** @var Mage_Sales_Model_Quote quote */
-        $this->quote = Mage::getModel('sales/quote')->load($dataFormated['quoteId']);
+        if(!isset($this->quote)
+        || $this->quote->getId() != $dataFormated['quoteId']) {
+            $this->quote = Mage::getModel('sales/quote')->load($dataFormated['quoteId']);
+        }
 
         /** @var Mage_Sales_Model_Quote $items */
         $items = $this->quote->getAllVisibleItems();
@@ -248,6 +251,16 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
                     'productId' => $item->getProductId(),
                     'quantity' => $item->getQty(),
                 );
+            }
+        }
+
+        if(isset($dataFormated['substract_quote_items_qtys'])) {
+            foreach(Zend_Json::decode($dataFormated['substract_quote_items_qtys']['products']) as $memoProduct) {
+                foreach($products as $key => $product) {
+                    if($memoProduct['productId'] == $product['productId']) {
+                        $products[$key]['quantity'] = $products[$key]['quantity'] - $memoProduct['quantity'];
+                    }
+                }
             }
         }
 
