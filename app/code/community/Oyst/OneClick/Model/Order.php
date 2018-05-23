@@ -142,7 +142,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
         $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $this->orderResponse);
-        $magentoQuoteBuilder->buildQuote();
+        $magentoQuoteBuilder->syncQuoteFacade();
 
         /** @var Oyst_OneClick_Model_Magento_Order $magentoOrderBuilder */
         $magentoOrderBuilder = Mage::getModel('oyst_oneclick/magento_order', $magentoQuoteBuilder->getQuote());

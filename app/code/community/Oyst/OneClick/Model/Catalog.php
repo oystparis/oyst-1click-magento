@@ -795,7 +795,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
         $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $apiData);
 
-        $magentoQuoteBuilder->buildQuote();
+        $magentoQuoteBuilder->syncQuoteFacade();
 
         // Object to format data of EndpointShipment
         $oneClickOrderCartEstimate = new OneClickOrderCartEstimate();

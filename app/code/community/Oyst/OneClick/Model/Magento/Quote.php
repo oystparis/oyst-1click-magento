@@ -43,7 +43,7 @@ class Oyst_OneClick_Model_Magento_Quote
      *
      * @return array
      */
-    public function buildQuote()
+    public function syncQuoteFacade()
     {
         try {
             // do not change invoke order
@@ -53,13 +53,15 @@ class Oyst_OneClick_Model_Magento_Quote
 
             $this->syncQuote($quoteId, $storeId);
             $this->syncCustomer();
-            $this->syncAddresses();
+            $this->syncDelivery();
             $this->syncQuoteItems();
             $this->syncPaymentMethodData();
 
             if (isset($this->apiData['order']['context']['applied_coupons'])) {
                 $this->quote->setCouponCode($this->apiData['order']['context']['applied_coupons']);
             }
+
+            Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_quote_facade', array('api_data' => $this->apiData, 'quote' => $this->quote));
 
             $this->quote->setTotalsCollectedFlag(false)->collectTotals()->save();
         } catch (Exception $e) {
@@ -207,7 +209,7 @@ class Oyst_OneClick_Model_Magento_Quote
     /**
      * Consider all address info only from API same as New guest
      */
-    private function syncAddresses()
+    private function syncDelivery()
     {
         $storeId = $this->apiData['order']['context']['store_id'];
 
