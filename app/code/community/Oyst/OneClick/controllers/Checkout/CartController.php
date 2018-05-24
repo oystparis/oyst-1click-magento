@@ -105,7 +105,7 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
     {
         $params = $this->getRequest()->getParams();
         $params['quoteId'] = Mage::getSingleton('checkout/session')->getQuoteId();
-        if(!$params['quoteId']) {
+        if (!$params['quoteId']) {
             Mage::getSingleton('checkout/cart')->save();
             $params['quoteId'] = Mage::getSingleton('checkout/session')->getQuoteId();
         }

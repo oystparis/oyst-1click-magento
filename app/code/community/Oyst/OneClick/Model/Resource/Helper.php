@@ -26,7 +26,7 @@ class Oyst_OneClick_Model_Resource_Helper
 
     public function inactiveAllCustomerQuotes($customerId)
     {
-        if(empty($customerId)) {
+        if (empty($customerId)) {
             return;
         }
 
@@ -46,7 +46,7 @@ class Oyst_OneClick_Model_Resource_Helper
     
     public function inactiveAllOystOrderRelatedQuotes($oystOrderId)
     {
-        if(empty($oystOrderId)) {
+        if (empty($oystOrderId)) {
             return;
         }
             
@@ -58,10 +58,9 @@ class Oyst_OneClick_Model_Resource_Helper
         );
         
         $writeConn->update(
-            $resource->getTableName('sales_flat_quote'), 
-            $data, 
+            $resource->getTableName('sales_flat_quote'),
+            $data,
             array('oyst_order_id = ?' => $oystOrderId)
         );
     }
 }
-

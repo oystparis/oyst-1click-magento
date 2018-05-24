@@ -68,7 +68,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
         $oystProducts = $oystCatalog->getOystProducts($dataFormated);
-        if(count($oystProducts) == 0) {
+        if (count($oystProducts) == 0) {
             $oystProducts[] = $oystCatalog->addDummyOystProduct();
         }
 
@@ -98,7 +98,6 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
                 $customization
             );
             $this->oystClient->validateResult($this->oneClickApi);
-
         } catch (Exception $e) {
             Mage::logException($e);
         }
@@ -217,7 +216,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         $products = array();
 
         /** @var Mage_Sales_Model_Quote quote */
-        if(!isset($this->quote)
+        if (!isset($this->quote)
         || $this->quote->getId() != $dataFormated['quoteId']) {
             $this->quote = Mage::getModel('sales/quote')->load($dataFormated['quoteId']);
         }
@@ -228,9 +227,9 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         $returnItems = array();
 
         /** @var Mage_Sales_Model_Quote_Item $item */
-        foreach($items as $item){
+        foreach ($items as $item) {
             if ($item->getHasChildren()) {
-                foreach($item->getChildren() as $child) {
+                foreach ($item->getChildren() as $child) {
                     $returnItems[] = $child;
                 }
             } else {
@@ -254,10 +253,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             }
         }
 
-        if(isset($dataFormated['substract_quote_items_qtys'])) {
-            foreach(Zend_Json::decode($dataFormated['substract_quote_items_qtys']['products']) as $memoProduct) {
-                foreach($products as $key => $product) {
-                    if($memoProduct['productId'] == $product['productId']) {
+        if (isset($dataFormated['substract_quote_items_qtys'])) {
+            foreach (Zend_Json::decode($dataFormated['substract_quote_items_qtys']['products']) as $memoProduct) {
+                foreach ($products as $key => $product) {
+                    if ($memoProduct['productId'] == $product['productId']) {
                         $products[$key]['quantity'] = $products[$key]['quantity'] - $memoProduct['quantity'];
                     }
                 }

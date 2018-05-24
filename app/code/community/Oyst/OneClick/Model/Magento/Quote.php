@@ -305,12 +305,12 @@ class Oyst_OneClick_Model_Magento_Quote
         $items = $this->apiData['order']['items'];
         $productReferences = array();
 
-        foreach($items as $item) {
-            foreach(explode(';', $item['product']['reference']) as $productReference) {
+        foreach ($items as $item) {
+            foreach (explode(';', $item['product']['reference']) as $productReference) {
                 $productReferences[] = array('ref' => $productReference, 'qty' => $item['quantity']);
             }
 
-            if(isset($item['product']['variation_reference'])) {
+            if (isset($item['product']['variation_reference'])) {
                 $this->handleIncreaseStock($item['product']['variation_reference']);
             } else {
                 $this->handleIncreaseStock($item['product']['reference']);
@@ -319,19 +319,19 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $cartData = array();
 
-        foreach($this->quote->getAllItems() as $item) {
-            if($item->getParentItemId()) {
+        foreach ($this->quote->getAllItems() as $item) {
+            if ($item->getParentItemId()) {
                 continue;
             }
 
-            foreach($productReferences as $productReference) {
-                if($item->getProductId() == $productReference['ref']) {
+            foreach ($productReferences as $productReference) {
+                if ($item->getProductId() == $productReference['ref']) {
                     $cartData[$item->getId()]['qty'] = $productReference['qty'];
                     break;
                 }
             }
 
-            if(!isset($cartData[$item->getId()]['qty'])) {
+            if (!isset($cartData[$item->getId()]['qty'])) {
                 $cartData[$item->getId()]['qty'] = 0;
             }
         }
@@ -348,8 +348,7 @@ class Oyst_OneClick_Model_Magento_Quote
         // Increase stock with qty decreased when order was made if should_ask_stock is enabled
         if (Mage::getStoreConfig('oyst/oneclick/should_ask_stock') &&
             isset($this->apiData['event']) &&
-            'order.v2.new' === $this->apiData['event'])
-        {
+            'order.v2.new' === $this->apiData['event']) {
             Mage::helper('oyst_oneclick')->log(
                 sprintf(
                     'Increase stock of product_id %s (%s) with %s',

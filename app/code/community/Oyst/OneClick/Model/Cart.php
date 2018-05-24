@@ -7,7 +7,7 @@ class Oyst_OneClick_Model_Cart
 {
     public function initOystCheckout($params)
     {
-        if(!empty($params['add_to_cart_form'])
+        if (!empty($params['add_to_cart_form'])
         && !$params['isPreload']) {
             $substractQuoteItemsQtys = array('quoteId' => $params['quoteId']);
             Mage::getModel('oyst_oneclick/oneClick_apiWrapper')->getCartItems($substractQuoteItemsQtys);
@@ -67,11 +67,10 @@ class Oyst_OneClick_Model_Cart
     protected function _authorizeOrder($params)
     {
         $response = Mage::getModel('oyst_oneclick/oneClick_apiWrapper')->authorizeOrder($params);
-        if(empty($response)) {
+        if (empty($response)) {
             throw new Exception(Mage::helper('oyst_oneclick')->__('Invalid Authorize Order Response.'));
         }
 
         return $response;
     }
 }
-
