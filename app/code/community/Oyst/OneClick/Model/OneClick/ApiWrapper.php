@@ -68,7 +68,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
         $oystProducts = $oystCatalog->getOystProducts($dataFormated);
-        if (count($oystProducts) == 0) {
+        if (count($oystProducts) === 0) {
             $oystProducts[] = $oystCatalog->addDummyOystProduct();
         }
 

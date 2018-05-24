@@ -1,4 +1,13 @@
 <?php
+/**
+ * This file is part of Oyst_OneClick for Magento.
+ *
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @author Oyst <plugin@oyst.com> <@oyst>
+ * @category Oyst
+ * @package Oyst_OneClick
+ * @copyright Copyright (c) 2017 Oyst (http://www.oyst.com)
+ */
 
 /**
  * Cart Model
@@ -33,13 +42,13 @@ class Oyst_OneClick_Model_Cart
         }
 
         $product = $this->_initProduct($addToCartFormParams);
-        $related = isset($addToCartFormParams['related_product']) ? $addToCartFormParams['related_product'] : null;
-
         if (!$product) {
             throw new Exception(Mage::helper('oyst_oneclick')->__('Product is not available'));
         }
 
         $cart->addProduct($product, $addToCartFormParams);
+
+        $related = isset($addToCartFormParams['related_product']) ? $addToCartFormParams['related_product'] : null;
         if (!empty($related)) {
             $cart->addProductsByIds(explode(',', $related));
         }

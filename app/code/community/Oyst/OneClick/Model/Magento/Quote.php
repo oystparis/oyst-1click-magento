@@ -53,7 +53,7 @@ class Oyst_OneClick_Model_Magento_Quote
 
             $this->syncQuote($quoteId, $storeId);
             $this->syncCustomer();
-            $this->syncDelivery();
+            $this->syncAddressesAndDelivery();
             $this->syncQuoteItems();
             $this->syncPaymentMethodData();
 
@@ -207,9 +207,9 @@ class Oyst_OneClick_Model_Magento_Quote
     }
 
     /**
-     * Consider all address info only from API same as New guest
+     * Consider all address and shipping method info only from API same as New guest
      */
-    private function syncDelivery()
+    private function syncAddressesAndDelivery()
     {
         $storeId = $this->apiData['order']['context']['store_id'];
 
@@ -311,9 +311,9 @@ class Oyst_OneClick_Model_Magento_Quote
             }
 
             if (isset($item['product']['variation_reference'])) {
-                $this->handleIncreaseStock($item['product']['variation_reference']);
+                $this->handleIncreaseStock($item['product']['variation_reference'], $item['quantity']);
             } else {
-                $this->handleIncreaseStock($item['product']['reference']);
+                $this->handleIncreaseStock($item['product']['reference'], $item['quantity']);
             }
         }
 
@@ -343,7 +343,7 @@ class Oyst_OneClick_Model_Magento_Quote
         return $this;
     }
 
-    private function handleIncreaseStock($productId)
+    private function handleIncreaseStock($productId, $qty)
     {
         // Increase stock with qty decreased when order was made if should_ask_stock is enabled
         if (Mage::getStoreConfig('oyst/oneclick/should_ask_stock') &&
@@ -353,7 +353,7 @@ class Oyst_OneClick_Model_Magento_Quote
                 sprintf(
                     'Increase stock of product_id %s (%s) with %s',
                     $productId,
-                    $item['quantity']
+                    $qty
                 )
             );
 
@@ -366,7 +366,7 @@ class Oyst_OneClick_Model_Magento_Quote
 
             if ($isStockManaged) {
                 $stockItem->setData('is_in_stock', 1); // Set the Product to InStock
-                $stockItem->addQty($item['quantity']);
+                $stockItem->addQty($qty);
                 // @codingStandardsIgnoreLine
                 $stockItem->save();
             }

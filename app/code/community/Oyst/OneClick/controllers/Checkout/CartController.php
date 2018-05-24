@@ -114,10 +114,11 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
         try {
             $oystCart = Mage::getModel('oyst_oneclick/cart');
             $this->data = $oystCart->initOystCheckout($params);
-            $this->sendResponse();
         } catch (Exception $e) {
-            // TODO
-            throw new Exception($e);
+            Mage::helper('oyst_oneclick')->log($e->__toString());
+            $this->data = array('has_error' => 1, 'message' => $e->getMessage());
         }
+
+        $this->sendResponse();
     }
 }

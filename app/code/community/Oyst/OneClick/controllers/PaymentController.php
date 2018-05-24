@@ -16,7 +16,7 @@ class Oyst_OneClick_PaymentController extends Mage_Core_Controller_Front_Action
 {
     /**
      * Return the OneClick payment Url
-     * @deprecated since version 1.12.0
+     * @deprecated since version 1.11.0
      * @return
      */
     public function urlAction()

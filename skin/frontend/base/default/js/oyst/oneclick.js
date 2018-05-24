@@ -19,6 +19,10 @@
  * @param {String} oneClickUrl  Backend conf oneclick payment url
  */
 function oystOneClick(config) {
+    if(config.addtocartButtonsClass) {
+        smartButtonData(config.addtocartButtonsClass);
+    }
+
     window.__OYST__ = window.__OYST__ || {};
     window.__OYST__.getOneClickURL = function (cb, opts) {
         opts = opts || {};
@@ -109,7 +113,7 @@ function oystOneClick(config) {
     };
     window.__OYST__.callTag = function(object){
         if(object.type == 'ORDER_CANCEL') {
-            window.location.reload(false); 
+            window.location.reload(false);
         }
     }
 }
@@ -175,4 +179,21 @@ function oneClickButtonPickToFirstAddToCartButtons(addtocartButtonsClass) {
             console.error(addtocartButtonsClass + " class not found.");
         }
     });
+}
+
+/**
+ * Apply add to cart size on OneClick button
+ */
+function smartButtonData(addtocartButtonsClass) {
+    if (document.getElementById("oyst-1click-button").getAttribute("data-smart")) {
+        try {
+            var addtocartButtons = document.getElementsByClassName(addtocartButtonsClass);
+            var addtocartButton = addtocartButtons[0].getElementsByClassName("button btn-cart");
+
+            document.getElementById("oyst-1click-button").setAttribute("data-height", addtocartButton[0].getHeight() + "px");
+            document.getElementById("oyst-1click-button").setAttribute("data-width", addtocartButton[0].getWidth() + "px");
+        } catch (e) {
+            console.error(addtocartButtonsClass + " class not found.");
+        }
+    }
 }

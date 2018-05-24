@@ -957,7 +957,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 ->addFieldToFilter('rule_id', array('in' => array_keys($total->getFullInfo())))
                 ->addFieldToFilter('simple_action', array('neq' => self::C4B_FREEPRODUCT_ADD_GIFT_ACTION))
                 ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);
-            ;
 
             foreach ($total->getFullInfo() as $salesRuleId => $discountInfo) {
                 $salesRule = $salesRules->getItemById($salesRuleId);
@@ -1190,6 +1189,11 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         return $stockItemToBook;
     }
 
+    /**
+     * This method is required because the API service authorize Order which is called on preload
+     * does not accept an empty cart, so we have to artificially force a dummy product
+     * @return OystProduct
+     */
     public function addDummyOystProduct()
     {
         $price = new OystPrice(1, 'EUR');
