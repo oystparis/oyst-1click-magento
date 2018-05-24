@@ -51,9 +51,11 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         // If last notification is not finished
         if ($lastNotification->getId() && 'finished' !== $lastNotification->getStatus()) {
-            Mage::throwException(Mage::helper('oyst_oneclick')->__(
+            Mage::throwException(
+                Mage::helper('oyst_oneclick')->__(
                 'Last Notification with order id "%s" is not finished.',
-                $oystOrderId)
+                $oystOrderId
+            )
             );
         }
 
@@ -142,7 +144,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
         $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $this->orderResponse);
-        $magentoQuoteBuilder->buildQuote();
+        $magentoQuoteBuilder->syncQuoteFacade();
 
         /** @var Oyst_OneClick_Model_Magento_Order $magentoOrderBuilder */
         $magentoOrderBuilder = Mage::getModel('oyst_oneclick/magento_order', $magentoQuoteBuilder->getQuote());
@@ -188,9 +190,11 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
                 $this->initTransaction($order);
 
                 $order->addStatusHistoryComment(
-                    Mage::helper('oyst_oneclick')->__('%s update order status to: "%s".',
+                    Mage::helper('oyst_oneclick')->__(
+                        '%s update order status to: "%s".',
                         $this->paymentMethod,
-                        OystOrderStatus::ACCEPTED)
+                        OystOrderStatus::ACCEPTED
+                    )
                 )->save();
 
                 $invIncrementIDs = array();
@@ -202,12 +206,13 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
                 if ($order->getInvoiceCollection()->getSize()) {
                     $order->addStatusHistoryComment(
-                        Mage::helper('oyst_oneclick')->__('%s generate invoice: "%s".',
+                        Mage::helper('oyst_oneclick')->__(
+                            '%s generate invoice: "%s".',
                             $this->paymentMethod,
-                            rtrim(implode(',', $invIncrementIDs), ','))
+                            rtrim(implode(',', $invIncrementIDs), ',')
+                        )
                     )->save();
                 }
-
             } catch (Exception $e) {
                 Mage::logException($e);
             }
