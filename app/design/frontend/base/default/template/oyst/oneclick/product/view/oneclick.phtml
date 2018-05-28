@@ -27,14 +27,17 @@ if ($this->isSupportedProduct() && $this->isButtonEnabled()) :
 
         (function () {
             if ("function" === typeof oystOneClick) {
-                oystOneClick(
-                    <?php echo $this->getProductType(); ?>,
-                    <?php echo $this->getOneClickUrl(); ?>,
-                    <?php echo $this->escapeHtml($this->isProductAddtocartFormValidate()); ?>,
-                    <?php echo Zend_Json::encode(
-                            Mage::getStoreConfig('oyst/oneclick/product_page_buttons_wrapper_class')
+                var oystOneClickConfig = {
+                    'oneClickUrl': <?php echo $this->getOneClickUrl(); ?>,
+                    'isCheckoutCart': false,
+                    'addToCartProductFormId': 'product_addtocart_form',
+                    'isProductAddtocartFormValidate': <?php echo $this->escapeHtml($this->isProductAddtocartFormValidate()); ?>,
+                    'addtocartButtonsClass': <?php echo Zend_Json::encode(
+                        Mage::getStoreConfig('oyst/oneclick/product_page_buttons_wrapper_class')
                     ); ?>
-                );
+                };
+            
+                oystOneClick(oystOneClickConfig);
             } else {
                 console.error("Missing function oystOneClick");
             }

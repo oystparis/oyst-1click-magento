@@ -443,7 +443,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      * @param array $translateAttribute
      * @param OystProduct $oystProduct
      */
-    protected function getAttributes(Mage_Catalog_Model_Product $product, Array $translateAttribute, OystProduct &$oystProduct)
+    protected function getAttributes(Mage_Catalog_Model_Product $product, array $translateAttribute, OystProduct &$oystProduct)
     {
         foreach ($translateAttribute as $attributeCode => $simpleAttribute) {
             if ($data = $product->getData($attributeCode)) {
@@ -528,7 +528,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $finalPrice = $product->getFinalPrice();
 
         if ($product->isConfigurable()) {
-
             $price = $product->getPrice();
             $finalPrice = $product->getFinalPrice();
             $configurablePrice = 0;
@@ -621,8 +620,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $data['price-before-discount'] = round($priceIncludingTax, 2);
         $discountAmount = $priceIncludingTax - $finalPriceIncludingTax;
         $data['discount-amount'] = $discountAmount > 0 ? round($discountAmount, 2) : '0';
-        $data['discount-percent'] = $discountAmount > 0 ? round(($discountAmount * 100) / $priceIncludingTax,
-            0) : '0';
+        $data['discount-percent'] = $discountAmount > 0 ? round(
+            ($discountAmount * 100) / $priceIncludingTax,
+            0
+        ) : '0';
         $data['start-date-discount'] = $product->getSpecialFromDate();
         $data['end-date-discount'] = $product->getSpecialToDate();
 
@@ -704,7 +705,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $catalogPlaceholderImage = Mage::getStoreConfig('catalog/placeholder/image_placeholder');
         if (empty($images) && !empty($catalogPlaceholderImage)) {
-            $images[] = sprintf('%s/placeholder/%s',
+            $images[] = sprintf(
+                '%s/placeholder/%s',
                 Mage::getSingleton('catalog/product_media_config')->getBaseMediaUrl(),
                 Mage::getStoreConfig('catalog/placeholder/image_placeholder')
             );
@@ -796,7 +798,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
         $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $apiData);
 
-        $magentoQuoteBuilder->buildQuote();
+        $magentoQuoteBuilder->syncQuoteFacade();
 
         // Object to format data of EndpointShipment
         $oneClickOrderCartEstimate = new OneClickOrderCartEstimate();
@@ -806,8 +808,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $this->getShipments($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
         $this->getCartAmount($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
-
-        $magentoQuoteBuilder->getQuote()->setIsActive(false)->save();
 
         return $oneClickOrderCartEstimate->toJson();
     }
@@ -860,7 +860,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 }
 
                 Mage::helper('oyst_oneclick')->log(
-                    sprintf('%s (%s): %s',
+                    sprintf(
+                        '%s (%s): %s',
                         trim($mappingName),
                         $rateData['code'],
                         $price
@@ -956,7 +957,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $salesRules = $salesRuleCollection
                 ->addFieldToFilter('rule_id', array('in' => array_keys($total->getFullInfo())))
                 ->addFieldToFilter('simple_action', array('neq' => self::C4B_FREEPRODUCT_ADD_GIFT_ACTION))
-                ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);;
+                ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);
 
             foreach ($total->getFullInfo() as $salesRuleId => $discountInfo) {
                 $salesRule = $salesRules->getItemById($salesRuleId);
@@ -999,7 +1000,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             $cartEstimate = $oneClickOrderCartEstimate->toArray();
             foreach ($cartEstimate['shipments'] as $shipment) {
-
                 if (is_null($apiData['order']['shipment']) && $shipment['primary']) {
                     $shippingAmount = Mage::helper('oyst_oneclick')->getHumanAmount($shipment['amount']['value']);
                     break;
@@ -1188,5 +1188,16 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         }
 
         return $stockItemToBook;
+    }
+
+    /**
+     * This method is required because the API service authorize Order which is called on preload
+     * does not accept an empty cart, so we have to artificially force a dummy product
+     * @return OystProduct
+     */
+    public function addDummyOystProduct()
+    {
+        $price = new OystPrice(1, 'EUR');
+        return new OystProduct(1, 'Dummy Product', $price, 1);
     }
 }
