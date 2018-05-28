@@ -14,8 +14,7 @@
  *
  * Adminhtml_Field_LogActions Block
  */
-class Oyst_OneClick_Block_Adminhtml_Field_LogActions extends Mage_Adminhtml_Block_Abstract
-    implements Varien_Data_Form_Element_Renderer_Interface
+class Oyst_OneClick_Block_Adminhtml_Field_LogActions extends Mage_Adminhtml_Block_Abstract implements Varien_Data_Form_Element_Renderer_Interface
 {
     /**
      * @var string
@@ -49,7 +48,9 @@ class Oyst_OneClick_Block_Adminhtml_Field_LogActions extends Mage_Adminhtml_Bloc
     {
         $html = sprintf(
             '<tr id="%s"><td class="label">%s</td><td class="value">%s</td></tr>',
-            $element->getHtmlId(), $element->getLabelHtml(), $this->toHtml()
+            $element->getHtmlId(),
+            $element->getLabelHtml(),
+            $this->toHtml()
         );
 
         return $html;

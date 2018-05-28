@@ -12,8 +12,7 @@
 /**
  * Adminhtml System Config Form Fieldset Carrier Mapping Block
  */
-class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
-    extends Mage_Adminhtml_Block_System_Config_Form_Fieldset
+class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping extends Mage_Adminhtml_Block_System_Config_Form_Fieldset
 {
     //Default code : 'flatrate','freeshipping','fedex','ups','usps','dhlint'
     protected $certified = array('flatrate', 'freeshipping', 'owebiashipping1', 'owebiashipping2', 'owebiashipping3');
@@ -103,7 +102,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
                     ' <span style="font-size:10px">(' . $group['value'] . ')</span>',
                 'title' => Mage::helper('oyst_oneclick')->__($group['label']) . ' (' . $group['value'] . ')',
                 'disabled' => false,
-            ))
+            )
+        )
             ->setRenderer(Mage::getBlockSingleton('adminhtml/system_config_form_field_heading'));
 
         return $field->toHtml();
@@ -131,7 +131,9 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
 
         $dummyElement = $this->getDummyElement();
 
-        $field = $fieldset->addField('oyst_oneclick_carrier_mapping_' . $group['value'], 'select',
+        $field = $fieldset->addField(
+            'oyst_oneclick_carrier_mapping_' . $group['value'],
+            'select',
             array(
                 'name' => 'groups[carrier_mapping][fields][' . $group['value'] . '][value]',
                 'label' => Mage::helper('oyst_oneclick')->__('Shipment type'),
@@ -144,7 +146,8 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
                 'comment' => Mage::helper('oyst_oneclick')->__('To remove switch to disabled'),
                 'can_use_default_value' => $this->getForm()->canUseDefaultValue($dummyElement),
                 'can_use_website_value' => $this->getForm()->canUseWebsiteValue($dummyElement),
-            ))
+            )
+        )
             ->setRenderer($this->getFieldRenderer());
 
         return $field->toHtml();
@@ -173,7 +176,9 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
         $e = $this->getDummyElement();
 
         $field = $fieldset
-            ->addField('oyst_oneclick_carrier_delay_' . $group['value'], 'text',
+            ->addField(
+                'oyst_oneclick_carrier_delay_' . $group['value'],
+                'text',
                 array(
                     'name' => 'groups[carrier_delay][fields][' . $group['value'] . '][value]',
                     'label' => Mage::helper('oyst_oneclick')->__('Shipment delay'),
@@ -214,7 +219,9 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping
         $e = $this->getDummyElement();
 
         $field = $fieldset
-            ->addField('oyst_oneclick_carrier_name_' . $group['value'], 'text',
+            ->addField(
+                'oyst_oneclick_carrier_name_' . $group['value'],
+                'text',
                 array(
                     'name' => 'groups[carrier_name][fields][' . $group['value'] . '][value]',
                     'label' => Mage::helper('oyst_oneclick')->__('Shipment name'),

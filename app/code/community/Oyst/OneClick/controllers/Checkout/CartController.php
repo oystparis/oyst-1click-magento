@@ -100,4 +100,25 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
         }
         $this->getResponse()->setBody(Zend_Json::encode($this->data));
     }
+
+    public function initOystCheckoutAction()
+    {
+        $params = $this->getRequest()->getParams();
+        $params['quoteId'] = Mage::getSingleton('checkout/session')->getQuoteId();
+        if (!$params['quoteId']) {
+            Mage::getSingleton('checkout/cart')->save();
+            $params['quoteId'] = Mage::getSingleton('checkout/session')->getQuoteId();
+        }
+        $params['add_to_cart_form'] = isset($params['add_to_cart_form']) ? Zend_Json::decode($params['add_to_cart_form']) : null;
+
+        try {
+            $oystCart = Mage::getModel('oyst_oneclick/cart');
+            $this->data = $oystCart->initOystCheckout($params);
+        } catch (Exception $e) {
+            Mage::helper('oyst_oneclick')->log($e->__toString());
+            $this->data = array('has_error' => 1, 'message' => $e->getMessage());
+        }
+
+        $this->sendResponse();
+    }
 }
