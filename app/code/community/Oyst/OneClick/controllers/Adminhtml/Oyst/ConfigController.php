@@ -38,7 +38,8 @@ class Oyst_OneClick_Adminhtml_Oyst_ConfigController extends Mage_Adminhtml_Contr
 
         try {
             $writeConnection->dropTable($tableName);
-            $writeConnection->delete('core_config_data',
+            $writeConnection->delete(
+                'core_config_data',
                 $writeConnection->quoteInto('path LIKE ?', 'payment/oyst_%') .
                 $writeConnection->quoteInto(' OR path LIKE ?', 'oyst/oneclick%') .
                 $writeConnection->quoteInto(' OR path LIKE ?', 'oyst_oneclick/%')

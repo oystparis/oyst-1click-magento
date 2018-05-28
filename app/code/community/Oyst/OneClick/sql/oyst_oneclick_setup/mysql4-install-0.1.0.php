@@ -52,12 +52,16 @@ $sales->startSetup();
 
 // Add attribute to order and quote for synchronisation
 $sales->addAttribute(
-    'order', 'oyst_order_id', array(
+    'order',
+    'oyst_order_id',
+    array(
         'type' => 'varchar',
     )
 );
 $sales->addAttribute(
-    'quote', 'oyst_order_id', array(
+    'quote',
+    'oyst_order_id',
+    array(
         'type' => 'varchar',
     )
 );

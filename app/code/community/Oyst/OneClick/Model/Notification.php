@@ -103,7 +103,9 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
         /** @var Oyst_OneClick_Model_Notification $notifications */
         $notifications = $this->getCollection()
             ->addFieldToFilter('status', array('like' => self::NOTIFICATION_STATUS_START))
-            ->addFieldToFilter('created_at', array(
+            ->addFieldToFilter(
+                'created_at',
+                array(
                     'to' => strtotime($notificationUpdateMaxDelay, time()),
                     'datetime' => true,
                 )

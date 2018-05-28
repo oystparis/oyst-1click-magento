@@ -57,7 +57,7 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
     public function getShipmentTypes()
     {
         try {
-            if(!isset($this->_shipmentTypes)) {
+            if (!isset($this->_shipmentTypes)) {
                 $this->_shipmentTypes = $this->_catalogApi->getShipmentTypes();
                 $this->_oystClient->validateResult($this->_catalogApi);
             }
