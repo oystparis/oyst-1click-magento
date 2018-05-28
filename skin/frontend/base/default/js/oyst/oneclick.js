@@ -111,11 +111,11 @@ function oystOneClick(config) {
             xhr.send(form);
         });
     };
-    window.__OYST__.callTag = function(object){
-        if(object.type == 'ORDER_CANCEL') {
+    window.addEventListener('message', function(event){
+        if(event.data.type == 'MODAL_CLOSE' || event.data.type == 'ORDER_CANCEL') {
             window.location.reload(false);
         }
-    }
+    });
 }
 
 /**
