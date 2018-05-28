@@ -53,9 +53,11 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         if ($lastNotification->getId()
             && Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_START === $lastNotification->getStatus()
         ) {
-            Mage::throwException(Mage::helper('oyst_oneclick')->__(
+            Mage::throwException(
+                Mage::helper('oyst_oneclick')->__(
                 'Last Notification with order id "%s" is still processing.',
-                $oystOrderId)
+                $oystOrderId
+            )
             );
         }
 
