@@ -10,12 +10,11 @@
  */
 
 /**
- * @var Oyst_OneClick_Block_Checkout_Cart_Redirect $this
+ * @var Oyst_OneClick_Block_Checkout_Redirect $this
  */
 ?>
 <?php
-$quoteUrl = $this->escapeUrl($this->getQuoteUrl());
-$quoteId = $this->getQuoteId();
+$returnUrl = $this->escapeUrl($this->getReturnUrl());
 ?>
 
 <div class="sk-fading-circle">
@@ -38,6 +37,6 @@ $quoteId = $this->getQuoteId();
 </div>
 
 <script>
-    var redirectCart = new RedirectCart("<?php echo $quoteUrl ?>", <?php echo $quoteId; ?>);
-    redirectCart.send();
+    var redirectFromOyst = new RedirectFromOyst("<?php echo $returnUrl ?>");
+    redirectFromOyst.send();
 </script>
