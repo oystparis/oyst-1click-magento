@@ -351,7 +351,7 @@ class Oyst_OneClick_Model_Magento_Quote
             'order.v2.new' === $this->apiData['event']) {
             Mage::helper('oyst_oneclick')->log(
                 sprintf(
-                    'Increase stock of product_id %s (%s) with %s',
+                    'Increase stock of product_id %s with %s',
                     $productId,
                     $qty
                 )
