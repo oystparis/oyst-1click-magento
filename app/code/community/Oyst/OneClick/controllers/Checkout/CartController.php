@@ -33,10 +33,10 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
     {
         $order = Mage::getModel('sales/order')->load(Mage::getSingleton('checkout/session')->getOystRelatedQuoteId(), 'quote_id');
 
-            if($order->getId()) {
-                $websiteId = Mage::app()->getWebsite()->getId();
-                $customer = Mage::getModel('customer/customer')->setWebsiteId($websiteId)
-                    ->loadByEmail($order->getCustomerEmail());
+        if ($order->getId()) {
+            $websiteId = Mage::app()->getWebsite()->getId();
+            $customer = Mage::getModel('customer/customer')->setWebsiteId($websiteId)
+                ->loadByEmail($order->getCustomerEmail());
 
             $session = Mage::getSingleton("customer/session");
             $session->loginById($customer->getId());
