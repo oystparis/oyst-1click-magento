@@ -31,33 +31,29 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
      */
     public function returnAction()
     {
-        $oystOrderId = Mage::getModel('sales/quote')->load(Mage::getSingleton('checkout/session')->getOystRelatedQuoteId())->getOystOrderId();
+        $order = Mage::getModel('sales/order')->load(Mage::getSingleton('checkout/session')->getOystRelatedQuoteId(), 'quote_id');
 
-        if ($oystOrderId) {
-            $order = Mage::getModel('sales/order')->load($oystOrderId, 'oyst_order_id');
+        if($order->getId()) {
+            $websiteId = Mage::app()->getWebsite()->getId();
+            $customer = Mage::getModel('customer/customer')->setWebsiteId($websiteId)
+                ->loadByEmail($order->getCustomerEmail());
 
-            if($order->getId()) {
-                $websiteId = Mage::app()->getWebsite()->getId();
-                $customer = Mage::getModel('customer/customer')->setWebsiteId($websiteId)
-                    ->loadByEmail($order->getCustomerEmail());
+            $session = Mage::getSingleton("customer/session");
+            $session->loginById($customer->getId());
+            $session->setCustomerAsLoggedIn($customer);
 
-                $session = Mage::getSingleton("customer/session");
-                $session->loginById($customer->getId());
-                $session->setCustomerAsLoggedIn($customer);
+            $session = Mage::getSingleton('checkout/type_onepage')->getCheckout();
+            $session->setLastQuoteId($order->getQuoteId())
+                ->setLastSuccessQuoteId($order->getQuoteId())
+                ->setLastOrderId($order->getId());
 
-                $session = Mage::getSingleton('checkout/type_onepage')->getCheckout();
-                $session->setLastQuoteId($order->getQuoteId())
-                    ->setLastSuccessQuoteId($order->getQuoteId())
-                    ->setLastOrderId($order->getId());
+            $successUrl = Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_success_page');
 
-                $successUrl = Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_success_page');
-
-                if (!$successUrl) {
-                    $successUrl = Mage::getBaseUrl() . Oyst_OneClick_Helper_Data::SUCCESS_URL;
-                }
-
-                $this->data = $successUrl;
+            if (!$successUrl) {
+                $successUrl = Mage::getBaseUrl() . Oyst_OneClick_Helper_Data::SUCCESS_URL;
             }
+
+            $this->data = $successUrl;
         }
 
         $this->sendResponse();
