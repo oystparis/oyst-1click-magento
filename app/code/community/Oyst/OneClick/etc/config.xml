@@ -52,7 +52,7 @@
         </fieldsets>
         <events>
             <!-- Support the lib/Oyst/oyst-php folder -->
-            <controller_front_init_before>
+            <resource_get_tablename>
                 <observers>
                     <oyst_lib_load>
                         <type>object</type>
@@ -60,7 +60,7 @@
                         <method>createAndRegister</method>
                     </oyst_lib_load>
                 </observers>
-            </controller_front_init_before>
+            </resource_get_tablename>
 
             <!-- Oneclick enable and restrict allow ips -->
             <controller_action_layout_load_before>
@@ -252,10 +252,6 @@
             </order_settings>
         </oyst>
         <oyst_oneclick>
-            <dev>
-                <register_autoloader>1</register_autoloader>
-                <autoloader_basepath>lib/Oyst/oyst-php</autoloader_basepath>
-            </dev>
             <mode>prod</mode>
         </oyst_oneclick>
         <payment>

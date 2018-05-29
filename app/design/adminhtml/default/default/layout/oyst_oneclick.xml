@@ -24,10 +24,4 @@
             <action method="addCss"><stylesheet>oyst/css/oneclick.css</stylesheet></action>
         </reference>
     </adminhtml_system_config_edit>
-
-    <adminhtml_oyst_actions_index>
-        <reference name="content">
-            <block type="core/template" name="adminhtml_oyst_actions" as="adminhtml_oyst_actions" template="oyst/freepay/actions.phtml" />
-        </reference>
-    </adminhtml_oyst_actions_index>
 </layout>
