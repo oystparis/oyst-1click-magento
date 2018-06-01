@@ -71,6 +71,13 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
     {
         $params = Mage::app()->getRequest()->getParams();
         $this->baseDir = Mage::getBaseDir('var') . DS . 'log' . DS;
+
+        $existingLogs = array_diff(scandir($this->baseDir), array('.', '..'));
+        if (!in_array($params['name'], $existingLogs)) {
+            $this->norouteAction();
+            return;
+        }
+
         $filePath = $this->baseDir . $params['name'];
 
         $this->varienIo = new Varien_Io_File();
