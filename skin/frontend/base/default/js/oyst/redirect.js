@@ -9,29 +9,24 @@
  */
 
 /**
- * OneClick RedirectCart JS
+ * OneClick RedirectFromOyst JS
  */
 "use strict";
 
 /**
- * Redirect from cart
+ * Redirect from Oyst
  *
  * @param {String} url Loading page url
- * @param {int} oystParam cart id
  */
-function RedirectCart(url, oystParam) {
+function RedirectFromOyst(url) {
     var self = this;
 
     this.url = url;
-    this.oystParam = oystParam;
-    this.form = new FormData();
     this.xhr = new XMLHttpRequest();
     this.data = null;
 
     this.prepare = function () {
-        self.form.append("oystParam", self.oystParam);
-
-        self.xhr.open("POST", self.url, true);
+        self.xhr.open("GET", self.url, true);
         self.xhr.setRequestHeader("cache-control", "no-cache");
     };
 
@@ -54,13 +49,11 @@ function RedirectCart(url, oystParam) {
             if (null === self.data) {
                 self.xhr.onload = self.nullResponse;
             } else {
-                self.url = self.data.check_order_url;
-                self.oystParam = self.data.oyst_order_id;
                 self.xhr.onload = self.redirectSuccess;
             }
 
             self.prepare();
-            self.xhr.send(self.form);
+            self.xhr.send();
         }, 5000);
     };
 }
