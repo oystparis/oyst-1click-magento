@@ -45,15 +45,14 @@ class Oyst_OneClick_Model_Magento_Order
     public function buildOrder()
     {
         $this->createOrder();
-
-        $this->order->setCreatedAt($this->quote->getCreatedAt());
-        $this->order->save();
     }
 
     private function createOrder()
     {
         try {
             $this->order = $this->placeOrder();
+            $this->order->setCreatedAt($this->quote->getCreatedAt());
+            $this->order->save();
         } catch (Exception $e) {
             // Remove ordered items from customer cart
             $this->quote->setIsActive(false)->save();

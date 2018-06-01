@@ -111,9 +111,18 @@ function oystOneClick(config) {
             xhr.send(form);
         });
     };
+    var allowOystRedirectSelf = false;
     window.addEventListener('message', function(event){
-        if(event.data.type == 'MODAL_CLOSE' || event.data.type == 'ORDER_CANCEL') {
-            window.location.reload(false);
+        if (event.data.type == 'ORDER_COMPLETE') {
+           allowOystRedirectSelf = false;
+        }
+
+        if (event.data.type == 'ORDER_CANCEL') {
+           allowOystRedirectSelf = true;
+        }
+
+        if (event.data.type == 'MODAL_CLOSE' && allowOystRedirectSelf) {
+           window.location.reload(false);
         }
     });
 }
