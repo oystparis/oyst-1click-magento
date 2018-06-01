@@ -60,7 +60,7 @@
         </reference>
     </oneclick_checkout_cart_bottom>
 
-    <oyst_oneclick_checkout_cart_loading>
+    <oyst_oneclick_checkout_cart_redirect>
         <reference name="head">
             <action method="addCss"><stylesheet>css/oyst/cart-redirect.css</stylesheet></action>
             <action method="addItem"><type>skin_js</type><name>js/oyst/redirect.js</name></action>
@@ -69,8 +69,8 @@
             <action method="setTemplate"><template>page/1column.phtml</template></action>
         </reference>
         <reference name="content">
-            <block type="oyst_oneclick/checkout_cart_redirect" name="cart_return_message" template="oyst/oneclick/checkout/redirect.phtml" />
+            <block type="oyst_oneclick/checkout_redirect" name="redirect_from_oyst" template="oyst/oneclick/checkout/redirect.phtml" />
         </reference>
-    </oyst_oneclick_checkout_cart_loading>
+    </oyst_oneclick_checkout_cart_redirect>
 
 </layout>
