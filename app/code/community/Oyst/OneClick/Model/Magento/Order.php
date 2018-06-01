@@ -54,9 +54,8 @@ class Oyst_OneClick_Model_Magento_Order
     {
         try {
             $this->order = $this->placeOrder();
-        } catch (Exception $e) {
-            // Remove ordered items from customer cart
             $this->quote->setIsActive(false)->save();
+        } catch (Exception $e) {
             Mage::helper('oyst_oneclick')->log('Error create order: ' . $e->getMessage());
             throw $e;
         }
