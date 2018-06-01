@@ -542,6 +542,35 @@
                     </fields>
                 </customization_button_checkout_cart>
 
+                <!--==================== Checkout onepage ====================== -->
+                <checkout_onepage translate="label">
+                    <label>Checkout Onepage</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>28</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <!-- checkout onepage xpath to append oneclick button -->
+                        <checkout_onepage_xpath_to_append_oneclick_button translate="label">
+                            <label>Checkout onepage XPath(s) where append the button</label>
+                            <comment><![CDATA[Separate by ","]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>oyst/oneclick/checkout_onepage_xpath_to_append_oneclick_button</config_path>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </checkout_onepage_xpath_to_append_oneclick_button>
+                    </fields>
+                </checkout_onepage>
+
                 <!--============================== Shipments Settings ================================ -->
                 <shipments translate="label">
                     <label>Shipments configuration</label>
