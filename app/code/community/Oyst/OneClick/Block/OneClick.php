@@ -14,6 +14,8 @@
  */
 class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
 {
+    const XML_PATH_CHECKOUT_ONEPAGE_XPATH_TO_APPEND_ONECLICK_BUTTON = 'oyst/oneclick/checkout_onepage_xpath_to_append_oneclick_button';
+
     /**
      * Check if the product is supported
      *
@@ -175,5 +177,15 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     public function getProductType()
     {
         return Zend_Json::encode($this->escapeHtml($this->getProduct()->getTypeId()));
+    }
+
+    /**
+     * Get checkout onepage position to append the button
+     *
+     * @return string
+     */
+    public function getCheckoutOnepagePlacesToAppendOneClickButton()
+    {
+        return $this->escapeHtml(Mage::getStoreConfig(self::XML_PATH_CHECKOUT_ONEPAGE_XPATH_TO_APPEND_ONECLICK_BUTTON));
     }
 }
