@@ -114,7 +114,7 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
         }
 
         if (!$data['success']) {
-            $this->addNotificationHistoryComment(
+            $order->addStatusHistoryComment(
                 sprintf(
                     $this->__('Last %s notification fail.'),
                     $data['event_code']
@@ -146,7 +146,7 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
 
         //prepare transaction and create invoice
         if ($transactionData) {
-            $this->_addTransaction($order->getId(), $transactionData);
+            $this->_addTransaction($order, $transactionData);
         } else {
             //pay offline
             $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
@@ -188,8 +188,6 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
             try {
                 $order->cancel();
                 $order->getStatusHistoryCollection(true);
-                $order->save();
-
                 $order->addStatusHistoryComment(
                     $this->__('Success Cancel Order. Payment Id: "%s".', $paymentId)
                 )->save();
@@ -204,29 +202,15 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Add history in Order
-     *
-     * @param array $params
-     */
-    public function addNotificationHistoryComment($params)
-    {
-        $order = Mage::getModel('sales/order')->load($params['order_increment_id'], 'increment_id');
-
-        $order->addStatusHistoryComment($this->__('Notification.'))->save();
-    }
-
-    /**
      * Create order Transaction
      *
-     * @param string $orderId
+     * @param Mage_Sales_Model_Order $order
      * @param array $transactionData
      */
-    protected function _addTransaction($orderId, $transactionData)
+    protected function _addTransaction($order, $transactionData)
     {
         /** @var Oyst_OneClick_Helper_Data $oystHelper */
         $oystHelper = Mage::helper('oyst_oneclick');
-
-        $order = Mage::getModel('sales/order')->load($orderId);
 
         $paymentId = !empty($transactionData['payment_id']) ? $transactionData['payment_id'] : false;
 

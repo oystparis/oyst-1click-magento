@@ -71,6 +71,14 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
     {
         $params = Mage::app()->getRequest()->getParams();
         $this->baseDir = Mage::getBaseDir('var') . DS . 'log' . DS;
+
+        $dirs = array(Zend_Cloud_StorageService_Adapter_FileSystem::LOCAL_DIRECTORY => Mage::getBaseDir('var'));
+        $fileSystem = new Zend_Cloud_StorageService_Adapter_FileSystem($dirs);
+        if (!in_array($params['name'], $fileSystem->listItems('log'))) {
+            $this->norouteAction();
+            return;
+        }
+
         $filePath = $this->baseDir . $params['name'];
 
         $this->varienIo = new Varien_Io_File();
