@@ -244,19 +244,23 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping 
      *
      * @return array
      */
-    protected function getAllCarrierCode()
+    public function getAllCarrierCode()
     {
         /** @var Mage_Shipping_Model_Config $methods */
         $methods = Mage::getSingleton('shipping/config')->getActiveCarriers($this->getStore());
         $methodOptions = array();
+        $ignoredShipments = Mage::helper('oyst_oneclick/shipments')->getIgnoredShipments();
+
         foreach ($methods as $ccode => $carrier) {
-            if ($_methods = $carrier->getAllowedMethods()) {
-                foreach ($_methods as $mcode => $method) {
-                    $code = $ccode . '_' . $mcode;
-                    $methodOptions[] = array(
-                        'value' => $code,
-                        'label' => $method,
-                    );
+            if ($this->isCarrierSupported($ccode, $ignoredShipments)) {
+                if ($_methods = $carrier->getAllowedMethods()) {
+                    foreach ($_methods as $mcode => $method) {
+                        $code = $ccode . '_' . $mcode;
+                        $methodOptions[] = array(
+                            'value' => $code,
+                            'label' => $method,
+                        );
+                    }
                 }
             }
         }
@@ -280,5 +284,10 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping 
         }
 
         return $store;
+    }
+
+    protected function isCarrierSupported($ccode, $ignoredShipments)
+    {
+        return true;
     }
 }

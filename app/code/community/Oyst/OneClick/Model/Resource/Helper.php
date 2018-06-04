@@ -23,44 +23,4 @@ class Oyst_OneClick_Model_Resource_Helper
     {
         return $this->getResource()->getConnection('core_write');
     }
-
-    public function inactiveAllCustomerQuotes($customerId)
-    {
-        if (empty($customerId)) {
-            return;
-        }
-
-        $resource = $this->getResource();
-        $writeConn = $this->getWriteConnection();
-
-        $data = array(
-            'is_active'      => '0',
-        );
-
-        $writeConn->update(
-            $resource->getTableName('sales_flat_quote'),
-            $data,
-            array('customer_id = ?' => $customerId)
-        );
-    }
-    
-    public function inactiveAllOystOrderRelatedQuotes($oystOrderId)
-    {
-        if (empty($oystOrderId)) {
-            return;
-        }
-            
-        $resource = $this->getResource();
-        $writeConn = $this->getWriteConnection();
-        
-        $data = array(
-            'is_active'      => '0',
-        );
-        
-        $writeConn->update(
-            $resource->getTableName('sales_flat_quote'),
-            $data,
-            array('oyst_order_id = ?' => $oystOrderId)
-        );
-    }
 }
