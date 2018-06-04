@@ -55,12 +55,9 @@ class Oyst_OneClick_Model_Magento_Quote
             $this->syncCustomer();
             $this->syncAddresses();
             $this->syncShippingMethod();
+            $this->syncCoupons();
             $this->syncQuoteItems();
             $this->syncPaymentMethodData();
-
-            if (isset($this->apiData['order']['context']['applied_coupons'])) {
-                $this->quote->setCouponCode($this->apiData['order']['context']['applied_coupons']);
-            }
 
             Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_quote_facade', array('api_data' => $this->apiData, 'quote' => $this->quote));
 
@@ -269,11 +266,11 @@ class Oyst_OneClick_Model_Magento_Quote
 
             // MEANS THAT SHIPPING METHOD PROVIDED BY OYST EXISTS BUT CODE HAS TO BE FOUND
             if (strpos($rateData['code'], $shippingMethod) !== false) {
-                if(!isset($tmpCheapestPrice)) {
+                if (!isset($tmpCheapestPrice)) {
                     $tmpCheapestPrice = $rateData['price'];
                 }
 
-                if($rateData['price'] <= $tmpCheapestPrice) {
+                if ($rateData['price'] <= $tmpCheapestPrice) {
                     $realShippingMethod = $rateData['code'];
                 }
             }
@@ -327,6 +324,42 @@ class Oyst_OneClick_Model_Magento_Quote
         }
 
         return $formattedAddress;
+    }
+
+    private function syncCoupons()
+    {
+        if (isset($this->apiData['order']['context']['applied_coupons'])
+            || isset($this->apiData['order']['applied_coupons'])
+        ) {
+            // Coupon applied from checkout
+            if (isset($this->apiData['order']['context']['applied_coupons'])) {
+                Mage::log('$this->apiData[order][context][applied_coupons]');
+                Mage::log($this->apiData['order']['context']['applied_coupons']);
+                $this->quote->setCouponCode($this->apiData['order']['context']['applied_coupons']);
+            }
+
+            // Coupon applied from modal
+            if (isset($this->apiData['discount_coupon'])) {
+                Mage::log('$this->apiData[discount_coupon]');
+                Mage::log($this->apiData['discount_coupon']);
+                $this->quote->coupon;
+                $this->quote->setCouponCode($this->apiData['discount_coupon']);
+            }
+
+            // Coupon on order creation
+            if (isset($this->apiData['order']['applied_coupons'])) {
+                $appliedCoupons = $this->apiData['order']['applied_coupons'];
+                Mage::log('$appliedCoupons');
+                Mage::log($appliedCoupons);
+                foreach ($appliedCoupons as $appliedCoupon) {
+                    if ($appliedCoupon['value'] == $this->apiData['order']['context']['applied_coupons']) {
+                        continue;
+                    }
+                    $this->quote->setCouponCode($appliedCoupon['value']);
+                    break;
+                }
+            }
+        }
     }
 
     private function syncQuoteItems()
