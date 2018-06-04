@@ -13,7 +13,7 @@
 <layout version="0.1.0">
 
     <default>
-        <block type="oyst_oneclick/oneClick" name="oyst.oneclick.express.checkout" output="toHtml"/>
+        <block type="oyst_oneclick/oneClick" name="oyst.oneclick.express.checkout"/>
         <reference name="head">
             <block type="core/text" name="oyst.oneclick.metadata">
                 <action method="setText">
@@ -82,6 +82,10 @@
 
         <reference name="oyst.oneclick.express.checkout">
             <action method="setTemplate" ifconfig="oyst/oneclick/is_enable"><template>oyst/oneclick/checkout/cart/oneclick.phtml</template></action>
+        </reference>
+        
+        <reference name="before_body_end">
+            <action method="append"><block>oyst.oneclick.express.checkout</block></action>
         </reference>
     </checkout_onepage_index>
 
