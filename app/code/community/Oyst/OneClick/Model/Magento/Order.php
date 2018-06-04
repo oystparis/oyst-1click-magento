@@ -45,15 +45,14 @@ class Oyst_OneClick_Model_Magento_Order
     public function buildOrder()
     {
         $this->createOrder();
-
-        $this->order->setCreatedAt($this->quote->getCreatedAt());
-        $this->order->save();
     }
 
     private function createOrder()
     {
         try {
             $this->order = $this->placeOrder();
+            $this->order->setCreatedAt($this->quote->getCreatedAt());
+            $this->order->save();
             $this->quote->setIsActive(false)->save();
         } catch (Exception $e) {
             Mage::helper('oyst_oneclick')->log('Error create order: ' . $e->getMessage());

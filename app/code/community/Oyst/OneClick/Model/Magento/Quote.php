@@ -53,7 +53,8 @@ class Oyst_OneClick_Model_Magento_Quote
 
             $this->syncQuote($quoteId, $storeId);
             $this->syncCustomer();
-            $this->syncAddressesAndDelivery();
+            $this->syncAddresses();
+            $this->syncShippingMethod();
             $this->syncQuoteItems();
             $this->syncPaymentMethodData();
 
@@ -207,37 +208,19 @@ class Oyst_OneClick_Model_Magento_Quote
     }
 
     /**
-     * Consider all address and shipping method info only from API same as New guest
+     * Consider all address only from API same as New guest
      */
-    private function syncAddressesAndDelivery()
+    private function syncAddresses()
     {
-        $storeId = $this->apiData['order']['context']['store_id'];
-
-        $billingMethod = $shippingMethod = Mage::getStoreConfig('oyst/oneclick/carrier_default', $storeId);
-        $billingDescription = $shippingDescription = Mage::getStoreConfig('oyst_oneclick/carrier_name/' . $shippingMethod, $storeId);
-
-        if (isset($this->apiData['order']['shipment']) &&
-            isset($this->apiData['order']['shipment']['carrier']) &&
-            isset($this->apiData['order']['shipment']['carrier']['id']) &&
-            'SHIPMENT-404' != $this->apiData['order']['shipment']['id']
-        ) {
-            $billingMethod = $shippingMethod = $this->apiData['order']['shipment']['carrier']['id'];
-            $billingDescription = $shippingDescription = $this->apiData['order']['shipment']['carrier']['name'];
-        }
-
         /** @var Mage_Sales_Model_Quote_Address $billingAddress */
         $billingAddress = $this->quote->getBillingAddress();
         $billingInfoFormated = $this->getAddressData($billingAddress);
         $billingAddress->addData($billingInfoFormated);
         $billingAddress->implodeStreetAddress();
-        $billingAddress->setShippingMethod($billingMethod);
-        $billingAddress->setShippingDescription($billingDescription);
         $billingAddress->isObjectNew(false);
 
         $billingAddress->setSaveInAddressBook(false);
         $billingAddress->setShouldIgnoreValidation(true);
-        $billingAddress->setCollectShippingRates(true);
-
 
         /** @var Mage_Sales_Model_Quote_Address $shippingAddress */
         $shippingAddress = $this->quote->getShippingAddress();
@@ -245,13 +228,59 @@ class Oyst_OneClick_Model_Magento_Quote
         $shippingAddress->setSameAsBilling(0); // maybe just set same as billing?
         $shippingAddress->addData($shippingInfoFormated);
         $shippingAddress->implodeStreetAddress();
-        $shippingAddress->setShippingMethod($shippingMethod);
-        $shippingAddress->setShippingDescription($shippingDescription);
         $shippingAddress->isObjectNew(false);
 
         $shippingAddress->setSaveInAddressBook(false);
         $shippingAddress->setShouldIgnoreValidation(true);
+    }
+
+    private function syncShippingMethod()
+    {
+        $shippingAddress = $this->quote->getShippingAddress();
+
+        $storeId = $this->apiData['order']['context']['store_id'];
+
+        $shippingMethod = Mage::getStoreConfig('oyst/oneclick/carrier_default', $storeId);
+        $shippingDescription = Mage::getStoreConfig('oyst_oneclick/carrier_name/' . $shippingMethod, $storeId);
+
+        if (isset($this->apiData['order']['shipment']) &&
+            isset($this->apiData['order']['shipment']['carrier']) &&
+            isset($this->apiData['order']['shipment']['carrier']['id']) &&
+            'SHIPMENT-404' != $this->apiData['order']['shipment']['id']
+        ) {
+            $shippingMethod = $this->apiData['order']['shipment']['carrier']['id'];
+            $shippingDescription = $this->apiData['order']['shipment']['carrier']['name'];
+        }
+
         $shippingAddress->setCollectShippingRates(true);
+
+        $rates = $shippingAddress
+            ->collectShippingRates()
+            ->getShippingRatesCollection();
+
+        $tmpCheapestPrice = null;
+        $realShippingMethod = null;
+        foreach ($rates->getData() as $rateData) {
+            // MEANS THAT SHIPPING METHOD PROVIDED BY OYST REALLY EXISTS
+            if ($rateData['code'] == $shippingMethod) {
+                $realShippingMethod = $rateData['code'];
+                break;
+            }
+
+            // MEANS THAT SHIPPING METHOD PROVIDED BY OYST EXISTS BUT CODE HAS TO BE FOUND
+            if (strpos($rateData['code'], $shippingMethod) !== false) {
+                if(!isset($tmpCheapestPrice)) {
+                    $tmpCheapestPrice = $rateData['price'];
+                }
+
+                if($rateData['price'] <= $tmpCheapestPrice) {
+                    $realShippingMethod = $rateData['code'];
+                }
+            }
+        }
+
+        $shippingAddress->setShippingMethod($realShippingMethod);
+        $shippingAddress->setShippingDescription($shippingDescription);
     }
 
     /**
