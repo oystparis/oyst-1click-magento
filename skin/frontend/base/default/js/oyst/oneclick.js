@@ -119,9 +119,19 @@ function oystOneClick(config) {
             initMutationObserver();
         });
     };
-    window.addEventListener("message", function (event) {
-        if ("MODAL_CLOSE" == event.data.type || "ORDER_CANCEL" == event.data.type) {
-            window.location.reload(false);
+
+    var allowOystRedirectSelf = false;
+    window.addEventListener('message', function(event){
+        if (event.data.type == 'ORDER_COMPLETE') {
+           allowOystRedirectSelf = false;
+        }
+
+        if (event.data.type == 'ORDER_CANCEL') {
+           allowOystRedirectSelf = true;
+        }
+
+        if (event.data.type == 'MODAL_CLOSE' && allowOystRedirectSelf) {
+           window.location.reload(false);
         }
     });
 }
