@@ -197,7 +197,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
                         $this->paymentMethod,
                         OystOrderStatus::ACCEPTED
                     )
-                )->save();
+                );
 
                 $invIncrementIDs = array();
                 if ($order->hasInvoices()) {
@@ -213,7 +213,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
                             $this->paymentMethod,
                             rtrim(implode(',', $invIncrementIDs), ',')
                         )
-                    )->save();
+                    );
                 }
             } catch (Exception $e) {
                 Mage::logException($e);
@@ -251,8 +251,6 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         if (Mage::helper('oyst_oneclick')->getConfig('enable_invoice_auto_generation')) {
             $payment->registerCaptureNotification($helper->getHumanAmount($this->orderResponse['order']['order_amount']['value']));
         }
-
-        $order->save();
     }
 
     /**
@@ -267,12 +265,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
             ->addFieldToFilter('is_active', array('eq' => 1))
             ->addFieldToFilter('entity_id', array('eq' => $quoteId));
 
-        foreach ($quotes as $quote) {
-            $quote->setIsActive(0);
-            $quote->setOystOrderId($oystOrderId);
-
-            // @codingStandardsIgnoreLine
-            $quote->save();
-        }
+        $resourceHelper = Mage::getResourceModel('oyst_oneclick/helper');
+        $resourceHelper->inactivateQuotesByIds($quotes->getAllIds());
     }
 }
