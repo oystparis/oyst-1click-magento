@@ -45,6 +45,7 @@ function RedirectFromOyst(url) {
     };
 
     this.send = function () {
+        var timeoutTimer = 5000;
         setTimeout(function () {
             if (null === self.data) {
                 self.xhr.onload = self.nullResponse;
@@ -54,6 +55,6 @@ function RedirectFromOyst(url) {
 
             self.prepare();
             self.xhr.send();
-        }, 5000);
+        }, timeoutTimer);
     };
 }

@@ -22,6 +22,8 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
 
     const SUCCESS_URL = 'checkout/onepage/success';
 
+    const FAILURE_URL = 'checkout/onepage/failure';
+
     const XML_PATH_RESTRICT_ALLOW_IPS = 'restrict_allow_ips';
 
     /**
