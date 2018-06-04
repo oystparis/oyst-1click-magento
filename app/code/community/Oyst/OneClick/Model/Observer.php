@@ -20,7 +20,7 @@ class Oyst_OneClick_Model_Observer
 
     const XML_PATH_ONECLICK_ENABLE = 'oyst/oneclick/enable';
 
-    const XML_PATH_ONECLICK_ENABLE_AND_RESTRICT_ALLOW_IPS = 'oyst/oneclick/is_enable';
+    const XML_PATH_ONECLICK_IS_ENABLE = 'oyst/oneclick/is_enable';
 
     const PAYMENT_METHOD = 'oyst_oneclick';
 
@@ -154,6 +154,9 @@ class Oyst_OneClick_Model_Observer
 
     /**
      * Check if the module must be considered as enable
+     *  - check module state
+     *  - ip allowed
+     *  - checkout onepage xpath filled
      *
      * @param Varien_Event_Observer $observer
      */
@@ -165,7 +168,12 @@ class Oyst_OneClick_Model_Observer
         $oystHelper = Mage::helper('oyst_oneclick');
 
         if ($oneclickEnable && $oystHelper->isIpAllowed()) {
-            Mage::app()->getStore()->setConfig(self::XML_PATH_ONECLICK_ENABLE_AND_RESTRICT_ALLOW_IPS, true);
+            Mage::app()->getStore()->setConfig(self::XML_PATH_ONECLICK_IS_ENABLE, true);
+
+            $xpath = Mage::getStoreConfig(Oyst_OneClick_Block_OneClick::XML_PATH_CHECKOUT_ONEPAGE_XPATH_TO_APPEND_ONECLICK_BUTTON);
+            if ('/checkout/onepage/' === Mage::app()->getRequest()->getPathInfo() && empty($xpath)) {
+                Mage::app()->getStore()->setConfig(self::XML_PATH_ONECLICK_IS_ENABLE, false);
+            }
         }
     }
 

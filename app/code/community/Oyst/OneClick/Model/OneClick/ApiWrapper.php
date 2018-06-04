@@ -199,7 +199,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         if (isset($dataFormated['isCheckoutCart'])) {
             $customization->setCta(
                 Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_label', Mage::app()->getStore()->getStoreId()),
-                Mage::helper('oyst_oneclick')->getRedirectUrl($this->quote->getId())
+                Mage::helper('oyst_oneclick')->getRedirectUrl()
             );
         }
 

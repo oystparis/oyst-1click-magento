@@ -24,8 +24,6 @@ use Oyst\Classes\OystProduct;
  */
 class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 {
-    const C4B_FREEPRODUCT_ADD_GIFT_ACTION = 'add_gift';
-
     /**
      * Supported type of product
      *
@@ -324,7 +322,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             }
 
             // this price is overwritten later with taxes and others stuff
-            $price = new OystPrice(1, 'EUR');
+            $price = new OystPrice(1, $this->getCatalogBaseCurrencyCode());
 
             $qty = is_null($qty) ? 1 : $qty;
 
@@ -496,11 +494,11 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     protected function addAmount(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
         $prices = $this->getPrices($product);
-        $oystPriceIncludingTaxes = new OystPrice($prices['price-including-tax'], 'EUR');
+        $oystPriceIncludingTaxes = new OystPrice($prices['price-including-tax'], $this->getCatalogBaseCurrencyCode());
         $oystProduct->__set('amountIncludingTax', $oystPriceIncludingTaxes);
 
         if (isset($prices['price-excluding-tax'])) {
-            $oystPriceExcludingTaxes = new OystPrice($prices['price-excluding-tax'], 'EUR');
+            $oystPriceExcludingTaxes = new OystPrice($prices['price-excluding-tax'], $this->getCatalogBaseCurrencyCode());
             $oystProduct->__set('amount_excluding_taxes', $oystPriceExcludingTaxes->toArray());
         }
     }
@@ -776,12 +774,19 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $supported = false;
 
         if ($product->getIsOneclickActiveOnProduct()) {
-            return $supported;
+            $supported = false;
         }
 
         if (in_array($product->getTypeId(), $this->supportedProductTypes)) {
             $supported = true;
         }
+
+        $transport = new Varien_Object();
+        $transport->setIsSupported($supported);
+        Mage::dispatchEvent('oyst_oneclick_model_catalog_is_supported_product', array(
+            'product' => $product, 'transport' => $transport
+        ));
+        $supported = $transport->getIsSupported();
 
         return $supported;
     }
@@ -935,7 +940,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             if (0 == $quoteItemPrice = $quoteItemData['price']) {
                 $freeItem = new OneClickItem(
                     $quoteItemData['product_id'],
-                    new OystPrice($quoteItemPrice, 'EUR'),
+                    new OystPrice($quoteItemPrice, $magentoQuoteBuilder->getQuote()->getBaseCurrencyCode()),
                     $quoteItemData['qty']
                 );
                 $freeItem->__set('title', $quoteItemData['name']);
@@ -956,7 +961,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $salesRuleCollection = Mage::getModel('salesrule/rule')->getCollection();
             $salesRules = $salesRuleCollection
                 ->addFieldToFilter('rule_id', array('in' => array_keys($total->getFullInfo())))
-                ->addFieldToFilter('simple_action', array('neq' => self::C4B_FREEPRODUCT_ADD_GIFT_ACTION))
+                ->addFieldToFilter('simple_action', array('nin' => $this->getForbiddenSalesRulesActions()))
                 ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);
 
             foreach ($total->getFullInfo() as $salesRuleId => $discountInfo) {
@@ -972,7 +977,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         foreach ($discountRules as $discountRule) {
             $merchantDiscount = new OneClickMerchantDiscount(
-                new OystPrice($discountRule['amount'], 'EUR'),
+                new OystPrice($discountRule['amount'], $magentoQuoteBuilder->getQuote()->getBaseCurrencyCode()),
                 $discountRule['name']
             );
 
@@ -1020,7 +1025,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         }
 
         Mage::helper('oyst_oneclick')->log('$grandTotal: ' . $grandTotal);
-        $oneClickOrderCartEstimate->setCartAmount(new OystPrice($grandTotal, 'EUR'));
+        $oneClickOrderCartEstimate->setCartAmount(new OystPrice($grandTotal, $magentoQuoteBuilder->getQuote()->getBaseCurrencyCode()));
     }
 
     /**
@@ -1197,7 +1202,22 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     public function addDummyOystProduct()
     {
-        $price = new OystPrice(1, 'EUR');
+        $price = new OystPrice(1, $this->getCatalogBaseCurrencyCode());
         return new OystProduct(1, 'Dummy Product', $price, 1);
+    }
+
+    public function getCatalogBaseCurrencyCode($storeId = null)
+    {
+        return Mage::app()->getStore($storeId)->getBaseCurrencyCode();
+    }
+
+    protected function getForbiddenSalesRulesActions()
+    {
+        $transport = new Varien_Object();
+        $transport->setForbiddenSalesRulesActions(array('add_gift'));
+        Mage::dispatchEvent('oyst_oneclick_model_catalog_get_forbidden_sales_rules_actions', array(
+            'transport' => $transport
+        ));
+        return $transport->getForbiddenSalesRulesActions();
     }
 }

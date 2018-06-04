@@ -178,6 +178,8 @@
 "Button Label","Texte du bouton"
 "Redirect loading message","Message de chargement de la redirection"
 "Success Page","Page de succès"
+"Checkout onepage XPath(s) where append the button","Chemin XPath(s) où ajouter le bouton en checkout onepage"
+"Separate by "",""","Séparé par des "","""
 
 "Shipment is set as default","L'expédition est définie par défaut"
 

@@ -20,50 +20,20 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
     /**
      * Loading page action
      */
-    public function loadingAction()
+    public function redirectAction()
     {
         $this->loadLayout();
         $this->renderLayout();
     }
 
     /**
-     * Get oyst_order_id from quote
-     */
-    public function quoteAction()
-    {
-        $response = array();
-        $quoteId = $this->getRequest()->getParam('oystParam', null);
-
-        if ($quoteId) {
-            $quote = Mage::getModel('sales/quote')->load($quoteId);
-
-            if ($oystOrderId = $quote->getOystOrderId()) {
-                $response = array(
-                    'oyst_order_id' => $oystOrderId,
-                    'check_order_url' => Mage::getBaseUrl() . Oyst_OneClick_Helper_Data::ORDER_URL,
-                );
-            }
-        }
-
-        $this->getResponse()->setHttpResponseCode(200);
-
-        if ('cgi-fcgi' === php_sapi_name()) {
-            $this->getResponse()->setHeader('Content-type', 'application/json');
-        }
-
-        $this->getResponse()->setBody(Zend_Json::encode($response));
-    }
-
-    /**
      * Login customer and redirect to success page
      */
-    public function orderAction()
+    public function returnAction()
     {
-        $oystOrderId = $this->getRequest()->getParam('oystParam', null);
+        $order = Mage::getModel('sales/order')->load(Mage::getSingleton('checkout/session')->getOystRelatedQuoteId(), 'quote_id');
 
-        if ($oystOrderId) {
-            $order = Mage::getModel('sales/order')->load($oystOrderId, 'oyst_order_id');
-
+        if ($order->getId()) {
             $websiteId = Mage::app()->getWebsite()->getId();
             $customer = Mage::getModel('customer/customer')->setWebsiteId($websiteId)
                 ->loadByEmail($order->getCustomerEmail());
@@ -114,6 +84,7 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
         try {
             $oystCart = Mage::getModel('oyst_oneclick/cart');
             $this->data = $oystCart->initOystCheckout($params);
+            Mage::getSingleton('checkout/session')->setOystRelatedQuoteId($params['quoteId']);
         } catch (Exception $e) {
             Mage::helper('oyst_oneclick')->log($e->__toString());
             $this->data = array('has_error' => 1, 'message' => $e->getMessage());

@@ -19,14 +19,8 @@ class Oyst_OneClick_Helper_Autoloader
      */
     public static function createAndRegister()
     {
-        if (self::_getStoreConfig('oyst_oneclick/dev/register_autoloader')) {
-            $libBaseDir = self::_getStoreConfig('oyst_oneclick/dev/autoloader_basepath');
-            if ($libBaseDir[0] !== '/') {
-                $libBaseDir = Mage::getBaseDir() . DS . $libBaseDir;
-            }
-
-            self::loadComposerAutoLoad($libBaseDir);
-        }
+        $libBaseDir = Mage::getBaseDir() . DS . 'lib/Oyst/oyst-php';
+        self::loadComposerAutoLoad($libBaseDir);
     }
 
     /**
@@ -42,23 +36,5 @@ class Oyst_OneClick_Helper_Autoloader
             require_once $autoload;
             $registered = true;
         }
-    }
-
-    /**
-     * Load store config first in case we are in update mode, where store config would not be available
-     *
-     * @param string $path
-     *
-     * @return bool
-     */
-    protected static function _getStoreConfig($path)
-    {
-        static $configLoaded = false;
-        if (!$configLoaded && Mage::app()->getUpdateMode()) {
-            Mage::getConfig()->loadDb();
-            $configLoaded = true;
-        }
-
-        return Mage::getStoreConfig($path);
     }
 }
