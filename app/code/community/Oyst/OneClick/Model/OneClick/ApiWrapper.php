@@ -11,6 +11,7 @@
 
 use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystOneClickApi;
+use Oyst\Classes\Enum\AbstractOrderState;
 use Oyst\Classes\OneClickCustomization;
 use Oyst\Classes\OneClickNotifications;
 use Oyst\Classes\OneClickOrderParams;
@@ -20,6 +21,11 @@ use Oyst\Classes\OneClickOrderParams;
  */
 class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
 {
+    // In modal timer is 5 minutes, 6 is to ensure it's over
+    const CONFIG_XML_PATH_OYST_CHECKOUT_MODAL_TIMER = 'oyst/oneclick/checkout_modal_timer';
+
+    const CONFIG_XML_PATH_OYST_PENDING_STATUS_FAILOVER_TIMER = 'oyst/oneclick/pending_status_failover_timer';
+
     /** @var Oyst_OneClick_Model_Api $oystClient */
     protected $oystClient;
 
@@ -265,5 +271,58 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
 
         $dataFormated['products'] = Zend_Json::encode($products);
         Mage::helper('oyst_oneclick')->log($dataFormated['products']);
+    }
+
+    /**
+     * Validate Oyst order status
+     *
+     * @param $oystOrderId
+     *
+     * @return bool
+     */
+    public function isOystOrderStatusValid($oystOrderId)
+    {
+        /** @var Oyst_OneClick_Model_Order_ApiWrapper $orderApi */
+        $orderApi = Mage::getModel('oyst_oneClick/order_apiWrapper');
+
+        try {
+            $response = $orderApi->getOrder($oystOrderId);
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+
+        // Is payment_failed status
+        if (AbstractOrderState::PAYMENT_FAILED == $response['order']['current_status']) {
+            return false;
+        }
+
+        // Is waiting status more than CONFIG_XML_PATH_OYST_MODAL_TIMER minutes
+        if (AbstractOrderState::WAITING == $response['order']['current_status']) {
+            $updatedAt = new DateTime($response['order']['updated_at']);
+            $currentTime = new DateTime();
+
+            $interval = $updatedAt->diff($currentTime);
+            $modalTimer = Mage::getStoreConfig(self::CONFIG_XML_PATH_OYST_CHECKOUT_MODAL_TIMER);
+
+            if ($modalTimer <= $interval->i) {
+                return false;
+            }
+        }
+
+        // Is pending status more than CONFIG_XML_PATH_OYST_PENDING_STATUS_FAILOVER_TIMER minutes
+        if (AbstractOrderState::PENDING == $response['order']['current_status']) {
+            $updatedAt = new DateTime($response['order']['updated_at']);
+            $currentTime = new DateTime(gmdate("Y-m-d\TH:i:s\Z"));
+
+            $interval = $updatedAt->diff($currentTime);
+
+            $pendingStatusFailoverTimer = Mage::getStoreConfig(self::CONFIG_XML_PATH_OYST_PENDING_STATUS_FAILOVER_TIMER);
+
+            if ($pendingStatusFailoverTimer <= $interval->i) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

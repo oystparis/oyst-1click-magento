@@ -246,6 +246,8 @@
                 <checkout_cart_cta_loading_message><![CDATA[Nous n’avons pas encore reçu la confirmation du paiement. Veuillez attendre quelques minutes pour rafraichir cette page.]]></checkout_cart_cta_loading_message>
                 <allow_discount_coupon_from_modal>0</allow_discount_coupon_from_modal>
                 <notifications_update_max_delay>-5 minutes</notifications_update_max_delay>
+                <checkout_modal_timer>6</checkout_modal_timer>
+                <pending_status_failover_timer>3</pending_status_failover_timer>
             </oneclick>
             <order_settings>
                 <enable>0</enable>
