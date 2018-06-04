@@ -65,46 +65,6 @@ class Oyst_OneClick_Adminhtml_OneClick_ActionsController extends Mage_Adminhtml_
     }
 
     /**
-     * Magento method for init layout, menu and breadcrumbs
-     *
-     * @return Oyst_OneClick_Adminhtml_OneClick_ActionsController
-     */
-    protected function _initAction()
-    {
-        $this->_activeMenu();
-
-        return $this;
-    }
-
-    /**
-     * Active menu
-     *
-     * @return Oyst_OneClick_Adminhtml_OneClick_ActionsController
-     */
-    protected function _activeMenu()
-    {
-        /** @var Oyst_OneClick_Helper_Data $oystHelper */
-        $oystHelper = Mage::helper('oyst_oneclick');
-
-        $this->loadLayout()
-            ->_setActiveMenu('oyst_oneclick/oneclick_actions')
-            ->_title($oystHelper->__('Actions'))
-            ->_addBreadcrumb($oystHelper->__('Actions'), $oystHelper->__('Actions'));
-
-        return $this;
-    }
-
-    /**
-     * Print action page
-     *
-     * @retun null
-     */
-    public function indexAction()
-    {
-        $this->_initAction()->renderLayout();
-    }
-
-    /**
      * Download requested log file
      */
     public function downloadAction()
