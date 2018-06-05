@@ -85,7 +85,7 @@
         </reference>
         
         <reference name="before_body_end">
-            <action method="append"><block>oyst.oneclick.express.checkout</block></action>
+            <action method="append" ifconfig="oyst/oneclick/is_enable"><block>oyst.oneclick.express.checkout</block></action>
         </reference>
     </checkout_onepage_index>
 
