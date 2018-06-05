@@ -260,7 +260,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         }
 
         if (isset($dataFormated['substract_quote_items_qtys'])) {
-            foreach (Zend_Json::decode($dataFormated['substract_quote_items_qtys']['products']) as $memoProduct) {
+            foreach ($dataFormated['substract_quote_items_qtys']['products'] as $memoProduct) {
                 foreach ($products as $key => $product) {
                     if ($memoProduct['productId'] == $product['productId']) {
                         $products[$key]['quantity'] = $products[$key]['quantity'] - $memoProduct['quantity'];
@@ -269,7 +269,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             }
         }
 
-        $dataFormated['products'] = Zend_Json::encode($products);
+        $dataFormated['products'] = $products;
         Mage::helper('oyst_oneclick')->log($dataFormated['products']);
     }
 
