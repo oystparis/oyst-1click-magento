@@ -91,7 +91,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     /**
      * @var array
      */
-    protected $products = null;
+    protected $products = array();
 
     /**
      * @var int
@@ -207,8 +207,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $this->products[$item['productId']]['quantity'] = $stockFilter[$item[$index]] = $item['quantity'];
         }
 
-        if (!$this->checkItemsQty($stockFilter) && !$this->isPreload) {
-            return null;
+        if (!count($this->products)
+            || (!$this->checkItemsQty($stockFilter) && !$this->isPreload)
+        ) {
+            return array();
         }
 
         $products = $this->getProductCollection(array_keys($this->products));
@@ -316,6 +318,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function format($products, $qty = null)
     {
+        $oystProduct = $this->addDummyOystProduct();
+
         foreach ($products as $product) {
             if (!$product->isConfigurable() && !is_null($this->configurableProductChildId) && $product->getId() != $this->configurableProductChildId) {
                 continue;
