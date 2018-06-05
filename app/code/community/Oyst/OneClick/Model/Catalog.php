@@ -276,7 +276,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     {
         $this->isPreload = filter_var($dataFormated['preload'], FILTER_VALIDATE_BOOLEAN);
 
-        $products = $this->getProducts(Zend_Json::decode($dataFormated['products']));
+        $products = $this->getProducts($dataFormated['products']);
 
         $this->userDefinedAttributeCode = $this->getUserDefinedAttributeCode();
         $this->systemSelectedAttributesCode = $this->getSystemSelectedAttributeCode();
