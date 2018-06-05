@@ -122,9 +122,9 @@ function oystOneClick(config) {
         });
     };
 
-    var allowOystRedirectSelf = false;
+    var allowOystRedirectSelf = true;
     window.addEventListener('message', function(event){
-        if (event.data.type == 'ORDER_COMPLETE') {
+        if (event.data.type == 'ORDER_COMPLETE' && config.isCheckoutCart) {
            allowOystRedirectSelf = false;
         }
 
@@ -243,7 +243,7 @@ function insertButtonByXPath() {
             placeToAppendButton.split(/\s*,\s*/).forEach(function (xpathExpression) {
                 var el = document.evaluate(xpathExpression, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
-                if (null !== el && isElemVisible(el)) {
+                if (null !== el && isElemVisible($(el))) {
                     var oneClickButtonWrapper = document.getElementById("oyst-1click-button-wrapper");
 
                     if (!el.querySelector("#oyst-1click-button-wrapper")) {

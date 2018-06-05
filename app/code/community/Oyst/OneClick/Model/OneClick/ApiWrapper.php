@@ -223,7 +223,8 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
 
         /** @var Mage_Sales_Model_Quote quote */
         if (!isset($this->quote)
-        || $this->quote->getId() != $dataFormated['quoteId']) {
+            || $this->quote->getId() != $dataFormated['quoteId']
+        ) {
             $this->quote = Mage::getModel('sales/quote')->load($dataFormated['quoteId']);
         }
 
@@ -264,6 +265,9 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
                 foreach ($products as $key => $product) {
                     if ($memoProduct['productId'] == $product['productId']) {
                         $products[$key]['quantity'] = $products[$key]['quantity'] - $memoProduct['quantity'];
+                        if ($products[$key]['quantity'] == 0) {
+                            unset($products[$key]);
+                        }
                     }
                 }
             }
