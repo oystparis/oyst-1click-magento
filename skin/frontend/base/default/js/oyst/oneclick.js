@@ -13,7 +13,9 @@
  */
 "use strict";
 
-wgxpath.install();
+if ('undefined' !== typeof wgxpath) {
+    wgxpath.install();
+}
 
 var mutationObserver = null;
 
@@ -236,23 +238,25 @@ function insertButtonByXPath() {
     var placeToAppendButton = document.getElementById("oyst-1click-button-wrapper").getAttribute("data-place-to-append");
     var breakException = {};
 
-    try {
-        placeToAppendButton.split(/\s*,\s*/).forEach(function (xpathExpression) {
-            var el = document.evaluate(xpathExpression, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    if (null !== placeToAppendButton) {
+        try {
+            placeToAppendButton.split(/\s*,\s*/).forEach(function (xpathExpression) {
+                var el = document.evaluate(xpathExpression, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
-            if (null !== el && isElemVisible(el)) {
-                var oneClickButtonWrapper = document.getElementById("oyst-1click-button-wrapper");
+                if (null !== el && isElemVisible(el)) {
+                    var oneClickButtonWrapper = document.getElementById("oyst-1click-button-wrapper");
 
-                if (!el.querySelector("#oyst-1click-button-wrapper")) {
-                    el.appendChild(oneClickButtonWrapper);
+                    if (!el.querySelector("#oyst-1click-button-wrapper")) {
+                        el.appendChild(oneClickButtonWrapper);
+                    }
+
+                    // Manage only one button
+                    throw breakException;
                 }
-
-                // Manage only one button
-                throw breakException;
-            }
-        });
-    } catch (e) {
-        if (e !== breakException) throw e;
+            });
+        } catch (e) {
+            if (e !== breakException) throw e;
+        }
     }
 }
 
