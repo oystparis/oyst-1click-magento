@@ -810,11 +810,36 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $this->getCartRules($magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
+        $this->validateCoupon($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
+
         $this->getShipments($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
         $this->getCartAmount($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
         return $oneClickOrderCartEstimate->toJson();
+    }
+
+    /**
+     * Validate coupon.
+     *
+     * @param array $apiData
+     * @param Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder
+     * @param OneClickOrderCartEstimate $oneClickOrderCartEstimate
+     */
+    private function validateCoupon($apiData, &$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
+    {
+        if (!isset($apiData['discount_coupon'])) {
+            return;
+        }
+
+        $coupons = explode(',', $magentoQuoteBuilder->getQuote()->getCouponCode());
+        if (in_array($apiData['discount_coupon'], $coupons)) {
+            return;
+        }
+
+        $errorMessage = Mage::helper('sales')->__('Coupon code %s is not valid.', strip_tags($apiData['discount_coupon']));
+
+        $oneClickOrderCartEstimate->setDiscountCouponError($errorMessage);
     }
 
     /**

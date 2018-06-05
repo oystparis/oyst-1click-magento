@@ -184,6 +184,7 @@
 "Shipment is set as default","Shipment is set as default"
 
 "Allow discount coupon from OYST modal","Allow discount coupon from OYST modal"
+"Coupon code %s is not valid.","Coupon code %s is not valid."
 
 "Allowed IPs (comma separated)","Allowed IPs (comma separated)"
 "Leave empty for access from any location.","Leave empty for access from any location."

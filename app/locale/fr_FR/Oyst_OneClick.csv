@@ -184,6 +184,7 @@
 "Shipment is set as default","L'expédition est définie par défaut"
 
 "Allow discount coupon from OYST modal","Autoriser le coupon de réduction depuis la modale OYST"
+"Coupon code %s is not valid.","Le code promo %s n'est pas valide."
 
 "Allowed IPs (comma separated)","Adresses IP autorisées (séparées par des virgules)"
 "Leave empty for access from any location.","Laissez vide pour l'accès de n'importe quel endroit."
