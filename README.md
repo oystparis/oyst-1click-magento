@@ -41,52 +41,6 @@ If you are using the compilation, before installing the extension it's necessary
 3. Clear the cache from `Admin Backend` — `System` — `Cache Management` ;
 4. Log out of the backend and log in again, so Magento can refresh permissions.
 
-### Via Git, cloning this repository
-
-If you are using the compilation, before installing the extension it's necessary to disable it! After you install, click the `Run Compilation Process` button in `Admin Backend` — `System` — `Tools` — `Compilation` ;
-
-1. Clone this repository ;
-2. Copy the `app`, `js`, `lib`, `skin` folders into the root folder of your Magento ;
-3. Download the lastest release of the oyst-php lib [oyst-php-x.x.x.tar.gz](https://github.com/oystparis/oyst-php/releases/latest) and unzip ;
-4. Copy `oyst-php` folder in `./lib/Oyst/` of your Magento ;
-5. Remove `./lib/Oyst/oyst-php/.gitignore` file ;
-6. Commit your changes.
-
-### Via Composer
-
-Add the repository:
-```
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/oystparis/oyst-1click-magento"
-    }
-  ]
-```
-and script block:
-```
-  "scripts": {
-    "post-install-cmd": [
-      "./.modman/oyst-1click-magento/lib/Oyst/get-sdk.sh"
-    ],
-    "post-update-cmd": [
-      "./.modman/oyst-1click-magento/lib/Oyst/get-sdk.sh"
-    ]
-  }
-```
-to your ```composer.json```.
-
-Then run the composer installer: `composer require oyst/oyst-1click-magento`
-
-### Via modman
-
-This is the preferred installation method, unless installing manually.
-```
-$ modman init
-$ modman clone https://github.com/oystparis/oyst-1click-magento
-$ ./lib/Oyst/get-sdk.sh
-```
-
 ## Support
 
 You can create issues on our repository or if you have some specific problems for your account you can contact <a href="mailto:plugin@oyst.com">plugin@oyst.com</a> as well.
