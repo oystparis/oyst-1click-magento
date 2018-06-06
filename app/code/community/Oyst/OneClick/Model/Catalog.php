@@ -777,10 +777,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     {
         $supported = false;
 
-        if ($product->getIsOneclickActiveOnProduct()) {
-            $supported = false;
-        }
-
         if (in_array($product->getTypeId(), $this->supportedProductTypes)) {
             $supported = true;
         }
@@ -863,7 +859,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $rates = $address
             ->collectShippingRates()
-            ->getShippingRatesCollection();
+            ->getAllShippingRates();
         $isPrimarySet = false;
 
         /** @var Mage_Tax_Helper_Data $coreHelper */
@@ -873,7 +869,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $coreHelper = Mage::helper('core');
 
         $ignoredShipments = Mage::helper('oyst_oneclick/shipments')->getIgnoredShipments();
-        foreach ($rates->getData() as $rateData) {
+        foreach ($rates as $rate) {
+            $rateData = $rate->toArray();
             try {
                 if (in_array($rateData['code'], $ignoredShipments)) {
                     continue;
@@ -986,20 +983,31 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 continue;
             }
 
-            /** @var Mage_SalesRule_Model_Resource_Rule_Collection $salesRuleCollection */
-            $salesRuleCollection = Mage::getModel('salesrule/rule')->getCollection();
-            $salesRules = $salesRuleCollection
-                ->addFieldToFilter('rule_id', array('in' => array_keys($total->getFullInfo())))
-                ->addFieldToFilter('simple_action', array('nin' => $this->getForbiddenSalesRulesActions()))
-                ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);
+            if ($total->getFullInfo()) {
+                /** @var Mage_SalesRule_Model_Resource_Rule_Collection $salesRuleCollection */
+                $salesRuleCollection = Mage::getModel('salesrule/rule')->getCollection();
+                $salesRules = $salesRuleCollection
+                    ->addFieldToFilter('rule_id', array('in' => array_keys($total->getFullInfo())))
+                    ->addFieldToFilter('simple_action', array('nin' => $this->getForbiddenSalesRulesActions()))
+                    ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);
 
-            foreach ($total->getFullInfo() as $salesRuleId => $discountInfo) {
-                $salesRule = $salesRules->getItemById($salesRuleId);
-                Mage::helper('oyst_oneclick')->log('RuleId: ' . $salesRule->getRuleId() . ' - Type: ' . $salesRule->getSimpleAction());
+                foreach ($total->getFullInfo() as $salesRuleId => $discountInfo) {
+                    if(!in_array($salesRuleId, explode(',', $quoteAppliedRuleIds))) {
+                        continue;
+                    }
 
+                    $salesRule = $salesRules->getItemById($salesRuleId);
+                    Mage::helper('oyst_oneclick')->log('RuleId: ' . $salesRule->getRuleId() . ' - Type: ' . $salesRule->getSimpleAction());
+
+                    $discountRules[] = array(
+                        'name' => $salesRule->getName(),
+                        'amount' => $discountInfo['amount']
+                    );
+                }
+            } else {
                 $discountRules[] = array(
-                    'name' => $salesRule->getName(),
-                    'amount' => $discountInfo['amount']
+                    'name' => $total->getTitle(),
+                    'amount' => abs($total->getValue())
                 );
             }
         }
