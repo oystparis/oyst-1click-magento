@@ -52,16 +52,17 @@ class Oyst_OneClick_Model_Magento_Quote
             $storeId = $this->apiData['order']['context']['store_id'];
 
             $this->syncQuote($quoteId, $storeId);
+            $this->syncQuoteItems();
             $this->syncCustomer();
             $this->syncAddresses();
-            $this->syncShippingMethod();
             $this->syncCoupons();
-            $this->syncQuoteItems();
+            $this->syncShippingMethod();
             $this->syncPaymentMethodData();
 
             Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_quote_facade', array('api_data' => $this->apiData, 'quote' => $this->quote));
 
-            $this->quote->setTotalsCollectedFlag(false)->collectTotals()->save();
+            $this->quote->setAppliedRuleIds(null)->setTotalsCollectedFlag(false)->collectTotals()->save();
+            $this->quote->getShippingAddress()->setCollectShippingRates(true)->collectShippingRates()->save();
         } catch (Exception $e) {
             Mage::helper('oyst_oneclick')->log('Error build quote: ' . $e->getMessage());
             throw $e;
@@ -253,11 +254,12 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $rates = $shippingAddress
             ->collectShippingRates()
-            ->getShippingRatesCollection();
+            ->getAllShippingRates();
 
         $tmpCheapestPrice = null;
         $realShippingMethod = null;
-        foreach ($rates->getData() as $rateData) {
+        foreach ($rates as $rate) {
+            $rateData = $rate->toArray();
             // MEANS THAT SHIPPING METHOD PROVIDED BY OYST REALLY EXISTS
             if ($rateData['code'] == $shippingMethod) {
                 $realShippingMethod = $rateData['code'];
