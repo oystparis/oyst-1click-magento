@@ -52,8 +52,8 @@ class Oyst_OneClick_Model_Magento_Quote
             $storeId = $this->apiData['order']['context']['store_id'];
 
             $this->syncQuote($quoteId, $storeId);
-            $this->syncQuoteItems();
             $this->syncCustomer();
+            $this->syncQuoteItems();
             $this->syncAddresses();
             $this->syncCoupons();
             $this->syncShippingMethod();
@@ -148,6 +148,9 @@ class Oyst_OneClick_Model_Magento_Quote
         // Already customer ; Check by website
         if ($customer = $this->getCustomer()) {
             if ($customer instanceof Mage_Customer_Model_Customer) {
+                if (!empty($this->apiData['order']['context']['user_id'])) {
+                    Mage::getSingleton('customer/session')->setCustomer($customer);
+                }
                 $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER);
                 $this->quote->setCustomer($customer);
             }
