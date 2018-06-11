@@ -63,16 +63,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         // Create new notification in db with status 'start'
         $notification = Mage::getModel('oyst_oneclick/notification');
-        $notification->setData(
-            array(
-                'event' => $this->eventNotification,
-                'oyst_data' => Zend_Json::encode($apiData),
-                'status' => Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_START,
-                'created_at' => Mage::getModel('core/date')->gmtDate(),
-                'executed_at' => Mage::getModel('core/date')->gmtDate(),
-            )
-        );
-        $notification->save();
+        $notification->registerNotificationStart($this->eventNotification, $apiData);
 
         // When notification already processed
         if (!is_null($magentoOrderId = $lastNotification->isOrderProcessed($oystOrderId))) {
@@ -93,11 +84,10 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         }
 
         // Save new status and result in db
-        $notification->setStatus(Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_FINISHED)
+        $notification
             ->setMageResponse($response)
             ->setOrderId($magentoOrderId)
-            ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
-            ->save();
+            ->registerNotificationFinish();
 
         return $response;
     }
@@ -115,8 +105,8 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         $oystOrderId = $params['oyst_order_id'];
 
         // Sync API
-        /** @var Oyst_OneClick_Model_Order_ApiWrapper $orderApi */
-        $orderApi = Mage::getModel('oyst_oneclick/order_apiWrapper');
+        /** @var Oyst_OneClick_Model_ApiWrapper_Type_Order $orderApi */
+        $orderApi = Mage::getModel('oyst_oneclick/apiWrapper_type_order');
 
         try {
             $this->orderResponse = $orderApi->getOrder($oystOrderId);
@@ -182,8 +172,8 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         // Update Oyst order to accepted and auto-generate invoice
         if (in_array($currentStatus, array(OystOrderStatus::PENDING))) {
-            /** @var Oyst_OneClick_Model_Order_ApiWrapper $orderApiClient */
-            $orderApiClient = Mage::getModel('oyst_oneclick/order_apiWrapper');
+            /** @var Oyst_OneClick_Model_ApiWrapper_Type_Order $orderApiClient */
+            $orderApiClient = Mage::getModel('oyst_oneclick/apiWrapper_type_order');
 
             try {
                 $response = $orderApiClient->updateOrder($this->orderResponse['order']['id'], OystOrderStatus::ACCEPTED, $order->getIncrementId());

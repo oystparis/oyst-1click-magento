@@ -60,16 +60,7 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
 
         // Create new notification in db with status 'start'
         $notification = Mage::getModel('oyst_oneclick/notification');
-        $notification->setData(
-            array(
-                'event' => $event,
-                'oyst_data' => Zend_Json::encode($data),
-                'status' => Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_START,
-                'created_at' => Mage::getSingleton('core/date')->gmtDate(),
-                'executed_at' => Mage::getSingleton('core/date')->gmtDate(),
-            )
-        );
-        $notification->save();
+        $notification->registerNotificationStart($event, $data);
 
         // Get order_increment_id
         if (empty($data['order_increment_id'])) {
@@ -93,9 +84,7 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
         // If data asynchronous payment notification is success, we invoice the order, else we cancel
         if (Oyst_OneClick_Model_Payment_Method_Freepay::EVENT_CODE_FRAUD_VALIDATION == $data['event_code'] && $data['success']) {
             //save new status and result in db
-            $notification->setStatus(Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_FINISHED)
-                ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
-                ->save();
+            $notification->registerNotificationFinish();
 
             // @TODO implement fraud validation
             return 'by-pass fraud validation';
@@ -123,10 +112,9 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
         }
 
         //save new status and result in db
-        $notification->setStatus(Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_FINISHED)
+        $notification
             ->setOrderId($result['order_id'])
-            ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
-            ->save();
+            ->registerNotificationFinish();
 
         return json_encode(array('order_id' => $result['order_id']));
     }
@@ -278,8 +266,8 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
     {
         $params = $this->_constructParams();
 
-        /** @var Oyst_OneClick_Model_Payment_ApiWrapper $paymentApiWrapper */
-        $paymentApiWrapper = Mage::getModel('oyst_oneclick/payment_apiWrapper');
+        /** @var Oyst_OneClick_Model_ApiWrapper_Type_Payment $paymentApiWrapper */
+        $paymentApiWrapper = Mage::getModel('oyst_oneclick/apiWrapper_type_payment');
         $response = $paymentApiWrapper->getPaymentUrl($params);
 
         return $response;

@@ -122,4 +122,23 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
             }
         }
     }
+    
+    public function registerNotificationStart($event, $data)
+    {
+        $this->setData(array(
+            'event' => $event,
+            'oyst_data' => Zend_Json::encode($data),
+            'status' => self::NOTIFICATION_STATUS_START,
+            'created_at' => Mage::getModel('core/date')->gmtDate(),
+            'executed_at' => Mage::getModel('core/date')->gmtDate(),
+        ));
+        $this->save();
+    }
+    
+    public function registerNotificationFinish()
+    {
+        $this->setStatus(self::NOTIFICATION_STATUS_FINISHED)
+            ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
+            ->save();
+    }
 }

@@ -21,9 +21,9 @@ class Oyst_OneClick_Model_System_Config_Source_ShipmentTypesList extends Mage_Co
      */
     public function toOptionArray()
     {
-        /** @var Oyst_OneClick_Model_OneClick_ApiWrapper $oneclickApi */
-        $oneclickApi = Mage::getSingleton('oyst_oneclick/catalog_apiWrapper');
-        $shipmentTypes = $oneclickApi->getShipmentTypes();
+        /** @var Oyst_OneClick_Model_ApiWrapper_Type_Catalog $catalogApi */
+        $catalogApi = Mage::getSingleton('oyst_oneclick/apiWrapper_type_catalog');
+        $shipmentTypes = $catalogApi->getShipmentTypes();
 
         $shipmentTypesList = array(
             array('value' => 0, 'label' => Mage::helper('oyst_oneclick')->__('Disabled')),

@@ -64,7 +64,7 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
             /** @var Mage_Sales_Model_Quote $oystOrderId */
             $oystOrderId = Mage::getModel('sales/quote')->load($oystRelatedQuoteId)->getOystOrderId();
 
-            if (!Mage::getModel('oyst_oneclick/oneclick_apiWrapper')->isOystOrderStatusValid($oystOrderId)) {
+            if (!Mage::getModel('oyst_oneclick/apiWrapper_type_oneClick')->isOystOrderStatusValid($oystOrderId)) {
                 $this->data = Mage::getBaseUrl() . Oyst_OneClick_Helper_Data::FAILURE_URL;
             }
         }
