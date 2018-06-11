@@ -104,11 +104,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     private $stockItem = null;
 
     /**
-     * @var bool Used to check if it's the first api call to display the button
-     */
-    private $isPreload;
-
-    /**
      * Object construct
      */
     public function __construct()
@@ -207,9 +202,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $this->products[$item['productId']]['quantity'] = $stockFilter[$item[$index]] = $item['quantity'];
         }
 
-        if (!count($this->products)
-            || (!$this->checkItemsQty($stockFilter) && !$this->isPreload)
-        ) {
+        if (!count($this->products)|| !$this->checkItemsQty($stockFilter)) {
             return array();
         }
 
@@ -276,8 +269,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     public function getOystProducts($dataFormated)
     {
-        $this->isPreload = filter_var($dataFormated['preload'], FILTER_VALIDATE_BOOLEAN);
-
         $products = $this->getProducts($dataFormated['products']);
 
         $this->userDefinedAttributeCode = $this->getUserDefinedAttributeCode();
@@ -294,7 +285,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $productsFormated[] = $this->format(array($product), $quantity);
 
             // Book initial quantity
-            if (!$this->isPreload && $this->getConfig('should_ask_stock') && 0 !== $quantity) {
+            if ($this->getConfig('should_ask_stock') && 0 !== $quantity) {
                 $productId = isset($this->configurableProductChildId) ? $this->configurableProductChildId : $product->getId();
                 $this->stockItemToBook($productId, $quantity);
                 Mage::helper('oyst_oneclick')->log(
@@ -318,7 +309,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function format($products, $qty = null)
     {
-        $oystProduct = $this->addDummyOystProduct();
+        $oystProduct = null;
 
         foreach ($products as $product) {
             if (!$product->isConfigurable() && !is_null($this->configurableProductChildId) && $product->getId() != $this->configurableProductChildId) {
@@ -481,7 +472,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function addVariations(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
-        if (!$this->isPreload && isset($this->products[$product->getId()]['childProduct'])) {
+        if (isset($this->products[$product->getId()]['childProduct'])) {
             $variationProductsFormated = $this->format(array($this->products[$product->getId()]['childProduct']));
             if (property_exists($variationProductsFormated, 'informations')) {
                 $oystProduct->__set('informations', $variationProductsFormated->__get('informations'));
@@ -541,11 +532,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 foreach ($attributes as $attribute) {
                     $productAttribute = $attribute->getProductAttribute();
 
-                    if ($this->isPreload) {
-                        $attributeValue = Mage::getResourceModel('catalog/product')->getAttributeRawValue($this->configurableProductChildId, $productAttribute->getAttributeCode(), $storeId);
-                    } else {
-                        $attributeValue = $this->products[$product->getId()]['childProduct']->getData($productAttribute->getAttributeCode());
-                    }
+                    $attributeValue = $this->products[$product->getId()]['childProduct']->getData($productAttribute->getAttributeCode());
 
                     // @codingStandardsIgnoreLine
                     if (count($attribute->getPrices()) > 0) {
@@ -992,7 +979,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                     ->setOrder('sort_order', $salesRuleCollection::SORT_ORDER_ASC);
 
                 foreach ($total->getFullInfo() as $salesRuleId => $discountInfo) {
-                    if(!in_array($salesRuleId, explode(',', $quoteAppliedRuleIds))) {
+                    if (!in_array($salesRuleId, explode(',', $quoteAppliedRuleIds))) {
                         continue;
                     }
 
@@ -1230,17 +1217,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         }
 
         return $stockItemToBook;
-    }
-
-    /**
-     * This method is required because the API service authorize Order which is called on preload
-     * does not accept an empty cart, so we have to artificially force a dummy product
-     * @return OystProduct
-     */
-    public function addDummyOystProduct()
-    {
-        $price = new OystPrice(1, $this->getCatalogBaseCurrencyCode());
-        return new OystProduct(1, 'Dummy Product', $price, 1);
     }
 
     public function getCatalogBaseCurrencyCode($storeId = null)

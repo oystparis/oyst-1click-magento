@@ -189,6 +189,22 @@
                             </depends>
                         </oneclickjs_url>
 
+                        <!-- javascript cdn url -->
+                        <oneclickmodal_url translate="label">
+                            <label>Modal CDN URL</label>
+                            <frontend_type>text</frontend_type>
+                            <validate>required-entry validate-url</validate>
+                            <config_path>oyst/oneclick/oneclickmodal_url</config_path>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>1</enable>
+                                <mode>custom</mode>
+                            </depends>
+                        </oneclickmodal_url>
+
                         <!-- notification url -->
                         <notification_url translate="label,comment">
                             <label>Notification URL</label>

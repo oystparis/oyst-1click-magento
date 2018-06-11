@@ -71,6 +71,11 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
         return Zend_Json::encode($this->escapeUrl(Mage::getStoreConfig('oyst/oneclick/payment_url', $store->getId())));
     }
 
+    public function getOneClickModalUrl()
+    {
+        return Zend_Json::encode($this->escapeUrl(Mage::helper('oyst_oneclick')->getOneClickModalUrl()));
+    }
+
     /**
      * Is form validation enable
      *
