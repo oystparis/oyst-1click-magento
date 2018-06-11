@@ -17,17 +17,14 @@ use Oyst\Classes\OneClickNotifications;
 use Oyst\Classes\OneClickOrderParams;
 
 /**
- * OneClick ApiWrapper Model
+ * ApiWrapper_Type_OneClick Model
  */
-class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
+class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_ApiWrapper_AbstractType
 {
     // In modal timer is 5 minutes, 6 is to ensure it's over
     const CONFIG_XML_PATH_OYST_CHECKOUT_MODAL_TIMER = 'oyst/oneclick/checkout_modal_timer';
 
     const CONFIG_XML_PATH_OYST_PENDING_STATUS_FAILOVER_TIMER = 'oyst/oneclick/pending_status_failover_timer';
-
-    /** @var Oyst_OneClick_Model_Api $oystClient */
-    protected $oystClient;
 
     /** @var OystOneClickApi $oneClickApi */
     protected $oneClickApi;
@@ -39,8 +36,8 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
 
     public function __construct()
     {
-        $this->oystClient = Mage::getModel('oyst_oneclick/api');
-        $this->oneClickApi = $this->oystClient->getClient($this->type);
+        parent::__construct();
+        $this->oneClickApi = $this->_oystClient->getClient($this->type);
     }
 
     /**
@@ -103,7 +100,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
                 $context,
                 $customization
             );
-            $this->oystClient->validateResult($this->oneClickApi);
+            $this->_oystClient->validateResult($this->oneClickApi);
         } catch (Exception $e) {
             Mage::logException($e);
         }
@@ -286,8 +283,8 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
      */
     public function isOystOrderStatusValid($oystOrderId)
     {
-        /** @var Oyst_OneClick_Model_Order_ApiWrapper $orderApi */
-        $orderApi = Mage::getModel('oyst_oneClick/order_apiWrapper');
+        /** @var Oyst_OneClick_Model_ApiWrapper_Type_Order $orderApi */
+        $orderApi = Mage::getModel('oyst_oneClick/apiWrapper_type_order');
 
         try {
             $response = $orderApi->getOrder($oystOrderId);

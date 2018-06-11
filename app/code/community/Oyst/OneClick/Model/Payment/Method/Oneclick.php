@@ -63,8 +63,8 @@ class Oyst_OneClick_Model_Payment_Method_Oneclick extends Mage_Payment_Model_Met
         }
 
         try {
-            /** @var Oyst_OneClick_Model_Order_ApiWrapper $api */
-            $api = Mage::getModel('oyst_oneclick/order_apiWrapper');
+            /** @var Oyst_OneClick_Model_ApiWrapper_Type_Order $api */
+            $api = Mage::getModel('oyst_oneclick/apiWrapper_type_order');
             $api->refund($payment->getOrder()->getOystOrderId(), $amount);
         } catch (Exception $e) {
             /** @var Oyst_OneClick_Helper_Data $oystHelper */
