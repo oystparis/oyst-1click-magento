@@ -35,9 +35,6 @@ function oystOneClick(config) {
 
         ready(function () {
             var form = new FormData();
-            if (config.isCheckoutCart) {
-                form.append("isCheckoutCart", config.isCheckoutCart);
-            }
 
             if (config.addToCartProductFormId) {
                 var isErrorsInForm = null;
@@ -75,7 +72,7 @@ function oystOneClick(config) {
             }
 
             if(opts.preload) {
-                cb(null, config.oneClickModalUrl+'?isCheckoutCart='+config.isCheckoutCart);
+                cb(null, config.oneClickModalUrl+'?isCheckoutCart=true');
             } else {
                 var settings = {
                     async: true,
@@ -127,7 +124,7 @@ function oystOneClick(config) {
 
     var allowOystRedirectSelf = true;
     window.addEventListener('message', function(event){
-        if (event.data.type == 'ORDER_COMPLETE' && config.isCheckoutCart) {
+        if (event.data.type == 'ORDER_COMPLETE') {
            allowOystRedirectSelf = false;
         }
 

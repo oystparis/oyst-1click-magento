@@ -146,9 +146,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             $orderParams->setShouldReinitBuffer($reinitialize);
         }
 
-        if (isset($dataFormated['isCheckoutCart'])) {
-            $orderParams->setIsCheckoutCart(true);
-        }
+        $orderParams->setIsCheckoutCart(true);
 
         if ($allowDiscountCoupon = Mage::getStoreConfig('oyst/oneclick/allow_discount_coupon_from_modal')) {
             $orderParams->setAllowDiscountCoupon($allowDiscountCoupon);
@@ -198,12 +196,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     {
         $customization = new OneClickCustomization();
 
-        if (isset($dataFormated['isCheckoutCart'])) {
-            $customization->setCta(
-                Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_label', Mage::app()->getStore()->getStoreId()),
-                Mage::helper('oyst_oneclick')->getRedirectUrl()
-            );
-        }
+        $customization->setCta(
+            Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_label', Mage::app()->getStore()->getStoreId()),
+            Mage::helper('oyst_oneclick')->getRedirectUrl()
+        );
 
         return $customization;
     }

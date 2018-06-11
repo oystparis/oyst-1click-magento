@@ -30,7 +30,6 @@ if ($this->isSupportedProduct() && $this->isButtonEnabled()) :
                 var oystOneClickConfig = {
                     'oneClickUrl': <?php echo $this->getOneClickUrl(); ?>,
                     'oneClickModalUrl': <?php echo $this->getOneClickModalUrl(); ?>,
-                    'isCheckoutCart': false,
                     'addToCartProductFormId': 'product_addtocart_form',
                     'isProductAddtocartFormValidate': <?php echo $this->escapeHtml($this->isProductAddtocartFormValidate()); ?>,
                     'addtocartButtonsClass': <?php echo Zend_Json::encode(
