@@ -16,9 +16,7 @@ class Oyst_OneClick_Model_Cart
 {
     public function initOystCheckout($params)
     {
-        if (!empty($params['add_to_cart_form'])
-            && !$params['preload']
-        ) {
+        if (!empty($params['add_to_cart_form'])) {
             $substractQuoteItemsQtys = array('quoteId' => $params['quoteId']);
             Mage::getModel('oyst_oneclick/oneClick_apiWrapper')->getCartItems($substractQuoteItemsQtys);
             $params['substract_quote_items_qtys'] = $substractQuoteItemsQtys;

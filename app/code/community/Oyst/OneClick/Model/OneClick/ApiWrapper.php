@@ -74,19 +74,15 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
         $oystProducts = $oystCatalog->getOystProducts($dataFormated);
-        if (count($oystProducts) === 0) {
-            $oystProducts[] = $oystCatalog->addDummyOystProduct();
-        }
 
         if (isset($oystProducts['has_error'])) {
             return $oystProducts;
         }
 
         $notifications = $this->getOneClickNotifications();
-        $dataFormated['preload'] = filter_var($dataFormated['preload'], FILTER_VALIDATE_BOOLEAN);
 
         // Book initial quantity
-        if (!$dataFormated['preload'] && $this->getConfig('should_ask_stock')) {
+        if ($this->getConfig('should_ask_stock')) {
             $notifications->addEvent('order.stock.released');
         }
 
@@ -150,9 +146,7 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
             $orderParams->setShouldReinitBuffer($reinitialize);
         }
 
-        if (isset($dataFormated['isCheckoutCart'])) {
-            $orderParams->setIsCheckoutCart(true);
-        }
+        $orderParams->setIsCheckoutCart(true);
 
         if ($allowDiscountCoupon = Mage::getStoreConfig('oyst/oneclick/allow_discount_coupon_from_modal')) {
             $orderParams->setAllowDiscountCoupon($allowDiscountCoupon);
@@ -202,12 +196,10 @@ class Oyst_OneClick_Model_OneClick_ApiWrapper extends Oyst_OneClick_Model_Api
     {
         $customization = new OneClickCustomization();
 
-        if (isset($dataFormated['isCheckoutCart'])) {
-            $customization->setCta(
-                Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_label', Mage::app()->getStore()->getStoreId()),
-                Mage::helper('oyst_oneclick')->getRedirectUrl()
-            );
-        }
+        $customization->setCta(
+            Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_label', Mage::app()->getStore()->getStoreId()),
+            Mage::helper('oyst_oneclick')->getRedirectUrl()
+        );
 
         return $customization;
     }
