@@ -138,14 +138,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         // Create new notification in db with status 'start'
         /** @var Oyst_OneClick_Model_Notification $notification */
         $notification = Mage::getModel('oyst_oneclick/notification');
-        $notification->setData(array(
-            'event' => $event,
-            'oyst_data' => Zend_Json::encode($apiData),
-            'status' => Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_START,
-            'created_at' => Mage::getModel('core/date')->gmtDate(),
-            'executed_at' => Mage::getModel('core/date')->gmtDate(),
-        ));
-        $notification->save();
+        $notification->registerNotificationStart($event, $apiData);
         Mage::helper('oyst_oneclick')->log('Start processing notification: ' . $notification->getNotificationId());
 
         // Do action for each event type
@@ -171,10 +164,9 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         }
 
         // Save new status and result in db
-        $notification->setStatus(Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_FINISHED)
+        $notification
             ->setMageResponse($response)
-            ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
-            ->save();
+            ->registerNotificationFinish();
         Mage::helper('oyst_oneclick')->log('End processing notification: ' . $notification->getNotificationId());
 
         return $response;
