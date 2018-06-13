@@ -276,7 +276,7 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
     public function isOystOrderStatusValid($oystOrderId)
     {
         /** @var Oyst_OneClick_Model_ApiWrapper_Type_Order $orderApi */
-        $orderApi = Mage::getModel('oyst_oneClick/apiWrapper_type_order');
+        $orderApi = Mage::getModel('oyst_oneclick/apiWrapper_type_order');
 
         try {
             $response = $orderApi->getOrder($oystOrderId);
