@@ -253,6 +253,10 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
                 $payment->registerCaptureNotification($amount, true);
             }
 
+            Mage::dispatchEvent('oyst_oneclick_model_payment_data_add_transaction_after',
+                array('payment' => $payment, 'order' => $order)
+            );
+
             $order->save();
         }
     }
@@ -425,7 +429,7 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
      *
      * @return float|int $amount
      */
-    private function getFormatAmount($transactionData)
+    protected function getFormatAmount($transactionData)
     {
         $amount = !empty($transactionData['amount']) ?
             !empty($transactionData['amount']['value']) ? $transactionData['amount']['value'] : 0 : 0;

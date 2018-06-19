@@ -138,9 +138,17 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $this->orderResponse);
         $magentoQuoteBuilder->syncQuoteFacade();
 
+        Mage::dispatchEvent('oyst_oneclick_model_order_create_magento_order_before',
+            array('quote' => $magentoQuoteBuilder->getQuote())
+        );
+
         /** @var Oyst_OneClick_Model_Magento_Order $magentoOrderBuilder */
         $magentoOrderBuilder = Mage::getModel('oyst_oneclick/magento_order', $magentoQuoteBuilder->getQuote());
         $magentoOrderBuilder->buildOrder();
+
+        Mage::dispatchEvent('oyst_oneclick_model_order_create_magento_order_after',
+            array('quote' => $magentoQuoteBuilder->getQuote(), 'order' => $magentoOrderBuilder->getOrder())
+        );
 
         $magentoOrderBuilder->getOrder()->addStatusHistoryComment(
             Mage::helper('oyst_oneclick')->__(
@@ -214,6 +222,10 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
             $order->cancel();
         }
 
+        Mage::dispatchEvent('oyst_oneclick_model_order_change_status_after',
+            array('order' => $order)
+        );
+
         $order->save();
     }
 
@@ -241,6 +253,10 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         if (Mage::helper('oyst_oneclick')->getConfig('enable_invoice_auto_generation')) {
             $payment->registerCaptureNotification($helper->getHumanAmount($this->orderResponse['order']['order_amount']['value']));
         }
+
+        Mage::dispatchEvent('oyst_oneclick_model_order_init_transaction_after',
+            array('payment' => $payment, 'order' => $order)
+        );
     }
 
     /**

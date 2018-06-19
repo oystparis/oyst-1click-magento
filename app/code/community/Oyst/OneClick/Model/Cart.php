@@ -54,7 +54,7 @@ class Oyst_OneClick_Model_Cart
             $cart->addProductsByIds(explode(',', $related));
         }
 
-        Mage::dispatchEvent('oyst_oneclick_checkout_type_oyst_add_to_cart', array('cart' => $cart, 'add_to_cart_form_params' => $addToCartFormParams));
+        Mage::dispatchEvent('oyst_oneclick_model_cart_add_to_cart', array('cart' => $cart, 'add_to_cart_form_params' => $addToCartFormParams));
 
         $cart->getQuote()->setDataChanges(true);
         $cart->save();
