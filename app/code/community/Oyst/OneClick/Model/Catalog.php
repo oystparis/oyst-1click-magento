@@ -179,7 +179,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      *
      * @return Mage_Catalog_Model_Resource_Product_Collection|null
      */
-    private function getProducts($data)
+    protected function getProducts($data)
     {
         $childrenIds = $stockFilter = array();
 
@@ -218,7 +218,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      *
      * @return Mage_Catalog_Model_Resource_Product_Collection
      */
-    private function getProductCollection($data)
+    protected function getProductCollection($data)
     {
         $products = Mage::getResourceModel('catalog/product_collection')
             ->addFieldToFilter('entity_id', array('in' => $data))
@@ -235,7 +235,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      *
      * @return bool
      */
-    private function checkItemsQty($data)
+    protected function checkItemsQty($data)
     {
         /** @var Mage_CatalogInventory_Model_Stock_Item $stockItems */
         $stockItems = Mage::getModel('cataloginventory/stock_item')
@@ -830,7 +830,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      * @param Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder
      * @param OneClickOrderCartEstimate $oneClickOrderCartEstimate
      */
-    private function getShipments($apiData, &$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
+    protected function getShipments($apiData, &$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
     {
         /** @var Mage_Core_Model_Store $storeId */
         $storeId = Mage::getModel('core/store')->load($apiData['order']['context']['store_id']);
@@ -923,7 +923,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      * @param Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder
      * @param OneClickOrderCartEstimate $oneClickOrderCartEstimate
      */
-    private function getCartRules(&$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
+    protected function getCartRules(&$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
     {
         $discountRules = array();
 
@@ -1012,7 +1012,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      * @param Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder
      * @param OneClickOrderCartEstimate $oneClickOrderCartEstimate
      */
-    private function getCartAmount($apiData, &$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
+    protected function getCartAmount($apiData, &$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
     {
         // Get order amount
         $totals = $magentoQuoteBuilder->getQuote()->getTotals();
