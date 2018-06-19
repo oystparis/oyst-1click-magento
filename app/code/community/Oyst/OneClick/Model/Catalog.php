@@ -194,7 +194,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             $this->products[$item['productId']]['quantity'] = $stockFilter[$item[$index]] = $item['quantity'];
         }
 
-        if (!count($this->products)|| !$this->checkItemsQty($stockFilter)) {
+        if (!count($this->products) || !$this->checkItemsQty($stockFilter)) {
             return array();
         }
 
@@ -237,11 +237,13 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     private function checkItemsQty($data)
     {
+        /** @var Mage_CatalogInventory_Model_Stock_Item $stockItems */
         $stockItems = Mage::getModel('cataloginventory/stock_item')
             ->getCollection()
             ->addFieldToFilter('product_id', array('in' => array_keys($data)))
             ->addStockFilter(Mage::getModel('cataloginventory/stock'));
 
+        /** @var Mage_CatalogInventory_Model_Stock_Item $stockItem */
         foreach ($stockItems as $stockItem) {
             $checkQuoteItemQty = $stockItem->checkQuoteItemQty($data[$stockItem->getProductId()], $stockItem->getQty());
             if ($checkQuoteItemQty->getData('has_error')) {
