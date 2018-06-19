@@ -91,6 +91,8 @@ class Oyst_OneClick_Model_Magento_Quote
         $this->quote->setOystOrderId($this->apiData['order']['id']);
 
         Mage::getSingleton('checkout/cart')->setQuote($this->quote);
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_quote_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     /**
@@ -180,6 +182,8 @@ class Oyst_OneClick_Model_Magento_Quote
 
             $this->quote->setCheckoutMethod($checkoutMethod);
         }
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_customer_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     /**
@@ -187,7 +191,7 @@ class Oyst_OneClick_Model_Magento_Quote
      *
      * @return bool|Mage_Customer_Model_Customer
      */
-    private function getCustomer()
+    protected function getCustomer()
     {
         $this->websiteId = Mage::getModel('core/store')
             ->load($this->apiData['order']['context']['store_id'])
@@ -230,6 +234,8 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $shippingAddress->setSaveInAddressBook(false);
         $shippingAddress->setShouldIgnoreValidation(true);
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_addresses_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     private function syncShippingMethod()
@@ -280,6 +286,8 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $shippingAddress->setShippingMethod($realShippingMethod);
         $shippingAddress->setShippingDescription($shippingDescription);
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_shipping_method_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     /**
@@ -289,7 +297,7 @@ class Oyst_OneClick_Model_Magento_Quote
      *
      * @return array
      */
-    private function getAddressData(Mage_Sales_Model_Quote_Address $address)
+    protected function getAddressData(Mage_Sales_Model_Quote_Address $address)
     {
         $customerAddress = $this->apiData['order']['user']['address'];
 
@@ -356,6 +364,8 @@ class Oyst_OneClick_Model_Magento_Quote
                 }
             }
         }
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_coupons_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     private function syncQuoteItems()
@@ -443,7 +453,11 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $payment
             ->importData(array('method' => $paymentMethod->getCode()))
-            ->setCcLast4(substr($this->apiData['order']['user']['card']['preview'], -4))
+            ->setCcLast4(substr($this->apiData['order']['user']['card']['preview'], -4));
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_payment_method_after', array('quote' => $this->quote, 'request' => $this->apiData));
+
+        $payment
             ->save();
     }
 }
