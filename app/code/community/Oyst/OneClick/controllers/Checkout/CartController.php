@@ -90,6 +90,7 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
     {
         $params = $this->getRequest()->getParams();
         $params['quoteId'] = Mage::getSingleton('checkout/session')->getQuoteId();
+
         if (!$params['quoteId']) {
             Mage::getSingleton('checkout/cart')->save();
             $params['quoteId'] = Mage::getSingleton('checkout/session')->getQuoteId();
@@ -98,6 +99,7 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
         $params['add_to_cart_form'] = isset($params['add_to_cart_form']) ? Zend_Json::decode($params['add_to_cart_form']) : null;
 
         try {
+            /** @var Oyst_OneClick_Model_Cart $oystCart */
             $oystCart = Mage::getModel('oyst_oneclick/cart');
             $this->data = $oystCart->initOystCheckout($params);
             Mage::getSingleton('checkout/session')->setOystRelatedQuoteId($params['quoteId']);

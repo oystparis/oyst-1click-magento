@@ -26,6 +26,7 @@ class Oyst_OneClick_Model_Cart
         }
 
         $response = $this->_authorizeOrder($params);
+
         return $response;
     }
 
@@ -41,6 +42,7 @@ class Oyst_OneClick_Model_Cart
         }
 
         $product = $this->_initProduct($addToCartFormParams);
+
         if (!$product) {
             throw new Exception(Mage::helper('oyst_oneclick')->__('Product is not available'));
         }
@@ -56,12 +58,14 @@ class Oyst_OneClick_Model_Cart
 
         $cart->getQuote()->setDataChanges(true);
         $cart->save();
+
         return true;
     }
 
     protected function _initProduct($addToCartFormParams)
     {
         $productId = isset($addToCartFormParams['product']) ? $addToCartFormParams['product'] : null;
+
         if ($productId) {
             $product = Mage::getModel('catalog/product')
                 ->setStoreId(Mage::app()->getStore()->getId())
@@ -70,12 +74,15 @@ class Oyst_OneClick_Model_Cart
                 return $product;
             }
         }
+
         return false;
     }
 
     protected function _authorizeOrder($params)
     {
+        /** @var Oyst_OneClick_Model_ApiWrapper_Type_OneClick $response */
         $response = Mage::getModel('oyst_oneclick/apiWrapper_type_oneClick')->authorizeOrder($params);
+
         if (empty($response)) {
             throw new Exception(Mage::helper('oyst_oneclick')->__('Invalid Authorize Order Response.'));
         }

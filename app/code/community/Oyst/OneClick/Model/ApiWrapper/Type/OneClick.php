@@ -237,12 +237,14 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
         foreach ($returnItems as $item) {
             if (!is_null($item->getParentItem())) {
                 $products[] = array(
+                    'quoteItemId' => $item->getId(),
                     'productId' => $item->getParentItem()->getProductId(),
                     'quantity' => $item->getParentItem()->getQty(),
                     'configurableProductChildId' => $item->getProductId(),
                 );
             } else {
                 $products[] = array(
+                    'quoteItemId' => $item->getId(),
                     'productId' => $item->getProductId(),
                     'quantity' => $item->getQty(),
                 );
@@ -252,7 +254,7 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
         if (isset($dataFormated['substract_quote_items_qtys'])) {
             foreach ($dataFormated['substract_quote_items_qtys']['products'] as $memoProduct) {
                 foreach ($products as $key => $product) {
-                    if ($memoProduct['productId'] == $product['productId']) {
+                    if ($memoProduct['quoteItemId'] == $product['quoteItemId']) {
                         $products[$key]['quantity'] = $products[$key]['quantity'] - $memoProduct['quantity'];
                         if ($products[$key]['quantity'] == 0) {
                             unset($products[$key]);
@@ -263,6 +265,7 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
         }
 
         $dataFormated['products'] = $products;
+
         Mage::helper('oyst_oneclick')->log($dataFormated['products']);
     }
 

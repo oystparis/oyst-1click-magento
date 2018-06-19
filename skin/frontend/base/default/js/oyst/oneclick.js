@@ -110,7 +110,7 @@ function oystOneClick(config) {
 
                         cb(isErrorsInForm, data.url);
 
-                        if (messageProductViewElem) {
+                        if (messageProductViewElem && messageProductViewElem.parentNode) {
                             messageProductViewElem.parentNode.removeChild(messageProductViewElem);
                         }
                     }
@@ -124,15 +124,15 @@ function oystOneClick(config) {
 
     var allowOystRedirectSelf = true;
     window.addEventListener('message', function(event){
-        if (event.data.type == 'ORDER_COMPLETE') {
+        if (event.data.type == "ORDER_COMPLETE") {
            allowOystRedirectSelf = false;
         }
 
-        if (event.data.type == 'ORDER_CANCEL') {
+        if (event.data.type == "ORDER_CANCEL") {
            allowOystRedirectSelf = true;
         }
 
-        if (event.data.type == 'MODAL_CLOSE' && allowOystRedirectSelf) {
+        if (event.data.type == "MODAL_CLOSE" && allowOystRedirectSelf) {
            window.location.reload(false);
         }
     });
