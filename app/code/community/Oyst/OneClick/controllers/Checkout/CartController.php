@@ -51,7 +51,8 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
             $session = Mage::getSingleton('checkout/type_onepage')->getCheckout();
             $session->setLastQuoteId($order->getQuoteId())
                 ->setLastSuccessQuoteId($order->getQuoteId())
-                ->setLastOrderId($order->getId());
+                ->setLastOrderId($order->getId())
+                ->setLastRealOrderId($order->getIncrementId());
 
             $successUrl = Mage::getStoreConfig('oyst/oneclick/checkout_cart_cta_success_page');
 
