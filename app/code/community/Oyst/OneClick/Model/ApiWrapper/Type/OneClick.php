@@ -38,6 +38,7 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
     {
         parent::__construct();
         $this->oneClickApi = $this->_oystClient->getClient($this->type);
+        $this->quote = Mage::getSingleton('checkout/cart')->getQuote();
     }
 
     /**
@@ -55,22 +56,15 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
     /**
      * API send
      *
-     * @param $dataFormated
-     *
      * @return mixed
      *
      * @throws Mage_Core_Exception
      */
-    public function authorizeOrder($dataFormated)
+    public function authorizeOrder()
     {
-        Mage::helper('oyst_oneclick')->log('$dataFormated');
-        Mage::helper('oyst_oneclick')->log($dataFormated);
-
-        $this->getCartItems($dataFormated);
-
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
-        $oystProducts = $oystCatalog->getOystProducts($dataFormated);
+        $oystProducts = $oystCatalog->getOystProducts();
 
         if (isset($oystProducts['has_error'])) {
             return $oystProducts;
@@ -83,9 +77,9 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
             $notifications->addEvent('order.stock.released');
         }
 
-        $orderParams = $this->getOneClickOrderParams($dataFormated);
+        $orderParams = $this->getOneClickOrderParams();
         $context = $this->getContext();
-        $customization = $this->getOneClickCustomization($dataFormated);
+        $customization = $this->getOneClickCustomization();
 
         try {
             $response = $this->oneClickApi->authorizeOrderV2(
@@ -126,11 +120,9 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
     /**
      * Get OneClickOrderParams configuration.
      *
-     * @param array $dataFormated
-     *
      * @return OneClickOrderParams
      */
-    private function getOneClickOrderParams($dataFormated)
+    private function getOneClickOrderParams()
     {
         $orderParams = new OneClickOrderParams();
         $orderParams->setManageQuantity($this->getConfig('allow_quantity_change'));
@@ -185,11 +177,9 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
     /**
      * Get one click customization.
      *
-     * @param array $dataFormated
-     *
      * @return OneClickCustomization
      */
-    private function getOneClickCustomization($dataFormated)
+    private function getOneClickCustomization()
     {
         $customization = new OneClickCustomization();
 
@@ -199,74 +189,6 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
         );
 
         return $customization;
-    }
-
-    /**
-     * Get cart items
-     *
-     * @param array $dataFormated
-     */
-    public function getCartItems(&$dataFormated)
-    {
-        $products = array();
-
-        /** @var Mage_Sales_Model_Quote quote */
-        if (!isset($this->quote)
-            || $this->quote->getId() != $dataFormated['quoteId']
-        ) {
-            $this->quote = Mage::getModel('sales/quote')->load($dataFormated['quoteId']);
-        }
-
-        /** @var Mage_Sales_Model_Quote $items */
-        $items = $this->quote->getAllVisibleItems();
-
-        $returnItems = array();
-
-        /** @var Mage_Sales_Model_Quote_Item $item */
-        foreach ($items as $item) {
-            if ($item->getHasChildren()) {
-                foreach ($item->getChildren() as $child) {
-                    $returnItems[] = $child;
-                }
-            } else {
-                $returnItems[] = $item;
-            }
-        }
-
-        /** @var Mage_Sales_Model_Quote_Item $item */
-        foreach ($returnItems as $item) {
-            if (!is_null($item->getParentItem())) {
-                $products[] = array(
-                    'quoteItemId' => $item->getId(),
-                    'productId' => $item->getParentItem()->getProductId(),
-                    'quantity' => $item->getParentItem()->getQty(),
-                    'configurableProductChildId' => $item->getProductId(),
-                );
-            } else {
-                $products[] = array(
-                    'quoteItemId' => $item->getId(),
-                    'productId' => $item->getProductId(),
-                    'quantity' => $item->getQty(),
-                );
-            }
-        }
-
-        if (isset($dataFormated['substract_quote_items_qtys'])) {
-            foreach ($dataFormated['substract_quote_items_qtys']['products'] as $memoProduct) {
-                foreach ($products as $key => $product) {
-                    if ($memoProduct['quoteItemId'] == $product['quoteItemId']) {
-                        $products[$key]['quantity'] = $products[$key]['quantity'] - $memoProduct['quantity'];
-                        if ($products[$key]['quantity'] == 0) {
-                            unset($products[$key]);
-                        }
-                    }
-                }
-            }
-        }
-
-        $dataFormated['products'] = $products;
-
-        Mage::helper('oyst_oneclick')->log($dataFormated['products']);
     }
 
     /**
