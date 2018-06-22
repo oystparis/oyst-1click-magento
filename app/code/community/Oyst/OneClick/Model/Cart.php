@@ -16,16 +16,20 @@ class Oyst_OneClick_Model_Cart
 {
     public function initOystCheckout($params)
     {
-        if (!empty($params['add_to_cart_form'])) {
-            $substractQuoteItemsQtys = array('quoteId' => $params['quoteId']);
-            Mage::getModel('oyst_oneclick/apiWrapper_type_oneClick')->getCartItems($substractQuoteItemsQtys);
-            $params['substract_quote_items_qtys'] = $substractQuoteItemsQtys;
+        Mage::helper('oyst_oneclick')->log('$params');
+        Mage::helper('oyst_oneclick')->log($params);
 
+        if (!empty($params['add_to_cart_form'])) {
             $this->_addToCart($params['add_to_cart_form']);
             unset($params['form_key']);
         }
 
-        $response = $this->_authorizeOrder($params);
+        /** @var Oyst_OneClick_Model_ApiWrapper_Type_OneClick $response */
+        $response = Mage::getModel('oyst_oneclick/apiWrapper_type_oneClick')->authorizeOrder();
+
+        if (empty($response)) {
+            throw new Exception(Mage::helper('oyst_oneclick')->__('Invalid Authorize Order Response.'));
+        }
 
         return $response;
     }
@@ -56,7 +60,6 @@ class Oyst_OneClick_Model_Cart
 
         Mage::dispatchEvent('oyst_oneclick_model_cart_add_to_cart', array('cart' => $cart, 'add_to_cart_form_params' => $addToCartFormParams));
 
-        $cart->getQuote()->setDataChanges(true);
         $cart->save();
 
         return true;
@@ -64,7 +67,7 @@ class Oyst_OneClick_Model_Cart
 
     protected function _initProduct($addToCartFormParams)
     {
-        $productId = isset($addToCartFormParams['product']) ? $addToCartFormParams['product'] : null;
+        $productId = isset($addToCartFormParams['product']) ? (int) $addToCartFormParams['product'] : null;
 
         if ($productId) {
             $product = Mage::getModel('catalog/product')
@@ -78,15 +81,22 @@ class Oyst_OneClick_Model_Cart
         return false;
     }
 
-    protected function _authorizeOrder($params)
+    /**
+     * Mage_Sales_Model_Quote_Address caches items after each collectTotals call. Some extensions calls collectTotals
+     * after adding new item to quote in observers. So we need clear this cache before adding new item to quote.
+     */
+    public function resetCartForSave()
     {
-        /** @var Oyst_OneClick_Model_ApiWrapper_Type_OneClick $response */
-        $response = Mage::getModel('oyst_oneclick/apiWrapper_type_oneClick')->authorizeOrder($params);
+        $cart = Mage::getSingleton('checkout/cart');
 
-        if (empty($response)) {
-            throw new Exception(Mage::helper('oyst_oneclick')->__('Invalid Authorize Order Response.'));
+        $cart->getQuote()->setDataChanges(true);
+        $cart->getQuote()->setTotalsCollectedFlag(false);
+
+        foreach ($cart->getQuote()->getAllAddresses() as $address) {
+            /** @var $address Mage_Sales_Model_Quote_Address */
+            $address->unsetData('cached_items_all');
+            $address->unsetData('cached_items_nominal');
+            $address->unsetData('cached_items_nonominal');
         }
-
-        return $response;
     }
 }

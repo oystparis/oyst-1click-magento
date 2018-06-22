@@ -122,7 +122,7 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
             }
         }
     }
-    
+
     public function registerNotificationStart($event, $data)
     {
         $this->setData(array(
@@ -134,7 +134,7 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
         ));
         $this->save();
     }
-    
+
     public function registerNotificationFinish()
     {
         $this->setStatus(self::NOTIFICATION_STATUS_FINISHED)

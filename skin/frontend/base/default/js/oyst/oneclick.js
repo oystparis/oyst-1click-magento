@@ -71,8 +71,8 @@ function oystOneClick(config) {
                 }
             }
 
-            if(opts.preload) {
-                cb(null, config.oneClickModalUrl+'?isCheckoutCart=true');
+            if (opts.preload) {
+                cb(null, config.oneClickModalUrl + "?isCheckoutCart=true");
             } else {
                 var settings = {
                     async: true,
@@ -123,17 +123,17 @@ function oystOneClick(config) {
     };
 
     var allowOystRedirectSelf = true;
-    window.addEventListener('message', function(event){
+    window.addEventListener('message', function (event) {
         if (event.data.type == "ORDER_COMPLETE") {
-           allowOystRedirectSelf = false;
+            allowOystRedirectSelf = false;
         }
 
         if (event.data.type == "ORDER_CANCEL") {
-           allowOystRedirectSelf = true;
+            allowOystRedirectSelf = true;
         }
 
         if (event.data.type == "MODAL_CLOSE" && allowOystRedirectSelf) {
-           window.location.reload(false);
+            window.location.reload(false);
         }
     });
 }

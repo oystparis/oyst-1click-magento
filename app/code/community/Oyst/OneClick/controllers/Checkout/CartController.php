@@ -90,20 +90,25 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
     public function initOystCheckoutAction()
     {
         $params = $this->getRequest()->getParams();
-        $params['quoteId'] = Mage::getSingleton('checkout/session')->getQuoteId();
+        $params['quote_id'] = Mage::getSingleton('checkout/session')->getQuoteId();
 
-        if (!$params['quoteId']) {
+        if (!$params['quote_id']) {
             Mage::getSingleton('checkout/cart')->save();
-            $params['quoteId'] = Mage::getSingleton('checkout/session')->getQuoteId();
+            $params['quote_id'] = Mage::getSingleton('checkout/session')->getQuoteId();
+            Mage::getModel('oyst_oneclick/cart')->resetCartForSave();
         }
+
+        $quote = Mage::getSingleton('checkout/cart')->getQuote();
+        Mage::register('oyst-quote', $quote, true);
 
         $params['add_to_cart_form'] = isset($params['add_to_cart_form']) ? Zend_Json::decode($params['add_to_cart_form']) : null;
 
         try {
+            Mage::getSingleton('checkout/session')->setOystRelatedQuoteId($quote->getId());
+
             /** @var Oyst_OneClick_Model_Cart $oystCart */
             $oystCart = Mage::getModel('oyst_oneclick/cart');
             $this->data = $oystCart->initOystCheckout($params);
-            Mage::getSingleton('checkout/session')->setOystRelatedQuoteId($params['quoteId']);
         } catch (Exception $e) {
             Mage::helper('oyst_oneclick')->log($e->__toString());
             $this->data = array('has_error' => 1, 'message' => $e->getMessage());
