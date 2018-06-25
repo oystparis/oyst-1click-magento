@@ -171,6 +171,7 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
     {
         $orderParams = new OneClickOrderParams();
         $orderParams->setManageQuantity($this->getConfig('allow_quantity_change'));
+        $orderParams->setIsMaterialized(!$this->quote->isVirtual());
 
         if ($delay = Mage::getStoreConfig('oyst/oneclick/order_delay')) {
             $orderParams->setDelay($delay);
