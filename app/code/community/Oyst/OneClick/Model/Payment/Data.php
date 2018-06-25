@@ -253,7 +253,8 @@ class Oyst_OneClick_Model_Payment_Data extends Mage_Core_Model_Abstract
                 $payment->registerCaptureNotification($amount, true);
             }
 
-            Mage::dispatchEvent('oyst_oneclick_model_payment_data_add_transaction_after',
+            Mage::dispatchEvent(
+                'oyst_oneclick_model_payment_data_add_transaction_after',
                 array('payment' => $payment, 'order' => $order)
             );
 
