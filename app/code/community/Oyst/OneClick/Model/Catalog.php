@@ -316,13 +316,18 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function addAmount(OystProduct &$oystProduct, Mage_Sales_Model_Quote_Item $quoteItem)
     {
+        $oystPriceIncludingTaxes = $this->getOystPriceFromQuoteItem($quoteItem);
+        $oystProduct->__set('amountIncludingTax', $oystPriceIncludingTaxes);
+    }
+
+    protected function getOystPriceFromQuoteItem(Mage_Sales_Model_Quote_Item $quoteItem)
+    {
         /** @var Mage_Checkout_Helper_Data $checkout */
         $checkout = Mage::helper('checkout');
 
         $priceInclTax = round($checkout->getPriceInclTax($quoteItem), 2);
 
-        $oystPriceIncludingTaxes = new OystPrice($priceInclTax, $this->getCatalogBaseCurrencyCode());
-        $oystProduct->__set('amountIncludingTax', $oystPriceIncludingTaxes);
+        return new OystPrice($priceInclTax, $this->getCatalogBaseCurrencyCode());
     }
 
     /**
@@ -487,6 +492,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $this->getShipments($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
         $this->getCartAmount($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
+
+        $this->getCartItems($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
         return $oneClickOrderCartEstimate->toJson();
     }
@@ -786,5 +793,55 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             'transport' => $transport
         ));
         return $transport->getForbiddenSalesRulesActions();
+    }
+
+     /**
+     * Get cart items.
+     *
+     * @param array $apiData
+     * @param Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder
+     * @param OneClickOrderCartEstimate $oneClickOrderCartEstimate
+     */
+    protected function getCartItems($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate)
+    {
+        $oystItems = array();
+
+        foreach ($magentoQuoteBuilder->getQuote()->getAllItems() as $item) {
+            if($item->getParentItemId()) {
+                continue;
+            }
+
+            $oystPriceIncludingTaxes = $this->getOystPriceFromQuoteItem($item);
+
+            $reference = null;
+
+            if (in_array($item->getProductType(), array('configurable'))) {
+                $childItem = null;
+                foreach ($magentoQuoteBuilder->getQuote()->getAllItems() as $tmpItem) {
+                    if($tmpItem->getParentItemId() == $item->getId()) {
+                        $childItem = $tmpItem;
+                        break;
+                    }
+                }
+                $reference = $item->getProductId().';'.$item->getId().';'.$childItem->getProductId();
+            } else {
+                $reference = $item->getProductId().';'.$item->getId();
+            }
+
+            $oystItem = new OneClickItem(
+                $reference, $oystPriceIncludingTaxes, $item->getQty()
+            );
+
+            $oystPriceForCrossedOutAmount = $this->getOystPriceFromQuoteItem($item);
+            $oystPriceForCrossedOutAmount->setValue($item->getProduct()->getPrice());
+            if($oystPriceIncludingTaxes->getValue() < $oystPriceForCrossedOutAmount->getValue()) {
+                $oystItem->__set('crossedOutAmount', $oystPriceForCrossedOutAmount);
+                $oystItem->__set('message', Mage::helper('oyst_oneclick')->__('Oyst has recognized you as a customer, so you benefit a promotion on this product.'));
+            }
+
+            $oystItems[] = $oystItem;
+        }
+
+        $oneClickOrderCartEstimate->setItems($oystItems);
     }
 }

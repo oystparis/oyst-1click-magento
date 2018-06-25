@@ -183,6 +183,10 @@ class Oyst_OneClick_Model_Magento_Quote
             $this->quote->setCheckoutMethod($checkoutMethod);
         }
 
+        if ($customer instanceof Mage_Customer_Model_Customer) {
+            Mae::getSingleton('customer/session')->setCustomer($customer);
+        }
+
         Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_customer_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
