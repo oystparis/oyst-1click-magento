@@ -15,6 +15,8 @@ use Oyst\Classes\Enum\AbstractOrderState;
 use Oyst\Classes\OneClickCustomization;
 use Oyst\Classes\OneClickNotifications;
 use Oyst\Classes\OneClickOrderParams;
+use Oyst\Classes\OystAddress;
+use Oyst\Classes\OystUser;
 
 /**
  * ApiWrapper_Type_OneClick Model
@@ -77,6 +79,7 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
             $notifications->addEvent('order.stock.released');
         }
 
+        $user = $this->getUser();
         $orderParams = $this->getOneClickOrderParams();
         $context = $this->getContext();
         $customization = $this->getOneClickCustomization();
@@ -85,7 +88,7 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
             $response = $this->oneClickApi->authorizeOrderV2(
                 $oystProducts,
                 $notifications,
-                null,
+                $user,
                 $orderParams,
                 $context,
                 $customization
@@ -115,6 +118,48 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
         }
 
         return $notifications;
+    }
+
+    /**
+     * Get OystUser.
+     *
+     * @return null|OystUser
+     */
+    protected function getUser()
+    {
+        $oystUser = null;
+
+        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+            /** @var Mage_Customer_Model_Customer $customer */
+            $customer = Mage::getSingleton('customer/session')->getCustomer();
+
+            $oystUser = new OystUser();
+
+            $oystUser
+                ->setFirstName($customer->getFirstname())
+                ->setLastName($customer->getLastname())
+                ->setEmail($customer->getEmail());
+
+            /** @var Mage_Customer_Model_Address $address */
+            $address = $customer->getDefaultShippingAddress();
+
+            if ($address) {
+                $oystAddress = new OystAddress();
+                $oystAddress
+                    ->setFirstName($address->getFirstname())
+                    ->setLastName($address->getLastname())
+                    ->setCompanyName($address->getCompany())
+                    ->setStreet($address->getStreet())
+                    ->setPostCode($address->getPostcode())
+                    ->setCity($address->getCity())
+                    ->setCountry($address->getCountry())
+                    ->setComplementary($address->getComplementary());
+
+                $oystUser->addAddress($address);
+            }
+        }
+
+        return $oystUser;
     }
 
     /**
