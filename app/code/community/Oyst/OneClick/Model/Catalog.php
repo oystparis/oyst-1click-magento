@@ -76,11 +76,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     protected $productsQuantities = null;
 
     /**
-     * @var array
-     */
-    protected $quoteItems = array();
-
-    /**
      * @var int
      */
     protected $configurableProductChildId = null;
@@ -493,7 +488,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $this->getCartAmount($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
-        $this->getCartItems($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate);
+        $this->getCartItems($magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
         return $oneClickOrderCartEstimate->toJson();
     }
@@ -798,16 +793,15 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      /**
      * Get cart items.
      *
-     * @param array $apiData
      * @param Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder
      * @param OneClickOrderCartEstimate $oneClickOrderCartEstimate
      */
-    protected function getCartItems($apiData, $magentoQuoteBuilder, $oneClickOrderCartEstimate)
+    protected function getCartItems($magentoQuoteBuilder, $oneClickOrderCartEstimate)
     {
         $oystItems = array();
 
         foreach ($magentoQuoteBuilder->getQuote()->getAllItems() as $item) {
-            if($item->getParentItemId()) {
+            if ($item->getParentItemId()) {
                 continue;
             }
 
@@ -815,10 +809,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             $reference = null;
 
-            if (in_array($item->getProductType(), array('configurable'))) {
+            if (in_array($item->getProductType(), array(Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE))) {
                 $childItem = null;
                 foreach ($magentoQuoteBuilder->getQuote()->getAllItems() as $tmpItem) {
-                    if($tmpItem->getParentItemId() == $item->getId()) {
+                    if ($tmpItem->getParentItemId() == $item->getId()) {
                         $childItem = $tmpItem;
                         break;
                     }
@@ -828,9 +822,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 $reference = $item->getProductId().';'.$item->getId();
             }
 
-            $oystItem = new OneClickItem(
-                $reference, $oystPriceIncludingTaxes, $item->getQty()
-            );
+            $oystItem = new OneClickItem($reference, $oystPriceIncludingTaxes, $item->getQty());
 
             $oystPriceForCrossedOutAmount = $this->getOystPriceFromQuoteItem($item);
             $oystPriceForCrossedOutAmount->setValue($item->getProduct()->getPrice());
