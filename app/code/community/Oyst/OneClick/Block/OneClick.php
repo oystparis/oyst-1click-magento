@@ -40,8 +40,7 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
             return false;
         }
 
-        // TODO Change code attribute to avoid confusions
-        if ($this->getProduct()->getIsOneclickActiveOnProduct()) {
+        if ($this->getProduct()->getIsOneclickDisableOnProduct()) {
             return false;
         }
 
