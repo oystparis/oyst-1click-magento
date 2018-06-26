@@ -74,11 +74,6 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
 
         $notifications = $this->getOneClickNotifications();
 
-        // Book initial quantity
-        if ($this->getConfig('should_ask_stock')) {
-            $notifications->addEvent('order.stock.released');
-        }
-
         $user = $this->getUser();
         $orderParams = $this->getOneClickOrderParams();
         $context = $this->getContext();
@@ -110,7 +105,6 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
     {
         $notifications = new OneClickNotifications();
         $notifications->setShouldAskShipments(true);
-        $notifications->setShouldAskStock($this->getConfig('should_ask_stock'));
         $notifications->setUrl($this->getConfig('notification_url'));
 
         if ($notifications->isShouldAskShipments()) {
