@@ -40,8 +40,7 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
             return false;
         }
 
-        // TODO Change code attribute to avoid confusions
-        if ($this->getProduct()->getIsOneclickActiveOnProduct()) {
+        if ($this->getProduct()->getIsOneclickDisableOnProduct()) {
             return false;
         }
 
@@ -69,6 +68,11 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
         $store = Mage::getSingleton('adminhtml/session_quote')->getStore();
 
         return Zend_Json::encode($this->escapeUrl(Mage::getStoreConfig('oyst/oneclick/payment_url', $store->getId())));
+    }
+
+    public function getOneClickModalUrl()
+    {
+        return Zend_Json::encode($this->escapeUrl(Mage::helper('oyst_oneclick')->getOneClickModalUrl()));
     }
 
     /**

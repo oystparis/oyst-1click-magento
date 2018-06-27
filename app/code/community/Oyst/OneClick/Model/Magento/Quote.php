@@ -91,6 +91,8 @@ class Oyst_OneClick_Model_Magento_Quote
         $this->quote->setOystOrderId($this->apiData['order']['id']);
 
         Mage::getSingleton('checkout/cart')->setQuote($this->quote);
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_quote_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     /**
@@ -180,6 +182,8 @@ class Oyst_OneClick_Model_Magento_Quote
 
             $this->quote->setCheckoutMethod($checkoutMethod);
         }
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_customer_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     /**
@@ -187,7 +191,7 @@ class Oyst_OneClick_Model_Magento_Quote
      *
      * @return bool|Mage_Customer_Model_Customer
      */
-    private function getCustomer()
+    protected function getCustomer()
     {
         $this->websiteId = Mage::getModel('core/store')
             ->load($this->apiData['order']['context']['store_id'])
@@ -230,6 +234,8 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $shippingAddress->setSaveInAddressBook(false);
         $shippingAddress->setShouldIgnoreValidation(true);
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_addresses_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     private function syncShippingMethod()
@@ -280,6 +286,8 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $shippingAddress->setShippingMethod($realShippingMethod);
         $shippingAddress->setShippingDescription($shippingDescription);
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_shipping_method_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     /**
@@ -289,7 +297,7 @@ class Oyst_OneClick_Model_Magento_Quote
      *
      * @return array
      */
-    private function getAddressData(Mage_Sales_Model_Quote_Address $address)
+    protected function getAddressData(Mage_Sales_Model_Quote_Address $address)
     {
         $customerAddress = $this->apiData['order']['user']['address'];
 
@@ -298,6 +306,15 @@ class Oyst_OneClick_Model_Magento_Quote
         $street = isset($customerAddress['street']) ? $customerAddress['street'] : '';
         $street .= isset($customerAddress['complementary']) ? ' ' . $customerAddress['complementary'] : '';
 
+        $city = null;
+        if (isset($customerAddress['postcode'])) {
+            $city = $this->mapCityZipCode($customerAddress['postcode']);
+        }
+
+        if (is_null($city)) {
+            $city = isset($customerAddress['city']) ? $customerAddress['city'] : '';
+        }
+
         $formattedAddress = array(
             'email' => $this->apiData['order']['user']['email'],
             'firstname' => isset($customerAddress['first_name']) ? $customerAddress['first_name'] : '',
@@ -305,7 +322,7 @@ class Oyst_OneClick_Model_Magento_Quote
             'telephone' => $this->apiData['order']['user']['phone'],
             'street' => $street,
             'postcode' => isset($customerAddress['postcode']) ? $customerAddress['postcode'] : '',
-            'city' => isset($customerAddress['city']) ? $customerAddress['city'] : '',
+            'city' => $city,
             'region' => isset($customerAddress['city']) ? $customerAddress['city'] : '',
             'region_id' =>  null,
             'country_id' => $country->getIso2Code(),
@@ -356,6 +373,8 @@ class Oyst_OneClick_Model_Magento_Quote
                 }
             }
         }
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_coupons_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     private function syncQuoteItems()
@@ -366,12 +385,6 @@ class Oyst_OneClick_Model_Magento_Quote
         foreach ($items as $item) {
             foreach (explode(';', $item['product']['reference']) as $productReference) {
                 $productReferences[] = array('ref' => $productReference, 'qty' => $item['quantity']);
-            }
-
-            if (isset($item['product']['variation_reference'])) {
-                $this->handleIncreaseStock($item['product']['variation_reference'], $item['quantity']);
-            } else {
-                $this->handleIncreaseStock($item['product']['reference'], $item['quantity']);
             }
         }
 
@@ -401,38 +414,6 @@ class Oyst_OneClick_Model_Magento_Quote
         return $this;
     }
 
-    private function handleIncreaseStock($productId, $qty)
-    {
-        // Increase stock with qty decreased when order was made if should_ask_stock is enabled
-        if (Mage::getStoreConfig('oyst/oneclick/should_ask_stock') &&
-            isset($this->apiData['event']) &&
-            'order.v2.new' === $this->apiData['event']) {
-            Mage::helper('oyst_oneclick')->log(
-                sprintf(
-                    'Increase stock of product_id %s with %s',
-                    $productId,
-                    $qty
-                )
-            );
-
-            /** @var Mage_CatalogInventory_Model_Stock_Item $stockItem */
-            $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productId);
-
-            $isStockManaged = $stockItem->getData('use_config_manage_stock') ?
-                Mage::getStoreConfig('cataloginventory/item_options/manage_stock') :
-                $stockItem->getData('manage_stock');
-
-            if ($isStockManaged) {
-                $stockItem->setData('is_in_stock', 1); // Set the Product to InStock
-                $stockItem->addQty($qty);
-                // @codingStandardsIgnoreLine
-                $stockItem->save();
-            }
-        }
-
-        return $this;
-    }
-
     private function syncPaymentMethodData()
     {
         /** @var Oyst_OneClick_Model_Payment_Method_Oneclick $paymentMethod */
@@ -443,7 +424,29 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $payment
             ->importData(array('method' => $paymentMethod->getCode()))
-            ->setCcLast4(substr($this->apiData['order']['user']['card']['preview'], -4))
+            ->setCcLast4(substr($this->apiData['order']['user']['card']['preview'], -4));
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_payment_method_after', array('quote' => $this->quote, 'request' => $this->apiData));
+
+        $payment
             ->save();
+    }
+
+    /**
+     * Get city name from the zipCode ; Specific for TNT module
+     *
+     * @param $zipCode
+     *
+     * @return mixed
+     */
+    public function mapCityZipCode($zipCode)
+    {
+        $map = Oyst_OneClick_Helper_ZipMap::getZipMap();
+
+        if (key_exists($zipCode, $map)) {
+            return $map[$zipCode];
+        }
+
+        return null;
     }
 }

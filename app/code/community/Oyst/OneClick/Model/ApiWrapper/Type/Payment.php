@@ -14,9 +14,9 @@ use Oyst\Classes\OystPrice;
 use Oyst\Api\OystOneClickApi;
 
 /**
- * Payment_ApiWrapper Model
+ * ApiWrapper_Type_Payment Model
  */
-class Oyst_OneClick_Model_Payment_ApiWrapper extends Mage_Core_Model_Abstract
+class Oyst_OneClick_Model_ApiWrapper_Type_Payment extends Oyst_OneClick_Model_ApiWrapper_AbstractType
 {
     /**
      * Hard coded currency
@@ -25,15 +25,12 @@ class Oyst_OneClick_Model_Payment_ApiWrapper extends Mage_Core_Model_Abstract
 
     const TYPE = OystApiClientFactory::ENTITY_PAYMENT;
 
-    /** @var Oyst_OneClick_Model_Api $_oystClient */
-    protected $_oystClient;
-
     /** @var OystOneClickApi $_oneClickApi */
     protected $_oneClickApi;
 
     public function __construct()
     {
-        $this->_oystClient = Mage::getModel('oyst_oneclick/api');
+        parent::__construct();
         $this->_oneClickApi = $this->_oystClient->getClient(self::TYPE);
     }
 

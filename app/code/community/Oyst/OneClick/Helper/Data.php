@@ -56,8 +56,8 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getSdkVersion()
     {
-        /** @var Oyst_OneClick_Model_Api $oystModel */
-        $oystModel = Mage::getModel('oyst_oneclick/api');
+        /** @var Oyst_OneClick_Model_ApiWrapper_Client $oystModel */
+        $oystModel = Mage::getModel('oyst_oneclick/apiWrapper_client');
 
         return $oystModel->getSdkVersion();
     }
@@ -109,8 +109,8 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     public function isApiKeyValid()
     {
         try {
-            /** @var Oyst_OneClick_Model_Api $api */
-            $api = Mage::getModel('oyst_oneclick/api');
+            /** @var Oyst_OneClick_Model_ApiWrapper_Client $api */
+            $api = Mage::getModel('oyst_oneclick/apiWrapper_client');
             $api->isApiKeyValid();
         } catch (Exception $e) {
             /** @var Oyst_OneClick_Helper_Data $oystHelper */
@@ -143,6 +143,25 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
             }
 
             return '<script src="' . $oneclickjs . '"></script>';
+        }
+    }
+
+    /**
+     * Get OneClick javascript CDN URL
+     *
+     * @return string
+     */
+    public function getOneClickModalUrl()
+    {
+        if ($this->getConfig('enable')) {
+            $mode = $this->getConfig('mode');
+            $oneclickModalUrl = $this->getConfig('oneclickmodal_' . $mode . '_url');
+
+            if (Oyst_OneClick_Model_System_Config_Source_Mode::CUSTOM === $mode) {
+                $oneclickModalUrl = $this->getConfig('oneclickmodal_url');
+            }
+
+            return $oneclickModalUrl;
         }
     }
 

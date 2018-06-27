@@ -87,8 +87,8 @@ class Oyst_OneClick_Model_Observer
 
         $oystHelper->log('Start send cancelOrRefund of order id : ' . $order->getId());
 
-        /** @var Oyst_OneClick_Model_Payment_ApiWrapper $response */
-        $response = Mage::getModel('oyst_oneclick/payment_apiWrapper');
+        /** @var Oyst_OneClick_Model_ApiWrapper_Type_Payment $response */
+        $response = Mage::getModel('oyst_oneclick/apiWrapper_type_payment');
         $response->cancelOrRefund($order->getPayment()->getLastTransId());
 
         $oystHelper->log('Waiting from cancelOrRefund notification of order id : ' . $order->getId());

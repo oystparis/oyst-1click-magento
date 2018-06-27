@@ -11,18 +11,12 @@
 
 use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystCatalogApi;
-use Oyst\Classes\OystCarrier;
-use Oyst\Classes\OneClickShipment;
-use Oyst\Classes\ShipmentAmount;
 
 /**
- * Catalog ApiWrapper Model
+ * ApiWrapper_Type_Catalog Model
  */
-class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
+class Oyst_OneClick_Model_ApiWrapper_Type_Catalog extends Oyst_OneClick_Model_ApiWrapper_AbstractType
 {
-    /** @var Oyst_OneClick_Model_Api $_oystClient */
-    protected $_oystClient;
-
     /** @var OystCatalogApi $_catalogApi */
     protected $_catalogApi;
 
@@ -33,7 +27,7 @@ class Oyst_OneClick_Model_Catalog_ApiWrapper extends Mage_Core_Model_Abstract
 
     public function __construct()
     {
-        $this->_oystClient = Mage::getModel('oyst_oneclick/api');
+        parent::__construct();
         $this->_catalogApi = $this->_oystClient->getClient($this->_type);
     }
 

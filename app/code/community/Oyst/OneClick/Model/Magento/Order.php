@@ -44,11 +44,6 @@ class Oyst_OneClick_Model_Magento_Order
 
     public function buildOrder()
     {
-        $this->createOrder();
-    }
-
-    private function createOrder()
-    {
         try {
             $this->order = $this->placeOrder();
             $this->order->setCreatedAt($this->quote->getCreatedAt());

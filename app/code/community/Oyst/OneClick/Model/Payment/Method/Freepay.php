@@ -58,8 +58,8 @@ class Oyst_OneClick_Model_Payment_Method_Freepay extends Mage_Payment_Model_Meth
      */
     public function refund(Varien_Object $payment, $amount)
     {
-        /** @var Oyst_OneClick_Model_Payment_ApiWrapper $api */
-        $api = Mage::getModel('oyst_oneclick/payment_apiWrapper');
+        /** @var Oyst_OneClick_Model_ApiWrapper_Type_Payment $api */
+        $api = Mage::getModel('oyst_oneclick/apiWrapper_type_payment');
 
         $api->cancelOrRefund($payment->getLastTransId(), $amount);
 

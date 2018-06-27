@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>1.12.0</version>
+            <version>1.13.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -229,9 +229,10 @@
             <oneclick>
                 <oneclickjs_sandbox_url>//cdn.sandbox.oyst.eu/</oneclickjs_sandbox_url>
                 <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
+                <oneclickmodal_sandbox_url>https://oneclick.sandbox.oyst.eu/</oneclickmodal_sandbox_url>
+                <oneclickmodal_prod_url>https://oneclick.oyst.com/</oneclickmodal_prod_url>
                 <product_addtocart_form_validate>1</product_addtocart_form_validate>
                 <allow_quantity_change>1</allow_quantity_change>
-                <should_ask_stock>1</should_ask_stock>
                 <enable_invoice_auto_generation>1</enable_invoice_auto_generation>
                 <button_theme>default</button_theme>
                 <product_page_button_position>disable</product_page_button_position>
