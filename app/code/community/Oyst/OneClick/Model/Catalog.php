@@ -790,7 +790,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         return $transport->getForbiddenSalesRulesActions();
     }
 
-     /**
+    /**
      * Get cart items.
      *
      * @param Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder
@@ -817,16 +817,16 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                         break;
                     }
                 }
-                $reference = $item->getProductId().';'.$item->getId().';'.$childItem->getProductId();
+                $reference = $item->getProductId() . ';' . $item->getId() . ';' . $childItem->getProductId();
             } else {
-                $reference = $item->getProductId().';'.$item->getId();
+                $reference = $item->getProductId() . ';' . $item->getId();
             }
 
             $oystItem = new OneClickItem($reference, $oystPriceIncludingTaxes, $item->getQty());
 
             $oystPriceForCrossedOutAmount = $this->getOystPriceFromQuoteItem($item);
             $oystPriceForCrossedOutAmount->setValue($item->getProduct()->getPrice());
-            if($oystPriceIncludingTaxes->getValue() < $oystPriceForCrossedOutAmount->getValue()) {
+            if ($oystPriceIncludingTaxes->getValue() < $oystPriceForCrossedOutAmount->getValue()) {
                 $oystItem->__set('crossedOutAmount', $oystPriceForCrossedOutAmount);
                 $oystItem->__set('message', Mage::helper('oyst_oneclick')->__('Oyst has recognized you as a customer, so you benefit a promotion on this product.'));
             }
