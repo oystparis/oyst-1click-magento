@@ -1,7 +1,7 @@
 # Oyst 1-Click plugin for Magento
 
 [![Build Status](https://travis-ci.org/oystparis/oyst-1click-magento.svg?branch=master)](https://travis-ci.org/oystparis/oyst-1click-magento)
-[![Latest Stable Version](https://img.shields.io/badge/latest-1.13.0-green.svg)](https://github.com/oystparis/oyst-1click-magento/releases)
+[![Latest Stable Version](https://img.shields.io/badge/latest-1.13.0-green.svg)](https://github.com/oystparis/oyst-1click-magento/releases/latest)
 [![Magento = 1.7.x.x](https://img.shields.io/badge/magento-1.7-blue.svg)](#)
 [![Magento = 1.8.x.x](https://img.shields.io/badge/magento-1.8-blue.svg)](#)
 [![Magento = 1.9.x.x](https://img.shields.io/badge/magento-1.9-blue.svg)](#)
@@ -40,6 +40,15 @@ If you are using the compilation, before installing the extension it's necessary
 > /!\ Please use the “__Merge__” upload mode. Do not replace the whole folders, but merge them. This way your FTP/SFTP client will only add new files. This mode is used by default by most of FTP/SFTP clients software.
 3. Clear the cache from `Admin Backend` — `System` — `Cache Management` ;
 4. Log out of the backend and log in again, so Magento can refresh permissions.
+
+## Build Magento tgz package
+
+1. Run this with version as parameter:
+```./bin/update_magento_version.sh v1.13.0-RC16```
+2. Build the package:
+```./bin/build_magento_package.sh```
+3. Get your package in:
+```./travis_release/```
 
 ## Support
 
