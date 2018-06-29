@@ -36,6 +36,8 @@ function oystOneClick(config) {
         ready(function () {
             var form = new FormData();
 
+            form.append("preload", opts.preload);
+
             if (config.addToCartProductFormId) {
                 var isErrorsInForm = null;
 
@@ -71,59 +73,55 @@ function oystOneClick(config) {
                 }
             }
 
-            if (opts.preload) {
-                cb(null, config.oneClickModalUrl + "?isCheckoutCart=true");
-            } else {
-                var settings = {
-                    async: true,
-                    cacheControl: "no-cache",
-                    data: form,
-                    method: "POST",
-                    mimeType: "multipart/form-data",
-                    url: config.oneClickUrl
-                };
+            var settings = {
+                async: true,
+                cacheControl: "no-cache",
+                data: form,
+                method: "POST",
+                mimeType: "multipart/form-data",
+                url: config.oneClickUrl
+            };
 
-                var xhr = new XMLHttpRequest();
-                xhr.open(settings.method, settings.url, settings.async);
-                xhr.setRequestHeader("cache-control", settings.cacheControl);
-                xhr.onload = function () {
-                    if (200 === xhr.status) {
-                        var data = JSON.parse(xhr.responseText);
-                        var isErrorsInForm = null;
-                        var messageProductViewElem = document.getElementById("messages_product_view");
-                        // If not the preload of button run form validation to know if they are errors
-                        if (!opts.preload) {
-                            if (data && data.has_error && data.message) {
-                                isErrorsInForm = true;
-                                if ("function" === typeof customMessagesProductView) {
-                                    // This function allow anyone to display custom message
-                                    customMessagesProductView(data);
-                                } else {
-                                    if (messageProductViewElem) {
-                                        messageProductViewElem.parentNode.removeChild(messageProductViewElem);
-                                    }
-
-                                    appendNotificationMsg(data.message, "error-msg", "product-view");
+            var xhr = new XMLHttpRequest();
+            xhr.open(settings.method, settings.url, settings.async);
+            xhr.setRequestHeader("cache-control", settings.cacheControl);
+            xhr.onload = function () {
+                if (200 === xhr.status) {
+                    var data = JSON.parse(xhr.responseText);
+                    var isErrorsInForm = null;
+                    var messageProductViewElem = document.getElementById("messages_product_view");
+                    // If not the preload of button run form validation to know if they are errors
+                    if (!opts.preload) {
+                        if (data && data.has_error && data.message) {
+                            isErrorsInForm = true;
+                            if ("function" === typeof customMessagesProductView) {
+                                // This function allow anyone to display custom message
+                                customMessagesProductView(data);
+                            } else {
+                                if (messageProductViewElem) {
+                                    messageProductViewElem.parentNode.removeChild(messageProductViewElem);
                                 }
+
+                                appendNotificationMsg(data.message, "error-msg", "product-view");
                             }
                         }
-
-                        cb(isErrorsInForm, data.url);
-
-                        if (messageProductViewElem && messageProductViewElem.parentNode) {
-                            messageProductViewElem.parentNode.removeChild(messageProductViewElem);
-                        }
                     }
-                };
-                xhr.send(form);
-            }
+
+                    cb(isErrorsInForm, data.url);
+
+                    if (messageProductViewElem && messageProductViewElem.parentNode) {
+                        messageProductViewElem.parentNode.removeChild(messageProductViewElem);
+                    }
+                }
+            };
+            xhr.send(form);
 
             initMutationObserver();
         });
     };
 
     var allowOystRedirectSelf = true;
-    window.addEventListener('message', function (event) {
+    window.addEventListener("message", function (event) {
         if (event.data.type == "ORDER_COMPLETE") {
             allowOystRedirectSelf = false;
         }

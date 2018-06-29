@@ -58,15 +58,18 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
     /**
      * API send
      *
+     * @param $dataFormated
+     *
      * @return mixed
      *
      * @throws Mage_Core_Exception
      */
-    public function authorizeOrder()
+    public function authorizeOrder($dataFormated)
     {
+        Mage::log($dataFormated);
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
-        $oystProducts = $oystCatalog->getOystProducts();
+        $oystProducts = $oystCatalog->getOystProducts($dataFormated);
 
         if (isset($oystProducts['has_error'])) {
             return $oystProducts;

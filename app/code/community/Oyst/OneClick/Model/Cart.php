@@ -19,13 +19,15 @@ class Oyst_OneClick_Model_Cart
         Mage::helper('oyst_oneclick')->log('$params');
         Mage::helper('oyst_oneclick')->log($params);
 
-        if (!empty($params['add_to_cart_form'])) {
+        if (!empty($params['add_to_cart_form'])
+            && !$params['preload']
+        ) {
             $this->_addToCart($params['add_to_cart_form']);
             unset($params['form_key']);
         }
 
         /** @var Oyst_OneClick_Model_ApiWrapper_Type_OneClick $response */
-        $response = Mage::getModel('oyst_oneclick/apiWrapper_type_oneClick')->authorizeOrder();
+        $response = Mage::getModel('oyst_oneclick/apiWrapper_type_oneClick')->authorizeOrder($params);
 
         if (empty($response)) {
             throw new Exception(Mage::helper('oyst_oneclick')->__('Invalid Authorize Order Response.'));

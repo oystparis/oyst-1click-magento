@@ -81,6 +81,11 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     protected $configurableProductChildId = null;
 
     /**
+     * @var bool Used to check if it's the first api call to display the button
+     */
+    private $isPreload;
+
+    /**
      * Object construct
      */
     public function __construct()
@@ -159,30 +164,36 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     /**
      * Return OystProduct array.
      *
+     * @param array $dataFormated
+     *
      * @return OystProduct[]|array Array of OystProduct or array with errors
      */
-    public function getOystProducts()
+    public function getOystProducts($dataFormated)
     {
-        $this->userDefinedAttributeCode = $this->getUserDefinedAttributeCode();
-        $this->systemSelectedAttributesCode = $this->getSystemSelectedAttributeCode();
-
         $oystProducts = array();
 
-        /** @var Mage_Sales_Model_Quote $quote */
-        $quote = $this->getQuote();
+        if ($this->isPreload = $dataFormated['preload']) {
+            $oystProducts[] = $this->addDummyOystProduct();
+        } else {
+            $this->userDefinedAttributeCode = $this->getUserDefinedAttributeCode();
+            $this->systemSelectedAttributesCode = $this->getSystemSelectedAttributeCode();
 
-        /** @var Mage_Sales_Model_Quote_Item $quoteItem */
-        foreach ($quote->getAllVisibleItems() as $quoteItem) {
-            if ($quoteItem->getProduct()->isConfigurable()) {
-                $parentQuoteItem = Mage::getModel('sales/quote_item');
-                // @codingStandardsIgnoreLine
-                $parentQuoteItem->load($quoteItem->getId(), 'parent_item_id');
-                $this->configurableProductChildId = $parentQuoteItem->getProductId();
+            /** @var Mage_Sales_Model_Quote $quote */
+            $quote = $this->getQuote();
+
+            /** @var Mage_Sales_Model_Quote_Item $quoteItem */
+            foreach ($quote->getAllVisibleItems() as $quoteItem) {
+                if ($quoteItem->getProduct()->isConfigurable()) {
+                    $parentQuoteItem = Mage::getModel('sales/quote_item');
+                    // @codingStandardsIgnoreLine
+                    $parentQuoteItem->load($quoteItem->getId(), 'parent_item_id');
+                    $this->configurableProductChildId = $parentQuoteItem->getProductId();
+                }
+
+                $oystProducts[] = $this->format($quoteItem);
+
+                $this->configurableProductChildId = null;
             }
-
-            $oystProducts[] = $this->format($quoteItem);
-
-            $this->configurableProductChildId = null;
         }
 
         return $oystProducts;
@@ -197,8 +208,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function format($quoteItem)
     {
-        $oystProduct = null;
-
         /** @var Mage_Catalog_Model_Product $product */
         $product = Mage::getModel('catalog/product')->load($quoteItem->getProductId());
 
@@ -773,6 +782,18 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     protected function getConfigMappingName($code, $storeId)
     {
         return Mage::getStoreConfig("oyst_oneclick/carrier_name/$code", $storeId);
+    }
+
+    /**
+     * This method is required because the API service authorize Order which is called on preload
+     * does not accept an empty cart, so we have to artificially force a dummy product
+     * @return OystProduct
+     */
+    public function addDummyOystProduct()
+    {
+        $price = new OystPrice(1, $this->getCatalogBaseCurrencyCode());
+
+        return new OystProduct(1, 'Dummy Product', $price, 1);
     }
 
     public function getCatalogBaseCurrencyCode($storeId = null)

@@ -229,8 +229,6 @@
             <oneclick>
                 <oneclickjs_sandbox_url>//cdn.sandbox.oyst.eu/</oneclickjs_sandbox_url>
                 <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
-                <oneclickmodal_sandbox_url>https://oneclick.sandbox.oyst.eu/</oneclickmodal_sandbox_url>
-                <oneclickmodal_prod_url>https://oneclick.oyst.com/</oneclickmodal_prod_url>
                 <product_addtocart_form_validate>1</product_addtocart_form_validate>
                 <allow_quantity_change>1</allow_quantity_change>
                 <enable_invoice_auto_generation>1</enable_invoice_auto_generation>
