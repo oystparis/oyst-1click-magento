@@ -101,6 +101,7 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
         $quote = Mage::getSingleton('checkout/cart')->getQuote();
         Mage::register('oyst-quote', $quote, true);
 
+        $params['preload'] = filter_var($params['preload'], FILTER_VALIDATE_BOOLEAN);
         $params['add_to_cart_form'] = isset($params['add_to_cart_form']) ? Zend_Json::decode($params['add_to_cart_form']) : null;
 
         try {

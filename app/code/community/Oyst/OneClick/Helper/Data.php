@@ -147,25 +147,6 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get OneClick javascript CDN URL
-     *
-     * @return string
-     */
-    public function getOneClickModalUrl()
-    {
-        if ($this->getConfig('enable')) {
-            $mode = $this->getConfig('mode');
-            $oneclickModalUrl = $this->getConfig('oneclickmodal_' . $mode . '_url');
-
-            if (Oyst_OneClick_Model_System_Config_Source_Mode::CUSTOM === $mode) {
-                $oneclickModalUrl = $this->getConfig('oneclickmodal_url');
-            }
-
-            return $oneclickModalUrl;
-        }
-    }
-
-    /**
      * Test and set default value
      *
      * @param string $var
