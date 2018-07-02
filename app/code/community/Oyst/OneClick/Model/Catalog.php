@@ -183,10 +183,13 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
             /** @var Mage_Sales_Model_Quote_Item $quoteItem */
             foreach ($quote->getAllVisibleItems() as $quoteItem) {
+                if ($quoteItem->getData('is_free_product')
+                 || $quoteItem->getData('oyst_skip_item_in_authorize')) {
+                    continue;
+                }
+
                 if ($quoteItem->getProduct()->isConfigurable()) {
-                    $parentQuoteItem = Mage::getModel('sales/quote_item');
-                    // @codingStandardsIgnoreLine
-                    $parentQuoteItem->load($quoteItem->getId(), 'parent_item_id');
+                    $parentQuoteItem = $quote->getItemsCollection()->getItemByColumnValue('parent_item_id', $quoteItem->getId());
                     $this->configurableProductChildId = $parentQuoteItem->getProductId();
                 }
 
@@ -321,9 +324,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     protected function addAmount(OystProduct &$oystProduct, Mage_Sales_Model_Quote_Item $quoteItem)
     {
         $oystPriceIncludingTaxes = $this->getOystPriceFromQuoteItem($quoteItem);
-        if ($oystPriceIncludingTaxes->getValue() > 0) {
-            $oystProduct->__set('amountIncludingTax', $oystPriceIncludingTaxes);
-        }
+        $oystProduct->__set('amountIncludingTax', $oystPriceIncludingTaxes);
     }
 
     protected function getOystPriceFromQuoteItem(Mage_Sales_Model_Quote_Item $quoteItem)
@@ -655,7 +656,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                     $quoteItemData['qty']
                 );
                 $freeItem->__set('title', $quoteItemData['name']);
-
+Mage::log($freeItem, null, 'debug_oyst.log', true);
                 $oneClickOrderCartEstimate->addFreeItems($freeItem);
 
                 continue;
