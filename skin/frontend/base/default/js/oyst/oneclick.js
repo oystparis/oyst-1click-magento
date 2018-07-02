@@ -70,6 +70,9 @@ function oystOneClick(config) {
                         }
                     });
                     form.append("add_to_cart_form", JSON.stringify(addToCartFormData));
+                    $$('#'+config.addToCartProductFormId+' input[type="file"]').each(function(elem){
+                        form.append(elem.name, elem.files[0]);
+                    });
                 }
             }
 
