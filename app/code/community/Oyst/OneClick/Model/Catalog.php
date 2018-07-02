@@ -321,7 +321,9 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     protected function addAmount(OystProduct &$oystProduct, Mage_Sales_Model_Quote_Item $quoteItem)
     {
         $oystPriceIncludingTaxes = $this->getOystPriceFromQuoteItem($quoteItem);
-        $oystProduct->__set('amountIncludingTax', $oystPriceIncludingTaxes);
+        if ($oystPriceIncludingTaxes->getValue() > 0) {
+            $oystProduct->__set('amountIncludingTax', $oystPriceIncludingTaxes);
+        }
     }
 
     protected function getOystPriceFromQuoteItem(Mage_Sales_Model_Quote_Item $quoteItem)
