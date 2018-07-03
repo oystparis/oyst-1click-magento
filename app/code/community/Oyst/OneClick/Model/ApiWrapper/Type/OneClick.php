@@ -66,7 +66,6 @@ class Oyst_OneClick_Model_ApiWrapper_Type_OneClick extends Oyst_OneClick_Model_A
      */
     public function authorizeOrder($dataFormated)
     {
-        Mage::log($dataFormated);
         /** @var Oyst_OneClick_Model_Catalog $oystCatalog */
         $oystCatalog = Mage::getModel('oyst_oneclick/catalog');
         $oystProducts = $oystCatalog->getOystProducts($dataFormated);
