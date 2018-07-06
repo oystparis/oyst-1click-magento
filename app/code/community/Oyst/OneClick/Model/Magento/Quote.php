@@ -287,6 +287,24 @@ class Oyst_OneClick_Model_Magento_Quote
                 }
             }
         }
+        // MEANS THAT SHIPPING METHOD REQUESTED BY OYST ONECLICK IS NOT AVAILABLE SO WE CHOOSE THE CHEAPEST ONE
+        if (empty($realShippingMethod)) {
+            $tmpCheapestPrice = null;
+            foreach ($rates as $rate) {
+                $rateData = $rate->toArray();
+
+                if (!Mage::getStoreConfig('oyst_oneclick/carrier_mapping/' . $rateData['code'])) {
+                    continue;
+                }
+
+                if (!isset($tmpCheapestPrice)) {
+                    $tmpCheapestPrice = $rateData['price'];
+                }
+                if ($rateData['price'] <= $tmpCheapestPrice) {
+                    $realShippingMethod = $rateData['code'];
+                }
+            }
+        }
 
         $shippingAddress->setShippingMethod($realShippingMethod);
         $shippingAddress->setShippingDescription($shippingDescription);
