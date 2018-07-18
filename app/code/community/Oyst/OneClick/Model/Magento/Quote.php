@@ -228,22 +228,28 @@ class Oyst_OneClick_Model_Magento_Quote
         $billingAddress->setSaveInAddressBook(false);
         $billingAddress->setShouldIgnoreValidation(true);
 
-        /** @var Mage_Sales_Model_Quote_Address $shippingAddress */
-        $shippingAddress = $this->quote->getShippingAddress();
-        $shippingInfoFormated = $this->getAddressData($shippingAddress);
-        $shippingAddress->setSameAsBilling(0); // maybe just set same as billing?
-        $shippingAddress->addData($shippingInfoFormated);
-        $shippingAddress->implodeStreetAddress();
-        $shippingAddress->isObjectNew(false);
+        if (!$this->quote->isVirtual()) {
+            /** @var Mage_Sales_Model_Quote_Address $shippingAddress */
+            $shippingAddress = $this->quote->getShippingAddress();
+            $shippingInfoFormated = $this->getAddressData($shippingAddress);
+            $shippingAddress->setSameAsBilling(0); // maybe just set same as billing?
+            $shippingAddress->addData($shippingInfoFormated);
+            $shippingAddress->implodeStreetAddress();
+            $shippingAddress->isObjectNew(false);
 
-        $shippingAddress->setSaveInAddressBook(false);
-        $shippingAddress->setShouldIgnoreValidation(true);
+            $shippingAddress->setSaveInAddressBook(false);
+            $shippingAddress->setShouldIgnoreValidation(true);
+        }
 
         Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_addresses_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
     private function syncShippingMethod()
     {
+        if ($this->quote->isVirtual()) {
+            return;
+        }
+
         $shippingAddress = $this->quote->getShippingAddress();
 
         $storeId = $this->apiData['order']['context']['store_id'];
