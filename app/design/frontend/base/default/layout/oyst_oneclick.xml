@@ -20,7 +20,6 @@
                     <text helper="oyst_oneclick/getTrackingMeta"/>
                 </action>
             </block>
-            <action method="addItem" ifconfig="oyst/oneclick/is_enable"><type>skin_js</type><script>js/oyst/lib/patch.new.ux.js</script></action>
         </reference>
     </default>
 
