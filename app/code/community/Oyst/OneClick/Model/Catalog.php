@@ -537,6 +537,10 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function getShipments($apiData, &$magentoQuoteBuilder, &$oneClickOrderCartEstimate)
     {
+        if ($magentoQuoteBuilder->getQuote()->isVirtual()) {
+            return;
+        }
+
         /** @var Mage_Core_Model_Store $storeId */
         $storeId = Mage::getModel('core/store')->load($apiData['order']['context']['store_id']);
 
