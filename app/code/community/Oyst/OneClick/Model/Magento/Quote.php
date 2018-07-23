@@ -22,9 +22,6 @@ class Oyst_OneClick_Model_Magento_Quote
     /** @var string[] API response */
     private $apiData = null;
 
-    /** @var int Website id */
-    private $websiteId = null;
-
     public function __construct($orderResponse)
     {
         $this->apiData = $orderResponse;
@@ -95,54 +92,6 @@ class Oyst_OneClick_Model_Magento_Quote
         Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_quote_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
 
-    /**
-     * Create new customer.
-     *
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $email
-     *
-     * @return false|Mage_Core_Model_Abstract
-     */
-    private function createCustomer($firstname, $lastname, $email)
-    {
-        /** @var Mage_Customer_Model_Customer $customer */
-        $customer = Mage::getModel('customer/customer');
-        $store = Mage::app()->getStore();
-
-        try {
-            $customer->setWebsiteId($this->websiteId)
-                ->setStore($store)
-                ->setFirstname($firstname)
-                ->setLastname($lastname)
-                ->setEmail($email);
-            $customer->save();
-
-            // Send welcome email
-            $customer->sendNewAccountEmail('registered', '', $store->getId(), $customer->generatePassword(16));
-
-            /** @var Mage_Customer_Model_Address $address */
-            $address = Mage::getModel('customer/address');
-
-            $address->setCustomerId($customer->getId())
-                ->setFirstname($customer->getFirstname())
-                ->setLastname($customer->getLastname())
-                ->setCountryId($this->apiData['order']['user']['address']['country'])
-                ->setPostcode($this->apiData['order']['user']['address']['postcode'])
-                ->setCity($this->apiData['order']['user']['address']['city'])
-                ->setTelephone($this->apiData['order']['user']['phone'])
-                ->setStreet($this->apiData['order']['user']['address']['postcode'])
-                ->setIsDefaultBilling(true)
-                ->setIsDefaultShipping(true)
-                ->setSaveInAddressBook(true);
-            $address->save();
-        } catch (Exception $e) {
-            Mage::helper('oyst_oneclick')->log($e->getMessage());
-        }
-
-        return $customer;
-    }
-
     private function syncCustomer()
     {
         // Already customer ; Check by website
@@ -168,19 +117,9 @@ class Oyst_OneClick_Model_Magento_Quote
             $this->quote->setCustomerLastname($lastname);
             $this->quote->setCustomerEmail($email);
 
-            $checkoutMethod = Mage_Checkout_Model_Type_Onepage::METHOD_GUEST;
-
-            if (Mage::getStoreConfig('oyst/oneclick/new_customer_account')) {
-                $customer = $this->createCustomer($firstname, $lastname, $email);
-                $checkoutMethod = Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER;
-            }
-
-            if ($customer instanceof Mage_Customer_Model_Customer && !$customer->getId()) {
-                $this->quote->setCustomerIsGuest(true);
-                $this->quote->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
-            }
-
-            $this->quote->setCheckoutMethod($checkoutMethod);
+            $this->quote->setCustomerIsGuest(true);
+            $this->quote->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
+            $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_GUEST);
         }
 
         if ($customer instanceof Mage_Customer_Model_Customer) {
@@ -197,13 +136,13 @@ class Oyst_OneClick_Model_Magento_Quote
      */
     protected function getCustomer()
     {
-        $this->websiteId = Mage::getModel('core/store')
+        $websiteId = Mage::getModel('core/store')
             ->load($this->apiData['order']['context']['store_id'])
             ->getWebsiteId();
 
         /** @var Mage_Customer_Model_Customer $customer */
         $customer = Mage::getModel('customer/customer');
-        $customer->setWebsiteId($this->websiteId);
+        $customer->setWebsiteId($websiteId);
         $customer->loadByEmail($this->apiData['order']['user']['email']);
 
         if ($customer->getId()) {
