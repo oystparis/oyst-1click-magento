@@ -315,6 +315,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         Mage::helper('oyst_oneclick')->log($attributeCodes);
 
         $informations = array();
+        $description = array();
 
         foreach ($attributeCodes as $attributeCode) {
             $value = '';
@@ -329,13 +330,13 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             }
             Mage::helper('oyst_oneclick')->log('$attributeCode: ' . $attributeCode . '  -  value: ' . $value);
 
+            $informations[$attributeCode] = $value;
             if (in_array($attributeCode, $this->configurableAttributesCode)) {
-                $informations['information'][$attributeCode] = $value;
-            } else {
-                $informations[$attributeCode] = $value;
+                $description[] = $attribute->getStoreLabel() . ':'. $value;
             }
         }
         $oystProduct->__set('informations', $informations);
+        $oystProduct->__set('description', implode(', ', $description));
     }
 
     /**
