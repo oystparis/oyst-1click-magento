@@ -42,38 +42,14 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      *
      * @var array
      */
-    protected $customAttributesCode = array('color', 'size');
+    protected $customAttributesCode = array();
 
     /**
-     * Selected system attribute code
+     * Custom attribute code
      *
      * @var array
      */
-    protected $systemSelectedAttributesCode = array();
-
-    /**
-     * Variations attribute code
-     *
-     * @var array
-     */
-    protected $variationAttributesCode = array('price', 'final_price');
-
-    /**
-     * User defined attribute code
-     *
-     * @var array
-     */
-    protected $userDefinedAttributeCode = array();
-
-    /**
-     * @var array
-     */
-    protected $productsIds = null;
-
-    /**
-     * @var array
-     */
-    protected $productsQuantities = null;
+    protected $configurableAttributesCode = array();
 
     /**
      * @var int
@@ -145,23 +121,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get products collection.
-     *
-     * @param array $data Product Ids
-     *
-     * @return Mage_Catalog_Model_Resource_Product_Collection
-     */
-    protected function getProductCollection($data)
-    {
-        $products = Mage::getResourceModel('catalog/product_collection')
-            ->addFieldToFilter('entity_id', array('in' => $data))
-            ->addFinalPrice()
-            ->addAttributeToSelect('*');
-
-        return $products;
-    }
-
-    /**
      * Return OystProduct array.
      *
      * @param array $dataFormated
@@ -175,8 +134,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         if ($this->isPreload = $dataFormated['preload']) {
             $oystProducts[] = $this->addDummyOystProduct();
         } else {
-            $this->userDefinedAttributeCode = $this->getUserDefinedAttributeCode();
-            $this->systemSelectedAttributesCode = $this->getSystemSelectedAttributeCode();
+            $this->loadCustomAttributesCode();
 
             /** @var Mage_Sales_Model_Quote $quote */
             $quote = $this->getQuote();
@@ -196,6 +154,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 $oystProducts[] = $this->format($quoteItem);
 
                 $this->configurableProductChildId = null;
+                $this->configurableAttributesCode = array();
             }
         }
 
@@ -213,6 +172,11 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     {
         /** @var Mage_Catalog_Model_Product $product */
         $product = Mage::getModel('catalog/product')->load($quoteItem->getProductId());
+        if (!empty($this->configurableProductChildId)
+         && $product->isConfigurable()) {
+            $childProduct = Mage::getModel('catalog/product')->load($this->configurableProductChildId);
+            $this->setConfigurableAttributesCode($product);
+        }
 
         // This price is overwritten later with taxes and others stuff
         $price = new OystPrice(1, $this->getCatalogBaseCurrencyCode());
@@ -222,7 +186,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
         $this->addAmount($oystProduct, $quoteItem);
         $this->addComplexAttributes($product, $oystProduct);
         $this->addImages($product, $oystProduct);
-        $this->addCustomAttributesToInformations($product, $oystProduct);
+        $this->addCustomAttributesToInformations(isset($childProduct) ? $childProduct : $product, $oystProduct);
         $this->addOptionsToInformations($oystProduct, $quoteItem);
 
         $oystProduct->__set('reference', $product->getEntityId() . ';' . $quoteItem->getId());
@@ -237,77 +201,34 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Return the user defined attributes code
+     * Return the selected custom attributes code
      *
      * @return array
      */
-    protected function getUserDefinedAttributeCode()
+    protected function loadCustomAttributesCode()
     {
-        /** @var Mage_Eav_Model_Entity_Type $type */
-        $type = Mage::getModel('eav/entity_type');
-        $type->loadByCode('catalog_product');
-
-        /** @var $attrs Mage_Eav_Model_Resource_Entity_Attribute_Collection */
-        $attrs = Mage::getResourceModel('eav/entity_attribute_collection')
-            ->setEntityTypeFilter($type)
-            ->addFieldToFilter('is_user_defined', true)
-            ->addFieldToFilter('frontend_input', 'select');
-
-        $userDefinedAttributeCode = array();
-        /** @var $attribute Mage_Eav_Model_Entity_Attribute */
-        foreach ($attrs as $attribute) {
-            $userDefinedAttributeCode[] = $attribute->getAttributeCode();
-        }
-
-        return $userDefinedAttributeCode;
-    }
-
-    /**
-     * Return the selected system attributes code
-     *
-     * @return array
-     */
-    protected function getSystemSelectedAttributeCode()
-    {
-        $code = 'systemattributes';
+        $code = 'customattributes';
         $attrsIds = explode(',', Mage::getStoreConfig("oyst/oneclick/$code"));
 
-        $systemSelectedAttributeCode = array();
-        foreach ($attrsIds as $attributeId) {
-            $attribute = Mage::getResourceModel('eav/entity_attribute_collection')
-                ->addFieldToFilter('attribute_id', $attributeId)
-                ->addFieldToSelect('attribute_code')
-                // @codingStandardsIgnoreLine
-                ->getFirstItem()
-            ;
+        $attributes = Mage::getResourceModel('eav/entity_attribute_collection')
+            ->addFieldToFilter('attribute_id', array('in' => $attrsIds))
+            ->addFieldToSelect('attribute_code')
+        ;
 
-            $systemSelectedAttributeCode[] = $attribute->getAttributeCode();
+        foreach ($attributes as $attribute) {
+            $this->customAttributesCode[] = $attribute->getAttributeCode();
         }
-
-        return $systemSelectedAttributeCode;
     }
 
     /**
-     * Return the product attributes code defined by user
-     *
-     * @param Mage_Catalog_Model_Product $product
-     * @param $userDefinedAttributeCode
-     *
      * @return array
      */
-    protected function getProductAttributeCodeDefinedByUser(Mage_Catalog_Model_Product $product, $userDefinedAttributeCode)
+    protected function getProductAttributesCode()
     {
-        $attributes = $product->getAttributes();
-        $productAttributeCode = array();
-        foreach ($attributes as $attribute) {
-            $productAttributeCode[] = $attribute->getAttributeCode();
-        }
-
         $attributeCodes = array_unique(
             array_merge(
-                array_intersect($userDefinedAttributeCode, $productAttributeCode),
                 $this->customAttributesCode,
-                $this->systemSelectedAttributesCode
+                $this->configurableAttributesCode
             )
         );
 
@@ -388,7 +309,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
      */
     protected function addCustomAttributesToInformations(Mage_Catalog_Model_Product $product, OystProduct &$oystProduct)
     {
-        $attributeCodes = $this->getProductAttributeCodeDefinedByUser($product, $this->userDefinedAttributeCode);
+        $attributeCodes = $this->getProductAttributesCode();
 
         Mage::helper('oyst_oneclick')->log('$attributeCodes');
         Mage::helper('oyst_oneclick')->log($attributeCodes);
@@ -408,7 +329,11 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
             }
             Mage::helper('oyst_oneclick')->log('$attributeCode: ' . $attributeCode . '  -  value: ' . $value);
 
-            $informations[$attributeCode] = $value;
+            if (in_array($attributeCode, $this->configurableAttributesCode)) {
+                $informations['information'][$attributeCode] = $value;
+            } else {
+                $informations[$attributeCode] = $value;
+            }
         }
         $oystProduct->__set('informations', $informations);
     }
@@ -660,7 +585,6 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                     $quoteItemData['qty']
                 );
                 $freeItem->__set('title', $quoteItemData['name']);
-Mage::log($freeItem, null, 'debug_oyst.log', true);
                 $oneClickOrderCartEstimate->addFreeItems($freeItem);
 
                 continue;
@@ -863,5 +787,12 @@ Mage::log($freeItem, null, 'debug_oyst.log', true);
         }
 
         $oneClickOrderCartEstimate->setItems($oystItems);
+    }
+
+    protected function setConfigurableAttributesCode(Mage_Catalog_Model_Product $product)
+    {
+        foreach (Mage::getModel('catalog/product_type_configurable')->getConfigurableAttributes($product) as $attribute) {
+            $this->configurableAttributesCode[] = $attribute->getData('product_attribute')->getAttributeCode();
+        }
     }
 }

@@ -763,13 +763,13 @@
                             </depends>
                         </new_customer_account>
 
-                        <!-- system attributes -->
-                        <systemattributes translate="label,comment">
-                            <label>Export select system attributes as custom options</label>
+                        <!-- custom attributes -->
+                        <customattributes translate="label,comment">
+                            <label>Export select custom attributes as custom options</label>
                             <comment><![CDATA[Color, size and all other custom attributes are exported by default.]]></comment>
                             <frontend_type>multiselect</frontend_type>
-                            <source_model>oyst_oneclick/system_config_source_systemattributes</source_model>
-                            <config_path>oyst/oneclick/systemattributes</config_path>
+                            <source_model>oyst_oneclick/system_config_source_customattributes</source_model>
+                            <config_path>oyst/oneclick/customattributes</config_path>
                             <sort_order>45</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -781,7 +781,7 @@
                                     <value>1</value>
                                 </enable>
                             </depends>
-                        </systemattributes>
+                        </customattributes>
 
                         <!-- configurable price -->
                         <configurable_price translate="label">
