@@ -153,7 +153,7 @@ class Oyst_OneClick_Model_Magento_Order
                 ->setPostcode($this->apiData['order']['user']['address']['postcode'])
                 ->setCity($this->apiData['order']['user']['address']['city'])
                 ->setTelephone($this->apiData['order']['user']['phone'])
-                ->setStreet($this->apiData['order']['user']['address']['postcode'])
+                ->setStreet($this->apiData['order']['user']['address']['street'])
                 ->setIsDefaultBilling(true)
                 ->setIsDefaultShipping(true)
                 ->setSaveInAddressBook(true);
