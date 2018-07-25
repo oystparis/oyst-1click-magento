@@ -144,8 +144,8 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         );
 
         /** @var Oyst_OneClick_Model_Magento_Order $magentoOrderBuilder */
-        $magentoOrderBuilder = Mage::getModel('oyst_oneclick/magento_order', $magentoQuoteBuilder->getQuote());
-        $magentoOrderBuilder->buildOrder();
+        $magentoOrderBuilder = Mage::getModel('oyst_oneclick/magento_order', $this->orderResponse);
+        $magentoOrderBuilder->setQuote($magentoQuoteBuilder->getQuote())->saveOrder();
 
         Mage::dispatchEvent(
             'oyst_oneclick_model_order_create_magento_order_after',
