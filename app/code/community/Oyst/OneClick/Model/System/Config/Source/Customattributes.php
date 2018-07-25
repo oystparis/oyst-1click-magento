@@ -12,7 +12,7 @@
 /**
  * Mode Model
  */
-class Oyst_OneClick_Model_System_Config_Source_Systemattributes
+class Oyst_OneClick_Model_System_Config_Source_Customattributes
 {
     public function toOptionArray()
     {
@@ -22,7 +22,6 @@ class Oyst_OneClick_Model_System_Config_Source_Systemattributes
         $attributeModel = Mage::getModel('eav/entity_attribute');
         $attrs = $attributeModel->getCollection()
             ->setEntityTypeFilter($type)
-            ->addFieldToFilter('is_user_defined', false)
             ->addFieldToFilter('frontend_input', 'select');
 
         $array = array();
