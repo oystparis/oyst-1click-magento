@@ -125,7 +125,8 @@ function oystOneClick(config) {
 
     var allowOystRedirectSelf = true;
     window.addEventListener("message", function (event) {
-        if (event.data.type == "ORDER_COMPLETE") {
+        if (event.data.type == "ORDER_COMPLETE"
+         || event.data.type == "ORDER_CONVERSION") {
             allowOystRedirectSelf = false;
         }
 
