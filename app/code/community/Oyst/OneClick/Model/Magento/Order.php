@@ -53,7 +53,8 @@ class Oyst_OneClick_Model_Magento_Order
     public function saveOrder()
     {
         try {
-            if (Mage::getStoreConfig('oyst/oneclick/new_customer_account')) {
+            if (!$this->quote->getCustomerId() 
+              && Mage::getStoreConfig('oyst/oneclick/new_customer_account')) {
                 $customer = $this->createCustomer(
                     $this->quote->getCustomerFirstname(), $this->quote->getCustomerLastname(), $this->quote->getCustomerEmail()
                 );
