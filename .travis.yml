@@ -45,7 +45,6 @@ env:
   global:
     - MAGENTO_DB_ALLOWSAME=1
     - SKIP_CLEANUP=1
-    - TEST_BASEDIR=.modman/oyst-magento/app/code/community/Oyst/Oyst/Test
   matrix:
     - MAGENTO_VERSION="magento-mirror-1.6.2.0"
     - MAGENTO_VERSION="magento-mirror-1.7.0.2"
@@ -67,7 +66,7 @@ install:
 
 script:
   - mkdir -p build/logs
-  - curl --retry 2 --retry-delay 5 -H "Authorization":"token $GITHUB_TOKEN" -f -sSL https://raw.githubusercontent.com/mehdichaouch/MageTestStand/master/setup.sh | bash
+  - curl --retry 2 --retry-delay 5 -H "Authorization":"token $GITHUB_TOKEN" -f -sSL https://raw.githubusercontent.com/AOEpeople/MageTestStand//master/setup.sh | bash
   ## PHP CodeSniffer disable error on exit
   - vendor/bin/phpcs --config-set ignore_warnings_on_exit 1
   ## PHP Copy/Paste Detector

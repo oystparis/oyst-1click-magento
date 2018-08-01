@@ -40,8 +40,7 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
             return false;
         }
 
-        // TODO Change code attribute to avoid confusions
-        if ($this->getProduct()->getIsOneclickActiveOnProduct()) {
+        if ($this->getProduct()->getIsOneclickDisableOnProduct()) {
             return false;
         }
 
@@ -92,7 +91,7 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
     {
         $buttonCustomization = '';
 
-        $genericCustomizationAttributes = array('theme', 'color', 'rounded', 'smart');
+        $genericCustomizationAttributes = array('theme', 'color', 'rounded', 'smart', 'sticky');
 
         foreach ($genericCustomizationAttributes as $customizationAttribute) {
             $config = Mage::getStoreConfig('oyst/oneclick/button_' . $customizationAttribute);
@@ -100,7 +99,7 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
                 continue;
             }
 
-            if (in_array($customizationAttribute, array('rounded', 'smart'))) {
+            if (in_array($customizationAttribute, array('rounded', 'smart', 'sticky'))) {
                 $config = filter_var($config, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false';
             }
 
@@ -116,17 +115,6 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
             }
 
             $buttonCustomization .= sprintf(" data-" . $customizationAttribute . "='%s'", $config);
-        }
-
-        $specificCustomizationAttributes = array('height', 'width');
-
-        foreach ($specificCustomizationAttributes as $customizationAttribute) {
-            $config = Mage::getStoreConfig('oyst/oneclick/' . $path . 'button_' . $customizationAttribute);
-            if (empty($config)) {
-                continue;
-            }
-
-            $buttonCustomization .= sprintf(" data-" .  $customizationAttribute . "='%s'", $config);
         }
 
         return $buttonCustomization;

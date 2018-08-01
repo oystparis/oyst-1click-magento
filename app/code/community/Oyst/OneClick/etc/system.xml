@@ -304,6 +304,24 @@
                             </depends>
                         </button_color>
 
+                        <!-- button sticky -->
+                        <button_sticky translate="label">
+                            <label>Button Sticky</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>oyst/oneclick/button_sticky</config_path>
+                            <sort_order>45</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </button_sticky>
+
                         <!-- styles -->
                         <styles translate="label comment">
                             <label>Add custom CSS</label>
@@ -671,24 +689,6 @@
                             </depends>
                         </allow_quantity_change>
 
-                        <!-- should ask stock for order -->
-                        <should_ask_stock translate="label">
-                            <label>Should ask stock</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>oyst/oneclick/should_ask_stock</config_path>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <enable>
-                                    <fieldset>general</fieldset>
-                                    <value>1</value>
-                                </enable>
-                            </depends>
-                        </should_ask_stock>
-
                         <!-- enable invoice auto generation -->
                         <enable_invoice_auto_generation translate="label">
                             <label>Enable invoice auto-generation</label>
@@ -763,13 +763,13 @@
                             </depends>
                         </new_customer_account>
 
-                        <!-- system attributes -->
-                        <systemattributes translate="label,comment">
-                            <label>Export select system attributes as custom options</label>
+                        <!-- custom attributes -->
+                        <customattributes translate="label,comment">
+                            <label>Export select custom attributes as custom options</label>
                             <comment><![CDATA[Color, size and all other custom attributes are exported by default.]]></comment>
                             <frontend_type>multiselect</frontend_type>
-                            <source_model>oyst_oneclick/system_config_source_systemattributes</source_model>
-                            <config_path>oyst/oneclick/systemattributes</config_path>
+                            <source_model>oyst_oneclick/system_config_source_customattributes</source_model>
+                            <config_path>oyst/oneclick/customattributes</config_path>
                             <sort_order>45</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -781,7 +781,7 @@
                                     <value>1</value>
                                 </enable>
                             </depends>
-                        </systemattributes>
+                        </customattributes>
 
                         <!-- configurable price -->
                         <configurable_price translate="label">
