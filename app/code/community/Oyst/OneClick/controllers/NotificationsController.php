@@ -23,14 +23,14 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
     {
         $event = $this->getRequest()->getPost('event');
         $data = $this->getRequest()->getPost('data');
-        $input = file_get_contents('php://input');
+        $input = $this->getRequest()->getRawBody();
 
         try {
             // @codingStandardsIgnoreLine
             $post = (array)Zend_Json::decode(str_replace("\n", '', $input));
         } catch (\Exception $e) {
             $this->traceException($e, $input);
-            return $this->badRequest('Invalid JSON Data '.print_r($input, true));
+            return $this->badRequest('Invalid JSON Data '.json_encode($input));
         }
 
         // Set the type and data from notification url
