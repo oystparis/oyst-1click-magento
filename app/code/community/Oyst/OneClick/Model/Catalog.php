@@ -587,7 +587,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 );
                 $freeItem->__set('title', $quoteItemData['name']);
                 $thumbnail = Mage::helper('catalog/image')->init($quoteItems->getItemById($quoteItemData['item_id'])->getProduct(), 'thumbnail');
-                $freeItem->__set('images', [$thumbnail->__toString()]);
+                $freeItem->__set('images', array($thumbnail->__toString()));
                 $oneClickOrderCartEstimate->addFreeItems($freeItem);
 
                 continue;
