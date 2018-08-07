@@ -89,4 +89,10 @@
         </reference>
     </checkout_onepage_index>
 
+    <checkout_onepage_success>
+        <reference name="before_body_end">
+            <block type="oyst_oneclick/checkout_tracking" name="oyst_tracking"/>
+        </reference>
+    </checkout_onepage_success>
+
 </layout>
