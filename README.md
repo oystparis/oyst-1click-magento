@@ -41,15 +41,6 @@ If you are using the compilation, before installing the extension it's necessary
 3. Clear the cache from `Admin Backend` — `System` — `Cache Management` ;
 4. Log out of the backend and log in again, so Magento can refresh permissions.
 
-## Build Magento tgz package
-
-1. Run this with version as parameter:
-```./bin/update_magento_version.sh v1.13.0-RC16```
-2. Build the package:
-```./bin/build_magento_package.sh```
-3. Get your package in:
-```./travis_release/```
-
 ## Support
 
 You can create issues on our repository or if you have some specific problems for your account you can contact <a href="mailto:plugin@oyst.com">plugin@oyst.com</a> as well.
