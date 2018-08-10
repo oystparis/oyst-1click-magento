@@ -23,7 +23,7 @@ class Oyst_OneClick_Block_Checkout_Tracking extends Mage_Core_Block_Abstract
             return '';
         }
 
-        return '<img src="'.$this->getTrackerBaseUrl().'?extra_parameters[amount]='.$this->getOrder()->getGrandTotal().'&extra_parameters[paymentMethod]='.$this->getOrder()->getPayment()->getMethod().'"/>';
+        return '<img src="'.$this->getTrackerBaseUrl().'?'.$this->getExtraParameters().'"/>';
     }
 
     protected function getOrder()
@@ -42,5 +42,17 @@ class Oyst_OneClick_Block_Checkout_Tracking extends Mage_Core_Block_Abstract
         } else {
             return 'https://staging-tkr.11rupt.eu/';
         }
+    }
+
+    protected function getExtraParameters()
+    {
+        $extraParameters = array(
+            'extra_parameters[amount]='.$this->getOrder()->getGrandTotal(),
+            'extra_parameters[paymentMethod]='.$this->getOrder()->getPayment()->getMethod(),
+            'extra_parameters[currency]='.$this->getOrder()->getOrderCurrencyCode(),
+            'extra_parameters[referrer]='.urlencode(Mage::helper('core/url')->getCurrentUrl()),
+        );
+
+        return implode('&', $extraParameters);
     }
 }
