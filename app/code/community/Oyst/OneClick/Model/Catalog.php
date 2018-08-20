@@ -493,7 +493,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                 }
 
                 $price = $coreHelper->currency($rateData['price'], false, false);
-                if ($taxHelper->shippingPriceIncludesTax()) {
+                if (!$taxHelper->shippingPriceIncludesTax()) {
                     $price = $taxHelper->getShippingPrice($price, true, $address);
                 }
 
@@ -537,6 +537,7 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
                 if ($rateCode === $this->getConfig('carrier_default')) {
                     $shipment->setPrimary(true);
+                    $shipment->getAmount()->setValue($address->getShippingInclTax());
                     $isPrimarySet = true;
                 }
 
