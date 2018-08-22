@@ -197,12 +197,11 @@ class Oyst_OneClick_Model_Magento_Quote
         $shippingDescription = Mage::getStoreConfig('oyst_oneclick/carrier_name/' . $shippingMethod, $storeId);
 
         if (isset($this->apiData['order']['shipment']) &&
-            isset($this->apiData['order']['shipment']['carrier']) &&
-            isset($this->apiData['order']['shipment']['carrier']['id']) &&
+            isset($this->apiData['order']['shipment']['id']) &&
             'SHIPMENT-404' != $this->apiData['order']['shipment']['id']
         ) {
-            $shippingMethod = $this->apiData['order']['shipment']['carrier']['id'];
-            $shippingDescription = $this->apiData['order']['shipment']['carrier']['name'];
+            $shippingMethod = $this->apiData['order']['shipment']['id'];
+            $shippingDescription = Mage::getStoreConfig('oyst_oneclick/carrier_name/' . $shippingMethod, $storeId);
         }
 
         $shippingAddress->setCollectShippingRates(true);
