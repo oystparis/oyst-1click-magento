@@ -708,6 +708,40 @@
                             </depends>
                         </enable_invoice_auto_generation>
 
+                        <order_status_payment_accepted translate="label">
+                            <label>Order Status Payment Accepted</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_order_status_processing</source_model>
+                            <config_path>oyst/oneclick/order_status_payment_accepted</config_path>
+                            <sort_order>27</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </order_status_payment_accepted>
+                        
+                        <order_status_payment_fraud translate="label">
+                            <label>Order Status Payment Fraud</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>oyst_oneclick/system_config_source_status_fraud</source_model>
+                            <config_path>oyst/oneclick/order_status_payment_fraud</config_path>
+                            <sort_order>28</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable>
+                                    <fieldset>general</fieldset>
+                                    <value>1</value>
+                                </enable>
+                            </depends>
+                        </order_status_payment_fraud>
+
                         <!-- order delay -->
                         <order_delay translate="label">
                             <label>Delay before the order is placed</label>

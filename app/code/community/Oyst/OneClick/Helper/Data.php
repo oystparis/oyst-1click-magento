@@ -25,6 +25,10 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     const FAILURE_URL = 'checkout/onepage/failure';
 
     const XML_PATH_RESTRICT_ALLOW_IPS = 'restrict_allow_ips';
+    
+    const STATUS_OYST_PAYMENT_ACCEPTED = 'oyst_payment_accepted';
+    
+    const STATUS_OYST_PAYMENT_FRAUD = 'oyst_payment_fraud';
 
     /**
      * Get config from Magento

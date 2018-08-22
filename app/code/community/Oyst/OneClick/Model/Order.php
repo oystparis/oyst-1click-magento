@@ -191,13 +191,21 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
                 $this->initTransaction($order);
 
-                $order->addStatusHistoryComment(
-                    Mage::helper('oyst_oneclick')->__(
-                        '%s update order status to: "%s".',
-                        $this->paymentMethod,
-                        OystOrderStatus::ACCEPTED
-                    )
-                );
+                if (!$order->getPayment()->getIsFraudDetected()) {
+                    $status = Mage::getStoreConfig('oyst/oneclick/order_status_payment_accepted');
+                    $order->setState(
+                        Mage_Sales_Model_Order::STATE_PROCESSING,
+                        $status ? $status : Oyst_OneClick_Helper_Data::STATUS_OYST_PAYMENT_ACCEPTED,
+                        Mage::helper('oyst_oneclick')->__(
+                            '%s update order status to: "%s".',
+                            $this->paymentMethod,
+                            OystOrderStatus::ACCEPTED
+                        )
+                    );
+                } else {
+                    $status = Mage::getStoreConfig('oyst/oneclick/order_status_payment_fraud');
+                    $order->setStatus($status ? $status : Oyst_OneClick_Helper_Data::STATUS_OYST_PAYMENT_FRAUD);
+                }
 
                 $invIncrementIDs = array();
                 if ($order->hasInvoices()) {

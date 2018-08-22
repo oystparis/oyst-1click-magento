@@ -247,6 +247,8 @@
                 <notifications_update_max_delay>-5 minutes</notifications_update_max_delay>
                 <checkout_modal_timer>6</checkout_modal_timer>
                 <pending_status_failover_timer>3</pending_status_failover_timer>
+                <order_status_payment_accepted>processing</order_status_payment_accepted>
+                <order_status_payment_fraud>fraud</order_status_payment_fraud>
             </oneclick>
             <order_settings>
                 <enable>0</enable>
