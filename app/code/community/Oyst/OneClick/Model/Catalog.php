@@ -535,10 +535,18 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
                     $oystCarrier
                 );
 
-                if ($rateCode === $this->getConfig('carrier_default')) {
-                    $shipment->setPrimary(true);
-                    $shipment->getAmount()->setValue($address->getShippingInclTax());
-                    $isPrimarySet = true;
+                if($address->getShippingMethod()) {
+                    if ($rateCode === $address->getShippingMethod()) {
+                        $shipment->setPrimary(true);
+                        $shipment->getAmount()->setValue($address->getShippingInclTax());
+                        $isPrimarySet = true;
+                    }
+                } else {
+                    if ($rateCode === $this->getConfig('carrier_default')) {
+                        $shipment->setPrimary(true);
+                        $shipment->getAmount()->setValue($address->getShippingInclTax());
+                        $isPrimarySet = true;
+                    }
                 }
 
                 $oneClickOrderCartEstimate->addShipment($shipment);
