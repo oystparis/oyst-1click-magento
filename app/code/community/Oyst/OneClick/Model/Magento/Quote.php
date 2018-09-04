@@ -58,8 +58,8 @@ class Oyst_OneClick_Model_Magento_Quote
 
             Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_quote_facade', array('api_data' => $this->apiData, 'quote' => $this->quote));
 
-            $this->quote->getShippingAddress()->setCollectShippingRates(true);
-            $this->quote->setAppliedRuleIds(null)->setTotalsCollectedFlag(false)->collectTotals()->save();
+            $this->wrapQuoteEnsureCollectTotals();
+            $this->quote->save();
         } catch (Exception $e) {
             Mage::helper('oyst_oneclick')->log('Error build quote: ' . $e->getMessage());
             throw $e;
@@ -387,5 +387,16 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $payment
             ->save();
+    }
+
+    protected function wrapQuoteEnsureCollectTotals()
+    {
+        $this->quote->getShippingAddress()->setCollectShippingRates(true);
+        $this->quote->getBillingAddress()->isObjectNew(true);
+        $this->quote->getShippingAddress()->isObjectNew(true);
+        $this->quote->setAppliedRuleIds(null)->setTotalsCollectedFlag(false)->collectTotals();
+        $this->quote->getBillingAddress()->isObjectNew(false);
+        $this->quote->getShippingAddress()->isObjectNew(false);
+        return $this;
     }
 }
