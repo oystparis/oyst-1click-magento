@@ -30,22 +30,26 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping 
      */
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        $html = $this->_getHeaderHtml($element);
-        $val = $this->getAllCarrierCode();
-        if (isset($val) && !empty($val)) {
-            foreach ($val as $v) {
-                if (false !== strpos($v['value'], '_about')) {
-                    continue;
+        try {
+            $html = $this->_getHeaderHtml($element);
+            $val = $this->getAllCarrierCode();
+            if (isset($val) && !empty($val)) {
+                foreach ($val as $v) {
+                    if (false !== strpos($v['value'], '_about')) {
+                        continue;
+                    }
+
+                    $html .= $this->getHeadingFieldHtml($element, $v);
+                    $html .= $this->getMappingFieldHtml($element, $v);
+                    $html .= $this->getDelayFieldHtml($element, $v);
+                    $html .= $this->getNameFieldHtml($element, $v);
                 }
-
-                $html .= $this->getHeadingFieldHtml($element, $v);
-                $html .= $this->getMappingFieldHtml($element, $v);
-                $html .= $this->getDelayFieldHtml($element, $v);
-                $html .= $this->getNameFieldHtml($element, $v);
             }
-        }
 
-        $html .= $this->_getFooterHtml($element);
+            $html .= $this->_getFooterHtml($element);
+        } catch (Exception $e) {
+            $html = '';
+        }
 
         return $html;
     }
