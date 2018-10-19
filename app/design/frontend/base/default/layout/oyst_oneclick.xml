@@ -13,86 +13,9 @@
 <layout version="0.1.0">
 
     <default>
-        <block type="oyst_oneclick/oneClick" name="oyst.oneclick.express.checkout"/>
-        <reference name="head">
-            <block type="core/text" name="oyst.oneclick.metadata">
-                <action method="setText">
-                    <text helper="oyst_oneclick/getTrackingMeta"/>
-                </action>
-            </block>
+        <reference name="before_body_end">
+            <block type="oyst_oneclick/scriptTag" name="oyst_oneclick.script_tag" template="oyst_oneclick/script_tag.phtml"/>
         </reference>
     </default>
-
-    <catalog_product_view>
-        <reference name="head">
-            <action method="addCss" ifconfig="oyst/oneclick/is_enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
-            <action method="addItem" ifconfig="oyst/oneclick/is_enable"><type>skin_js</type><name>js/oyst/oneclick.js</name></action>
-        </reference>
-
-        <reference name="product.info.addtocart">
-            <action method="append" ifconfig="oyst/oneclick/is_enable"><block>oyst.oneclick.express.checkout</block></action>
-        </reference>
-        <reference name="oyst.oneclick.express.checkout">
-            <action method="setTemplate" ifconfig="oyst/oneclick/is_enable"><template>oyst/oneclick/product/view/oneclick.phtml</template></action>
-        </reference>
-    </catalog_product_view>
-
-    <checkout_cart_index>
-        <reference name="oyst.oneclick.express.checkout">
-            <action method="setTemplate" ifconfig="oyst/oneclick/is_enable"><template>oyst/oneclick/checkout/cart/oneclick.phtml</template></action>
-        </reference>
-
-        <reference name="head">
-            <action method="addCss" ifconfig="oyst/oneclick/is_enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
-            <action method="addItem" ifconfig="oyst/oneclick/is_enable"><type>skin_js</type><name>js/oyst/oneclick.js</name></action>
-       </reference>
-    </checkout_cart_index>
-
-    <oneclick_checkout_cart_top>
-        <reference name="checkout.cart.top_methods">
-            <action method="insert" ifconfig="oyst/oneclick/is_enable"><block>oyst.oneclick.express.checkout</block></action>
-        </reference>
-    </oneclick_checkout_cart_top>
-
-    <oneclick_checkout_cart_bottom>
-        <reference name="checkout.cart.methods">
-            <action method="insert" ifconfig="oyst/oneclick/is_enable"><block>oyst.oneclick.express.checkout</block></action>
-        </reference>
-    </oneclick_checkout_cart_bottom>
-
-    <oyst_oneclick_checkout_cart_redirect>
-        <reference name="head">
-            <action method="addCss"><stylesheet>css/oyst/cart-redirect.css</stylesheet></action>
-            <action method="addItem"><type>skin_js</type><name>js/oyst/redirect.js</name></action>
-        </reference>
-        <reference name="root">
-            <action method="setTemplate"><template>page/1column.phtml</template></action>
-        </reference>
-        <reference name="content">
-            <block type="oyst_oneclick/checkout_redirect" name="redirect_from_oyst" template="oyst/oneclick/checkout/redirect.phtml" />
-        </reference>
-    </oyst_oneclick_checkout_cart_redirect>
-
-    <checkout_onepage_index>
-        <reference name="head">
-            <action method="addCss" ifconfig="oyst/oneclick/is_enable"><stylesheet>css/oyst/oneclick.css</stylesheet></action>
-            <action method="addItem" ifconfig="oyst/oneclick/is_enable"><type>skin_js</type><name>js/oyst/lib/wgxpath.install.js</name></action>
-            <action method="addItem" ifconfig="oyst/oneclick/is_enable"><type>skin_js</type><name>js/oyst/oneclick.js</name></action>
-        </reference>
-
-        <reference name="oyst.oneclick.express.checkout">
-            <action method="setTemplate" ifconfig="oyst/oneclick/is_enable"><template>oyst/oneclick/checkout/cart/oneclick.phtml</template></action>
-        </reference>
-        
-        <reference name="before_body_end">
-            <action method="append" ifconfig="oyst/oneclick/is_enable"><block>oyst.oneclick.express.checkout</block></action>
-        </reference>
-    </checkout_onepage_index>
-
-    <checkout_onepage_success>
-        <reference name="before_body_end">
-            <block type="oyst_oneclick/checkout_tracking" name="oyst_tracking"/>
-        </reference>
-    </checkout_onepage_success>
 
 </layout>

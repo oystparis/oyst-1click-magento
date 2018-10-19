@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>1.13.2</version>
+            <version>2.0.0</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -19,16 +19,7 @@
         <models>
             <oyst_oneclick>
                 <class>Oyst_OneClick_Model</class>
-                <resourceModel>oyst_oneclick_resource</resourceModel>
             </oyst_oneclick>
-            <oyst_oneclick_resource>
-                <class>Oyst_OneClick_Model_Resource</class>
-                <entities>
-                    <notification>
-                        <table>oyst_notification</table>
-                    </notification>
-                </entities>
-            </oyst_oneclick_resource>
         </models>
         <resources>
             <oyst_oneclick_setup>
@@ -40,37 +31,41 @@
         </resources>
         <fieldsets>
             <sales_convert_quote>
-                <oyst_order_id>
+                <oyst_id>
                     <to_order>*</to_order>
-                </oyst_order_id>
+                </oyst_id>
             </sales_convert_quote>
             <sales_convert_order>
-                <oyst_order_id>
+                <oyst_id>
                     <to_quote>*</to_quote>
-                </oyst_order_id>
+                </oyst_id>
             </sales_convert_order>
         </fieldsets>
         <events>
-            <!-- Support the lib/Oyst/oyst-php folder -->
-            <resource_get_tablename>
+            <controller_front_init_routers>
                 <observers>
-                    <oyst_lib_load>
-                        <type>object</type>
-                        <class>Oyst_OneClick_Helper_Autoloader</class>
-                        <method>createAndRegister</method>
-                    </oyst_lib_load>
+                    <oyst_oneclick>
+                        <class>Oyst_OneClick_Controller_Api_Router</class>
+                        <method>initControllerRouters</method>
+                    </oyst_oneclick>
                 </observers>
-            </resource_get_tablename>
-
-            <!-- Oneclick enable and restrict allow ips -->
-            <controller_action_layout_load_before>
+            </controller_front_init_routers>
+            <sales_order_save_after>
                 <observers>
-                    <oyst_oneclick_is_enable>
-                        <class>Oyst_OneClick_Model_Observer</class>
-                        <method>isEnable</method>
-                    </oyst_oneclick_is_enable>
+                    <oyst_oneclick>
+                        <class>oyst_oneclick/observer</class>
+                        <method>handleOrderToCapture</method>
+                    </oyst_oneclick>
                 </observers>
-            </controller_action_layout_load_before>
+            </sales_order_save_after>
+            <sales_order_creditmemo_save_after>
+                <observers>
+                    <oyst_oneclick>
+                        <class>oyst_oneclick/observer</class>
+                        <method>handleOrderRefund</method>
+                    </oyst_oneclick>
+                </observers>
+            </sales_order_creditmemo_save_after>
         </events>
     </global>
     <admin>
@@ -94,15 +89,6 @@
                 </args>
             </oyst_oneclick>
         </routers>
-        <translate>
-            <modules>
-                <Oyst_OneClick>
-                    <files>
-                        <default>Oyst_OneClick.csv</default>
-                    </files>
-                </Oyst_OneClick>
-            </modules>
-        </translate>
         <layout>
             <updates>
                 <oyst_oneclick>
@@ -110,200 +96,15 @@
                 </oyst_oneclick>
             </updates>
         </layout>
-        <events>
-            <controller_action_layout_load_before>
-                <observers>
-                    <oyst_payment>
-                        <class>Oyst_OneClick_Model_Observer</class>
-                        <method>appendOneClickButton</method>
-                    </oyst_payment>
-                </observers>
-            </controller_action_layout_load_before>
-        </events>
     </frontend>
-    <adminhtml>
-        <layout>
-            <updates>
-                <oyst_oneclick>
-                    <file>oyst_oneclick.xml</file>
-                </oyst_oneclick>
-            </updates>
-        </layout>
-        <translate>
-            <modules>
-                <Oyst_OneClick>
-                    <files>
-                        <default>Oyst_OneClick.csv</default>
-                    </files>
-                </Oyst_OneClick>
-            </modules>
-        </translate>
-        <events>
-            <!-- Show/Hide the Button 1-Click Tab -->
-            <core_block_abstract_prepare_layout_after>
-                <observers>
-                    <oyst_payment>
-                        <class>Oyst_OneClick_Model_Adminhtml_Observer</class>
-                        <method>removeTab</method>
-                    </oyst_payment>
-                </observers>
-            </core_block_abstract_prepare_layout_after>
-
-            <!-- Change the cancel button action -->
-            <sales_order_payment_cancel>
-                <observers>
-                    <oyst_payment>
-                        <class>Oyst_OneClick_Model_Observer</class>
-                        <method>salesOrderPaymentCancel</method>
-                    </oyst_payment>
-                </observers>
-            </sales_order_payment_cancel>
-
-            <!-- Change order status after partial refund -->
-            <sales_order_payment_refund>
-                <observers>
-                    <oyst_payment>
-                        <class>Oyst_OneClick_Model_Observer</class>
-                        <method>setStatusAfterRefund</method>
-                    </oyst_payment>
-                </observers>
-            </sales_order_payment_refund>
-
-            <!-- Invalidate config cache for Freepay -->
-            <admin_system_config_changed_section_payment>
-                <observers>
-                    <oyst_payment>
-                        <class>Oyst_OneClick_Model_Observer</class>
-                        <method>invalidateCache</method>
-                    </oyst_payment>
-                </observers>
-            </admin_system_config_changed_section_payment>
-
-            <!-- Invalidate config cache for OneClick -->
-            <admin_system_config_changed_section_oyst_oneclick>
-                <observers>
-                    <oyst_payment>
-                        <class>Oyst_OneClick_Model_Observer</class>
-                        <method>invalidateCache</method>
-                    </oyst_payment>
-                </observers>
-            </admin_system_config_changed_section_oyst_oneclick>
-
-            <controller_action_predispatch_adminhtml_system_config_edit>
-                <observers>
-                    <bind_locale>
-                        <class>Oyst_OneClick_Model_Observer</class>
-                        <method>redirectToNotificationsGrid</method>
-                    </bind_locale>
-                </observers>
-            </controller_action_predispatch_adminhtml_system_config_edit>
-
-            <!-- Activate config tabs -->
-            <adminhtml_init_system_config>
-                <observers>
-                    <activate_tabs>
-                        <class>Oyst_OneClick_Model_Observer</class>
-                        <method>activateTabs</method>
-                    </activate_tabs>
-                </observers>
-            </adminhtml_init_system_config>
-
-            <!-- OneClick payment info -->
-            <payment_info_block_prepare_specific_information>
-                <observers>
-                    <oneclick>
-                        <class>Oyst_OneClick_Model_Observer</class>
-                        <method>oneclickPaymentInfoSpecificInformation</method>
-                    </oneclick>
-                </observers>
-            </payment_info_block_prepare_specific_information>
-        </events>
-    </adminhtml>
     <!-- Default configuration values -->
     <default>
-        <oyst>
-            <abstract>
-                <developed_by>Oyst</developed_by>
-                <contact_email>plugin@oyst.com</contact_email>
-            </abstract>
-            <oneclick>
-                <oneclickjs_sandbox_url>//cdn.sandbox.oyst.eu/</oneclickjs_sandbox_url>
-                <oneclickjs_prod_url>//cdn.oyst.com/</oneclickjs_prod_url>
-                <product_addtocart_form_validate>1</product_addtocart_form_validate>
-                <allow_quantity_change>1</allow_quantity_change>
-                <enable_invoice_auto_generation>1</enable_invoice_auto_generation>
-                <button_theme>default</button_theme>
-                <product_page_button_position>disable</product_page_button_position>
-                <tracking>1</tracking>
-                <product_page_buttons_wrapper_class>add-to-cart-buttons</product_page_buttons_wrapper_class>
-                <button_rounded>1</button_rounded>
-                <button_smart>1</button_smart>
-                <new_customer_account>1</new_customer_account>
-                <order_delay>15</order_delay>
-                <checkout_cart_button_position>disabled</checkout_cart_button_position>
-                <checkout_cart_cta_label><![CDATA[Retour boutique.]]></checkout_cart_cta_label>
-                <checkout_cart_cta_loading_message><![CDATA[Nous n’avons pas encore reçu la confirmation du paiement. Veuillez attendre quelques minutes pour rafraichir cette page.]]></checkout_cart_cta_loading_message>
-                <allow_discount_coupon_from_modal>0</allow_discount_coupon_from_modal>
-                <notifications_update_max_delay>-5 minutes</notifications_update_max_delay>
-                <checkout_modal_timer>6</checkout_modal_timer>
-                <pending_status_failover_timer>3</pending_status_failover_timer>
-                <order_status_payment_accepted>processing</order_status_payment_accepted>
-                <order_status_payment_fraud>fraud</order_status_payment_fraud>
-            </oneclick>
-            <order_settings>
-                <enable>0</enable>
-            </order_settings>
-        </oyst>
-        <oyst_oneclick>
-            <mode>prod</mode>
-        </oyst_oneclick>
         <payment>
-            <oyst_oneclick translate="title" module="oyst_oneclick">
-                <active>1</active>
-                <model>oyst_oneclick/payment_method_oneclick</model>
-                <title>Oyst 1-Click</title>
-                <sort_order>100</sort_order>
-                <shipping_type>shipping</shipping_type>
-                <allow_quest_checkout>0</allow_quest_checkout>
-                <change_address>0</change_address>
-                <show_in_payment_step_checkout>0</show_in_payment_step_checkout>
-                <show_outside_of_checkout>0</show_outside_of_checkout>
-                <allow_billing_agreement_wizard>0</allow_billing_agreement_wizard>
-            </oyst_oneclick>
-            <oyst_abstract>
-                <developed_by>Oyst</developed_by>
-                <contact_email>plugin@oyst.com</contact_email>
-                <enable_logs>1</enable_logs>
-                <mode>prod</mode>
-                <invoice_label>FreePay</invoice_label>
-                <tracking>1</tracking>
-            </oyst_abstract>
-            <oyst_freepay translate="title" module="oyst_oneclick">
-                <active>0</active>
-                <title>Payer par carte bancaire</title>
-                <model>oyst_oneclick/payment_method_freepay</model>
+            <oyst_oneclick>
+                <model>oyst_oneclick/payment_method_oneClick</model>
                 <order_status>pending</order_status>
-                <payment_cancelled>holded</payment_cancelled>
-                <refund_authorized>closed</refund_authorized>
-                <payment_action>authorize_capture</payment_action>
-                <allowspecific>0</allowspecific>
-                <sort_order>0</sort_order>
-            </oyst_freepay>
+                <title>Oyst OneClick</title>
+            </oyst_oneclick>
         </payment>
     </default>
-    <crontab>
-        <jobs>
-            <oyst_update_notifications_status>
-                <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
-                <run><model>oyst_oneclick/observer::updateNotificationsStatus</model></run>
-            </oyst_update_notifications_status>
-        </jobs>
-    </crontab>
-    <phpunit>
-        <suite>
-            <modules>
-                <Oyst_OneClick />
-            </modules>
-        </suite>
-    </phpunit>
 </config>

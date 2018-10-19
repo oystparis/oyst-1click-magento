@@ -1,0 +1,14 @@
+
+<script>
+
+    window.__OYST__ = window.__OYST__ || {};
+    window.__OYST__.baseUrl = '<?php echo $this->getUrl() ?>';
+    window.__OYST__.addToCartUrl = '<?php echo $this->getUrl('oyst_oneclick/checkout/addtocart') ?>';
+    window.__OYST__.getCartUrl = '<?php echo $this->getUrl('oyst_oneclick/checkout/getcart') ?>';
+    window.__OYST__.successRedirectUrl = '<?php echo $this->getUrl('oyst_oneclick/checkout/redirect') ?>';
+    window.__OYST__.failureRedirectUrl = '<?php echo $this->getUrl('checkout/cart') ?>';
+
+</script>
+
+<?php echo $this->getScriptTag(); ?>
+

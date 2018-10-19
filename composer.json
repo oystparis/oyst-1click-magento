@@ -36,14 +36,6 @@
             "url": "https://packages.firegento.com"
         }
     },
-    "scripts": {
-        "post-install-cmd": [
-            "./lib/Oyst/get-sdk.sh"
-        ],
-        "post-update-cmd": [
-            "./lib/Oyst/get-sdk.sh"
-        ]
-    },
     "support": {
         "issues": "https://github.com/oystparis/oyst-1click-magento/issues",
         "source": "https://github.com/oystparis/oyst-1click-magento",

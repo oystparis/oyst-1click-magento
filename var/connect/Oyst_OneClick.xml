@@ -1,5 +1,6 @@
 <_>
-   <form_key>UwVbhCE8nCZMnDpm</form_key>
+   <form_key>lmGWF80iGkKO4nkq</form_key>
+   <_create/>
    <name>Oyst_OneClick</name>
    <channel>community</channel>
    <version_ids>
@@ -19,18 +20,20 @@ Oyst 1-Click is powered by strong security technologies:&lt;br /&gt;
 &lt;/ul&gt;</description>
    <license>Apache</license>
    <license_uri>https://www.apache.org/licenses/LICENSE-2.0.txt</license_uri>
-   <version>1.13.2</version>
+   <version>2.0.0-RC1</version>
    <stability>stable</stability>
    <notes>Check https://github.com/oystparis/oyst-1click-magento/releases/latest for details.</notes>
    <authors>
-      <author>
+      <name>
          <name>Oyst</name>
+      </name>
+      <user>
          <user>1Click</user>
+      </user>
+      <email>
          <email>plugin@oyst.com</email>
-      </author>
+      </email>
    </authors>
-   <date>2018-06-11</date>
-   <time>13:34:18</time>
    <depends_php_min>5.3.0</depends_php_min>
    <depends_php_max>8.0.0</depends_php_max>
    <depends>
@@ -48,7 +51,7 @@ Oyst 1-Click is powered by strong security technologies:&lt;br /&gt;
             <max/>
          </max>
          <files>
-            <files>                                                                                                                                                                  </files>
+            <files>                                                                                                                                                                                                      </files>
          </files>
       </package>
       <extension>
@@ -69,30 +72,14 @@ Oyst 1-Click is powered by strong security technologies:&lt;br /&gt;
          <target>magecommunity</target>
          <target>magedesign</target>
          <target>magedesign</target>
-         <target>magedesign</target>
-         <target>magedesign</target>
          <target>mageetc</target>
-         <target>magelib</target>
-         <target>magelocale</target>
-         <target>mageweb</target>
-         <target>mageskin</target>
-         <target>mageskin</target>
-         <target>mageskin</target>
       </target>
       <path>
          <path/>
-         <path>Oyst</path>
-         <path>adminhtml/default/default/layout/oyst_oneclick.xml</path>
-         <path>adminhtml/default/default/template/oyst</path>
+         <path>Oyst/OneClick</path>
          <path>frontend/base/default/layout/oyst_oneclick.xml</path>
-         <path>frontend/base/default/template/oyst</path>
+         <path>frontend/base/default/template/oyst_oneclick</path>
          <path>modules/Oyst_OneClick.xml</path>
-         <path>Oyst</path>
-         <path/>
-         <path>js/oyst</path>
-         <path>adminhtml/default/default/oyst</path>
-         <path>frontend/base/default/css/oyst</path>
-         <path>frontend/base/default/js/oyst</path>
       </path>
       <type>
          <type>file</type>
@@ -100,14 +87,6 @@ Oyst 1-Click is powered by strong security technologies:&lt;br /&gt;
          <type>file</type>
          <type>dir</type>
          <type>file</type>
-         <type>dir</type>
-         <type>file</type>
-         <type>dir</type>
-         <type>dir</type>
-         <type>dir</type>
-         <type>dir</type>
-         <type>dir</type>
-         <type>dir</type>
       </type>
       <include>
          <include/>
@@ -115,24 +94,8 @@ Oyst 1-Click is powered by strong security technologies:&lt;br /&gt;
          <include/>
          <include/>
          <include/>
-         <include/>
-         <include/>
-         <include/>
-         <include>#Oyst_OneClick.csv#</include>
-         <include/>
-         <include/>
-         <include/>
-         <include/>
       </include>
       <ignore>
-         <ignore/>
-         <ignore/>
-         <ignore/>
-         <ignore/>
-         <ignore/>
-         <ignore/>
-         <ignore/>
-         <ignore/>
          <ignore/>
          <ignore/>
          <ignore/>
