@@ -71,8 +71,8 @@ class Oyst_OneClick_Model_OystCheckoutManagement extends Oyst_OneClick_Model_Abs
 
         if (!$isRequestedShippingMethodAvailable) {
             $oystMethodsAvailable = [];
-            foreach ($oystCheckoutShipping->getMethodsAvailable() as $oystMethodAvailable) {
-                $oystMethodsAvailable[] = $oystMethodAvailable->getReference();
+            foreach ($oystCheckoutShipping['methods_available'] as $oystMethodAvailable) {
+                $oystMethodsAvailable[] = $oystMethodAvailable['reference'];
             }
 
             $cheapestShippingMethodAvailable = [];
