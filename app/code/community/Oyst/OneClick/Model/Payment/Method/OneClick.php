@@ -18,6 +18,8 @@ class Oyst_OneClick_Model_Payment_Method_OneClick extends Mage_Payment_Model_Met
 
     protected $_code = 'oyst_oneclick';
 
+    protected $_canRefund = true;
+
     /**
      * @return string
      */
