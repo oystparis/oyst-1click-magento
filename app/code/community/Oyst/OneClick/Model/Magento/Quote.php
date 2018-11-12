@@ -99,6 +99,7 @@ class Oyst_OneClick_Model_Magento_Quote
             if ($customer instanceof Mage_Customer_Model_Customer) {
                 $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER);
                 $this->quote->setCustomer($customer);
+                $this->quote->setCustomerIsGuest(false);
             }
         }
 
@@ -322,10 +323,10 @@ class Oyst_OneClick_Model_Magento_Quote
             if (isset($this->apiData['order']['applied_coupons'])) {
                 $appliedCoupons = $this->apiData['order']['applied_coupons'];
                 foreach ($appliedCoupons as $appliedCoupon) {
-                    if ($appliedCoupon['value'] == $this->apiData['order']['context']['applied_coupons']) {
+                    if ($appliedCoupon == $this->apiData['order']['context']['applied_coupons']) {
                         continue;
                     }
-                    $this->quote->setCouponCode($appliedCoupon['value']);
+                    $this->quote->setCouponCode($appliedCoupon);
                     break;
                 }
             }
