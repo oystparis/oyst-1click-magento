@@ -189,7 +189,7 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_Fieldset_Carrier_Mapping 
                     'default' => 1,
                     'inherit' => $inherit,
                     'value' => $data,
-                    'class' => 'validate-number validate-oyst-shipment-delay',
+                    //'class' => 'validate-number validate-oyst-shipment-delay',
                     'comment' => Mage::helper('oyst_oneclick')->__('Value in hours'),
                     'can_use_default_value' => $this->getForm()->canUseDefaultValue($e),
                     'can_use_website_value' => $this->getForm()->canUseWebsiteValue($e),
