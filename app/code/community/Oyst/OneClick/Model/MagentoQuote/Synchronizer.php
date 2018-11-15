@@ -9,7 +9,7 @@ class Oyst_OneClick_Model_MagentoQuote_Synchronizer
         Mage_SalesRule_Model_Coupon $coupon
     )
     {
-        Mage::getSingleton('checkout/cart')->setQuote($quote);
+        Mage::getSingleton('checkout/session')->replaceQuote($quote);
         $quote->setOystId($oystCheckout['oyst_id']);
 
         $this->syncMagentoAddresses($quote, $oystCheckout['billing'], $oystCheckout['shipping']);
