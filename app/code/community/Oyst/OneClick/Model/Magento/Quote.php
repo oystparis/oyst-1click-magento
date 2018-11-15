@@ -87,7 +87,7 @@ class Oyst_OneClick_Model_Magento_Quote
         $this->quote->setUpdatedAt($this->apiData['order']['created_at']);
         $this->quote->setOystOrderId($this->apiData['order']['id']);
 
-        Mage::getSingleton('checkout/cart')->setQuote($this->quote);
+        Mage::getSingleton('checkout/session')->replaceQuote($this->quote);
 
         Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_quote_after', array('quote' => $this->quote, 'request' => $this->apiData));
     }
