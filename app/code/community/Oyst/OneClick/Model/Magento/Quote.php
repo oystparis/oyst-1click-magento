@@ -121,6 +121,7 @@ class Oyst_OneClick_Model_Magento_Quote
             $this->quote->setCustomerIsGuest(true);
             $this->quote->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
             $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_GUEST);
+            $this->quote->setCustomerId(null);
         }
 
         if ($customer instanceof Mage_Customer_Model_Customer) {
