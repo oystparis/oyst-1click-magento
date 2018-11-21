@@ -65,7 +65,6 @@ class Oyst_OneClick_Model_Magento_Order
             }
 
             $this->order = $this->placeOrder();
-            $this->order->setCreatedAt($this->quote->getCreatedAt());
             $this->order->save();
             $this->quote->setIsActive(false)->save();
         } catch (Exception $e) {
