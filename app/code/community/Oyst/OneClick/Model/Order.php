@@ -72,15 +72,24 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
                 'message' => 'notification has been already processed.',
             ));
         } else {
-            // Sync Order From Api
-            $result = $this->sync(array(
-                'oyst_order_id' => $oystOrderId,
-            ));
-            $magentoOrderId = $result['magento_order_id'];
+            try {
+                // Sync Order From Api
+                $result = $this->sync(array(
+                    'oyst_order_id' => $oystOrderId,
+                ));
+                $magentoOrderId = $result['magento_order_id'];
 
-            $response = Zend_Json::encode(array(
-                'magento_order_id' => $result['magento_order_id'],
-            ));
+                $response = Zend_Json::encode(array(
+                    'magento_order_id' => $result['magento_order_id'],
+                ));
+            } catch(Exception $e) {
+                $notification
+                    ->setMageResponse(Zend_Json::encode(array(
+                        'message' => $e->getMessage() . ' see : error_oyst.log',
+                    )))
+                    ->registerNotificationFail();
+                throw $e;
+            }
         }
 
         // Save new status and result in db
