@@ -16,7 +16,7 @@ class Oyst_OneClick_Model_ConstantsMapper
             case Mage_Catalog_Model_Product_Type::TYPE_BUNDLE:
                 $result = Oyst_OneClick_Helper_Constants::ITEM_TYPE_BUNDLE;
                 break;
-            case Mage_Catalog_Model_Product_Type::TYPE_DOWNLOADABLE:
+            case Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE:
                 $result = Oyst_OneClick_Helper_Constants::ITEM_TYPE_DOWNLOADABLE;
                 break;
             case Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE:
