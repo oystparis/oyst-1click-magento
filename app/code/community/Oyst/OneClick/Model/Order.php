@@ -144,21 +144,21 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         Mage::register('order_status_changing', true);
 
         /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
-        $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $this->orderResponse);
-        $magentoQuoteBuilder->syncQuoteFacade();
+        $quote =  Mage::getModel('sales/quote')->load($this->orderResponse['order']['context']['quote_id']);
+        $quote->collectTotals();        
 
         Mage::dispatchEvent(
             'oyst_oneclick_model_order_create_magento_order_before',
-            array('quote' => $magentoQuoteBuilder->getQuote())
+            array('quote' => $quote)
         );
 
         /** @var Oyst_OneClick_Model_Magento_Order $magentoOrderBuilder */
         $magentoOrderBuilder = Mage::getModel('oyst_oneclick/magento_order', $this->orderResponse);
-        $magentoOrderBuilder->setQuote($magentoQuoteBuilder->getQuote())->saveOrder();
+        $magentoOrderBuilder->setQuote($quote)->saveOrder();
 
         Mage::dispatchEvent(
             'oyst_oneclick_model_order_create_magento_order_after',
-            array('quote' => $magentoQuoteBuilder->getQuote(), 'order' => $magentoOrderBuilder->getOrder())
+            array('quote' => $quote, 'order' => $magentoOrderBuilder->getOrder())
         );
 
         $magentoOrderBuilder->getOrder()->addStatusHistoryComment(
@@ -174,7 +174,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         Mage::unregister('order_status_changing');
 
-        $this->clearCart($magentoQuoteBuilder->getQuote()->getQuoteId(), $oystOrderId);
+        $this->clearCart($quote->getQuoteId(), $oystOrderId);
 
         $magentoOrderBuilder->getOrder()->sendNewOrderEmail();
 
