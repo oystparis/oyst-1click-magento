@@ -21,12 +21,12 @@ class Oyst_OneClick_Model_OystConfig_Ecommerce_Builder
     {
         $result = [];
 
-        foreach ($carriers as $carrier) {
-            foreach ($carrier['value'] as $shippingMethod) {
+        foreach ($carriers as $ccode => $carrier) {
+            foreach($carrier->getAllowedMethods() as $mcode => $mlabel) {
                 $oystConfigEcommerceShippingMethod = array();
 
-                $oystConfigEcommerceShippingMethod['label'] = $shippingMethod['label'];
-                $oystConfigEcommerceShippingMethod['reference'] = $shippingMethod['value'];
+                $oystConfigEcommerceShippingMethod['label'] = $mlabel;
+                $oystConfigEcommerceShippingMethod['reference'] = $ccode.'_'.$mcode;
 
                 $result[] = $oystConfigEcommerceShippingMethod;
             }

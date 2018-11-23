@@ -22,7 +22,6 @@ class Oyst_OneClick_Model_OystConfigManagement
     public function getEcommerceConfig()
     {
         $carriers = Mage::getSingleton('shipping/config')->getActiveCarriers();
-        array_shift($carriers);
 
         $allowedCountryCodes = explode(',', (string)Mage::getStoreConfig('general/country/allow'));
         $countries = Mage::getModel('directory/country')->getCollection()
