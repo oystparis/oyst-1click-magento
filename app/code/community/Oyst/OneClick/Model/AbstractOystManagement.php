@@ -7,7 +7,7 @@ class Oyst_OneClick_Model_AbstractOystManagement
         // Disable country/state validation
         Mage::app()->getStore()->setConfig(Mage_Directory_Helper_Data::XML_PATH_STATES_REQUIRED, '');
     }
-    
+
     protected function getMagentoCustomer($email, $websiteId = null)
     {
         return Mage::getModel('customer/customer')->setWebsiteId($websiteId)->loadByEmail($email);
@@ -29,6 +29,14 @@ class Oyst_OneClick_Model_AbstractOystManagement
         return Mage::getModel('sales/quote')->getCollection()
             ->addFieldToFilter('oyst_id', $oystId)
             ->addFieldToFilter('is_active', 1)
+            ->setOrder('entity_id', Varien_Data_Collection::SORT_ORDER_DESC)
+            ->getFirstItem();
+    }
+
+    public function getMagentoOrderByQuoteId($quoteId)
+    {
+        return Mage::getModel('sales/order')->getCollection()
+            ->addFieldToFilter('quote_id', $quoteId)
             ->setOrder('entity_id', Varien_Data_Collection::SORT_ORDER_DESC)
             ->getFirstItem();
     }
@@ -76,7 +84,7 @@ class Oyst_OneClick_Model_AbstractOystManagement
             Oyst_OneClick_Helper_Constants::DISABLE_REGION_REQUIRED_REGISTRY_KEY, true, true
         );
     }
-    
+
     protected function getMagentoOrderByOystId($oystId)
     {
         return Mage::getModel('sales/order')->getCollection()
