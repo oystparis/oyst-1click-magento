@@ -11,4 +11,9 @@ class Oyst_OneClick_Block_ScriptTag extends Mage_Core_Block_Template
             $scriptTag
         );
     }
+
+    public function isEnabled()
+    {
+        return Mage::getStoreConfig('oyst_oneclick/general/enabled');
+    }
 }
