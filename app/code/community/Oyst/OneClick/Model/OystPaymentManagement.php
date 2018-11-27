@@ -4,28 +4,28 @@ class Oyst_OneClick_Model_OystPaymentManagement extends Oyst_OneClick_Model_Abst
 {
     /**
      * TODO : Check if order has already been captured
-     * @param array $orderIds
+     * @param array $orderAmounts (Amounts indexed by orderIds)
      * @param bool $skipInvoiceCreation
      * @return $this
      */
-    public function handleMagentoOrdersToCapture(array $orderIds, $skipInvoiceCreation = false)
+    public function handleMagentoOrdersToCapture(array $orderAmounts, $skipInvoiceCreation = false)
     {
         $orders = Mage::getModel('sales/order')->getCollection()
-            ->addFieldToFilter('entity_id', array('in' => $orderIds))
+            ->addFieldToFilter('entity_id', array('in' => array_keys($orderAmounts)))
             ->addFieldToFilter('status', Oyst_OneClick_Helper_Constants::OYST_ORDER_STATUS_PAYMENT_TO_CAPTURE);
 
         if (count($orders) == 0) {
             return $this;
         }
 
-        $oystOrderIds = [];
+        $oystOrderAmounts = [];
         foreach ($orders as $order) {
-            $oystOrderIds[] = $order->getOystId();
+            $oystOrderAmounts[$order->getOystId()] = $orderAmounts[$order->getId()];
         }
 
         $gatewayCallbackClient = new Oyst_OneClick_Gateway_CallbackClient();
         $gatewayResult = json_decode($gatewayCallbackClient->callGatewayCallbackApi(
-            Oyst_OneClick_Helper_Constants::OYST_GATEWAY_ENDPOINT_TYPE_CAPTURE, $oystOrderIds
+            Oyst_OneClick_Helper_Constants::OYST_GATEWAY_ENDPOINT_TYPE_CAPTURE, $oystOrderAmounts
         ), true);
 
         if ($skipInvoiceCreation) {
@@ -45,28 +45,27 @@ class Oyst_OneClick_Model_OystPaymentManagement extends Oyst_OneClick_Model_Abst
     }
 
     /**
-     * TODO : Full Refund is handled but allow partial refunds
-     * @param array $orderIds
+     * @param array $orderAmounts (Amounts indexed by orderIds)
      * @param bool $skipCreditmemoCreation
      * @return $this
      */
-    public function handleMagentoOrdersToRefund($orderIds, $skipCreditmemoCreation = false)
+    public function handleMagentoOrdersToRefund(array $orderAmounts, $skipCreditmemoCreation = false)
     {
         $orders = Mage::getModel('sales/order')->getCollection()
-            ->addFieldToFilter('entity_id', array('in' => $orderIds));
+            ->addFieldToFilter('entity_id', array('in' => array_keys($orderAmounts)));
 
         if (count($orders) == 0) {
             return $this;
         }
 
-        $oystOrderIds = [];
+        $oystOrderAmounts = [];
         foreach ($orders as $order) {
-            $oystOrderIds[] = $order->getOystId();
+            $oystOrderAmounts[$order->getOystId()] = $orderAmounts[$order->getId()];
         }
 
         $gatewayCallbackClient = new Oyst_OneClick_Gateway_CallbackClient();
         $gatewayResult = json_decode($gatewayCallbackClient->callGatewayCallbackApi(
-            Oyst_OneClick_Helper_Constants::OYST_GATEWAY_ENDPOINT_TYPE_REFUND, $oystOrderIds
+            Oyst_OneClick_Helper_Constants::OYST_GATEWAY_ENDPOINT_TYPE_REFUND, $oystOrderAmounts
         ), true);
 
         if ($skipCreditmemoCreation) {

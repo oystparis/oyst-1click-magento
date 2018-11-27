@@ -7,7 +7,7 @@ class Oyst_OneClick_Model_Observer
         $order = $observer->getEvent()->getDataObject();
 
         if ($order->getStatus() == Oyst_OneClick_Helper_Constants::OYST_ORDER_STATUS_PAYMENT_TO_CAPTURE) {
-            Mage::getModel('oyst_oneclick/oystPaymentManagement')->handleMagentoOrdersToCapture([$order->getId()]);
+            Mage::getModel('oyst_oneclick/oystPaymentManagement')->handleMagentoOrdersToCapture([$order->getId() => $order->getGrandTotal()]);
         }
     }
 
@@ -16,12 +16,6 @@ class Oyst_OneClick_Model_Observer
         $creditmemo = $observer->getEvent()->getDataObject();
         $order = $creditmemo->getOrder();
 
-        if ($creditmemo->getGrandTotal() ==  $order->getGrandTotal()) {
-            Mage::getModel('oyst_oneclick/oystPaymentManagement')->handleMagentoOrdersToRefund([$order->getId()], true);
-        } else {
-            $order->addStatusHistoryComment(
-                __('Partial Refund %1 %2 should be handled from Oyst Back Office.', $order->getGrandTotal(), $order->getOrderCurrencyCode())
-            );
-        }
+        Mage::getModel('oyst_oneclick/oystPaymentManagement')->handleMagentoOrdersToRefund([$order->getId() => $creditmemo->getGrandTotal()], true);
     }
 }

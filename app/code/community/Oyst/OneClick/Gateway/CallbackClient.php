@@ -9,7 +9,7 @@
 
 class Oyst_OneClick_Gateway_CallbackClient
 {
-    public function callGatewayCallbackApi($endpointType, array $oystOrderIds)
+    public function callGatewayCallbackApi($endpointType, array $oystOrderAmounts)
     {
         $endpoint = $this->getEndpoint($endpointType);
 
@@ -18,7 +18,7 @@ class Oyst_OneClick_Gateway_CallbackClient
         $client->setHeaders('Accept', 'application/json');
         $client->setHeaders('Content-Type', 'application/json');
         $client->setRawData(json_encode([
-            'orderIds' => $oystOrderIds
+            'orderAmounts' => $oystOrderAmounts
         ]))->setEncType('application/json');
         $client->setUri($endpoint['url']);
 
