@@ -18,4 +18,10 @@
         </reference>
     </default>
 
+    <checkout_onepage_success>
+        <reference name="before_body_end">
+            <block type="oyst_oneclick/tracking" before="oyst_oneclick.script_tag" name="oyst_oneclick.tracking" template="oyst_oneclick/checkout/onepage/success/tracking.phtml"/>
+        </reference>
+    </checkout_onepage_success>
+
 </layout>
