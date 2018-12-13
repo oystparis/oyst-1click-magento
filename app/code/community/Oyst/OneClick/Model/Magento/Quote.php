@@ -82,7 +82,7 @@ class Oyst_OneClick_Model_Magento_Quote
         $this->quote->setRemoteIp($this->apiData['order']['context']['remote_addr']);
 
         $this->quote->setIsMultiShipping(false);
-        $this->quote->setIsSuperMode(true);
+        //$this->quote->setIsSuperMode(true);
         $this->quote->setCreatedAt($this->apiData['order']['created_at']);
         $this->quote->setUpdatedAt($this->apiData['order']['created_at']);
         $this->quote->setOystOrderId($this->apiData['order']['id']);

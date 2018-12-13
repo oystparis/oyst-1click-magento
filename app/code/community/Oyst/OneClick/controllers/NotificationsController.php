@@ -87,6 +87,9 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
         try {
             /** @var Oyst_OneClick_Model_Catalog|Oyst_OneClick_Model_Order $model */
             $response = $model->processNotification($event, $data);
+        } catch (\Mage_Checkout_Exception $e) {
+            $this->traceException($e, $data);
+            return $this->badRequest($e->getMessage());
         } catch (\Exception $e) {
             $this->traceException($e, $data);
             return $this->errorResponse($e->getMessage());
@@ -110,7 +113,7 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
         $this->getResponse()
             ->clearHeaders()
             ->setHeader('HTTP/1.1', '400 Bad Request')
-            ->setBody('400 Bad Request' . $message);
+            ->setBody(json_encode(array('error' => 'M1-Oyst-Error', 'message' => $message)));
     }
 
     /**

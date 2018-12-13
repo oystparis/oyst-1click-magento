@@ -415,6 +415,14 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $magentoQuoteBuilder->syncQuoteFacade();
 
+        if ($magentoQuoteBuilder->getQuote()->getHasError()) {
+            $errorMessages = array();
+            foreach ($magentoQuoteBuilder->getQuote()->getErrors() as $error) {
+                $errorMessages[] = $error->getCode();
+            }
+            throw new Mage_Checkout_Exception(implode('\n', $errorMessages));
+        }
+
         // Object to format data of EndpointShipment
         $oneClickOrderCartEstimate = new OneClickOrderCartEstimate();
 
