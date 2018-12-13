@@ -40,6 +40,10 @@ class Oyst_OneClick_Block_OneClick extends Mage_Core_Block_Template
             return false;
         }
 
+        if (Mage::getStoreConfig('oyst/oneclick/force_button_display_on_product')) {
+            return true;
+        }
+
         if ($this->getProduct()->getIsOneclickDisableOnProduct()) {
             return false;
         }

@@ -249,6 +249,7 @@
                 <pending_status_failover_timer>3</pending_status_failover_timer>
                 <order_status_payment_accepted>processing</order_status_payment_accepted>
                 <order_status_payment_fraud>fraud</order_status_payment_fraud>
+                <force_button_display_on_product>1</force_button_display_on_product>
             </oneclick>
             <order_settings>
                 <enable>0</enable>
