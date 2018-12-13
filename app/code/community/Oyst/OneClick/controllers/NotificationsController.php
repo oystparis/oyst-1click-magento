@@ -86,6 +86,7 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
 
         try {
             /** @var Oyst_OneClick_Model_Catalog|Oyst_OneClick_Model_Order $model */
+            Mage::app()->getStore()->setConfig(Mage_Directory_Helper_Data::XML_PATH_STATES_REQUIRED, '');
             $response = $model->processNotification($event, $data);
         } catch (\Mage_Checkout_Exception $e) {
             $this->traceException($e, $data);
