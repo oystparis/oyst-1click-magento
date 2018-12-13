@@ -14,13 +14,6 @@
 
     <default>
         <block type="oyst_oneclick/oneClick" name="oyst.oneclick.express.checkout"/>
-        <reference name="head">
-            <block type="core/text" name="oyst.oneclick.metadata">
-                <action method="setText">
-                    <text helper="oyst_oneclick/getTrackingMeta"/>
-                </action>
-            </block>
-        </reference>
     </default>
 
     <catalog_product_view>
