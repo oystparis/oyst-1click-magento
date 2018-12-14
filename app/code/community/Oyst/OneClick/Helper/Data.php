@@ -266,4 +266,17 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $allow;
     }
+    
+    public function handleQuoteErrors(Mage_Sales_Model_Quote $quote)
+    {
+        if ($quote->getHasError()) {
+            $errorMessages = array();
+            foreach ($quote->getErrors() as $error) {
+                $errorMessages[] = $error->getCode();
+            }
+            throw new Mage_Checkout_Exception(implode('\n', $errorMessages));
+        }
+        
+        return $this;
+    }
 }

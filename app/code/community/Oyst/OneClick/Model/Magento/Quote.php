@@ -368,7 +368,9 @@ class Oyst_OneClick_Model_Magento_Quote
 
         $cart = Mage::getSingleton('checkout/cart');
         $cartData = $cart->suggestItemsQty($cartData);
-        $cart->updateItems($cartData)->save();
+        $cart->updateItems($cartData);
+        Mage::helper('oyst_oneclick')->handleQuoteErrors($this->quote);
+        $cart->save();
 
         return $this;
     }
