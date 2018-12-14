@@ -51,14 +51,14 @@ class Oyst_OneClick_CheckoutController extends Mage_Checkout_CartController
     {
         try {
             if ($order->getCustomerId()) {
-                if (!Mage::getSingleton('custom/session')->isLoggedIn()) {
-                    Mage::getSingleton('custom/session')->loginById($order->getCustomerId());
+                if (!Mage::getSingleton('customer/session')->isLoggedIn()) {
+                    Mage::getSingleton('customer/session')->loginById($order->getCustomerId());
                 }
             } else {
                 if (Mage::getStoreConfig(Oyst_OneClick_Helper_Constants::CONFIG_PATH_OYST_CONFIG_CREATE_CUSTOMER_ON_OYST_ORDER)) {
                     $customer = Mage::getModel('oyst_oneclick/oystCustomerManagement')
                         ->createMagentoCustomerFromOrder($order);
-                    Mage::getSingleton('custom/session')->loginById($customer->getId());
+                    Mage::getSingleton('customer/session')->loginById($customer->getId());
                 }
             }
         } catch (\Exception $e) {
