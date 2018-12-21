@@ -167,7 +167,9 @@ class Oyst_OneClick_Model_Magento_Quote
         $billingAddress->isObjectNew(false);
 
         $billingAddress->setSaveInAddressBook(false);
-        $billingAddress->setShouldIgnoreValidation(true);
+        if (($validateRes = $billingAddress->validate())!==true) {
+            throw new Mage_Checkout_Exception(implode('\n', $validateRes));
+        }
 
         if (!$this->quote->isVirtual()) {
             /** @var Mage_Sales_Model_Quote_Address $shippingAddress */
@@ -179,7 +181,9 @@ class Oyst_OneClick_Model_Magento_Quote
             $shippingAddress->isObjectNew(false);
 
             $shippingAddress->setSaveInAddressBook(false);
-            $shippingAddress->setShouldIgnoreValidation(true);
+            if (($validateRes = $shippingAddress->validate())!==true) {
+                throw new Mage_Checkout_Exception(implode('\n', $validateRes));
+            }
         }
 
         Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_addresses_after', array('quote' => $this->quote, 'request' => $this->apiData));

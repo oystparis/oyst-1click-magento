@@ -135,9 +135,9 @@ class Oyst_OneClick_Model_Magento_Order
         try {
             $customer->setWebsiteId($websiteId)
                 ->setStore($store)
-                ->setFirstname($firstname)
-                ->setLastname($lastname)
-                ->setEmail($email);
+                ->setFirstname($this->quote->getCustomerFirstname())
+                ->setLastname($this->quote->getCustomerLastname())
+                ->setEmail($this->quote->getCustomerEmail());
             $customer->save();
 
             // Send welcome email
@@ -145,18 +145,22 @@ class Oyst_OneClick_Model_Magento_Order
 
             /** @var Mage_Customer_Model_Address $address */
             $address = Mage::getModel('customer/address');
+            $quoteAddress = $this->quote->isVirtual() ? $this->quote->getBillingAddress() : $this->quote->getShippingAddress();
 
             $address->setCustomerId($customer->getId())
                 ->setFirstname($customer->getFirstname())
                 ->setLastname($customer->getLastname())
-                ->setCountryId($this->apiData['order']['user']['address']['country'])
-                ->setPostcode($this->apiData['order']['user']['address']['postcode'])
-                ->setCity($this->apiData['order']['user']['address']['city'])
-                ->setTelephone($this->apiData['order']['user']['phone'])
-                ->setStreet($this->apiData['order']['user']['address']['street'])
+                ->setCountryId($quoteAddress->getCountryId())
+                ->setPostcode($quoteAddress->getPostcode())
+                ->setCity($quoteAddress->getCity())
+                ->setTelephone($quoteAddress->getTelephone())
+                ->setStreet($quoteAddress->getStreet())
                 ->setIsDefaultBilling(true)
                 ->setIsDefaultShipping(true)
                 ->setSaveInAddressBook(true);
+            if (($validateRes = $address->validate())!==true) {
+                throw new Exception(implode('\n', $validateRes));
+            }
             $address->save();
         } catch (Exception $e) {
             Mage::helper('oyst_oneclick')->log($e->getMessage());
