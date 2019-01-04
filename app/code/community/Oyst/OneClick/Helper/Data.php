@@ -25,9 +25,9 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     const FAILURE_URL = 'checkout/onepage/failure';
 
     const XML_PATH_RESTRICT_ALLOW_IPS = 'restrict_allow_ips';
-    
+
     const STATUS_OYST_PAYMENT_ACCEPTED = 'oyst_payment_accepted';
-    
+
     const STATUS_OYST_PAYMENT_FRAUD = 'oyst_payment_fraud';
 
     /**
@@ -266,7 +266,7 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $allow;
     }
-    
+
     public function handleQuoteErrors(Mage_Sales_Model_Quote $quote)
     {
         if ($quote->getHasError()) {
@@ -276,7 +276,26 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
             }
             throw new Mage_Checkout_Exception(implode('\n', $errorMessages));
         }
-        
+
         return $this;
+    }
+
+    public function addQuoteExtraData($quote, $key, $value)
+    {
+        $extraData = json_decode($quote->getOystExtraData(), true);
+
+        if(empty($extraData)) {
+            $extraData = array();
+        }
+
+        $extraData[$key] = $value;
+
+        $quote->setOystExtraData(json_encode($extraData));
+    }
+
+    public function getSalesObjectExtraData($salesObject, $key)
+    {
+        $extraData = json_decode($salesObject->getOystExtraData(), true);
+        return isset($extraData[$key]) ? $extraData[$key] : null;
     }
 }

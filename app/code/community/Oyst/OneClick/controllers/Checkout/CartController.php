@@ -43,10 +43,19 @@ class Oyst_OneClick_Checkout_CartController extends Mage_Core_Controller_Front_A
             $customer = Mage::getModel('customer/customer')->setWebsiteId($websiteId)
                 ->loadByEmail($order->getCustomerEmail());
 
-            /** @var Mage_Customer_Model_Session $session */
-            $session = Mage::getSingleton('customer/session');
-            $session->loginById($customer->getId());
-            $session->setCustomerAsLoggedIn($customer);
+            if ($customer->getId()) {
+                /** @var Mage_Customer_Model_Session $session */
+                $session = Mage::getSingleton('customer/session');
+                $session->loginById($customer->getId());
+                $session->setCustomerAsLoggedIn($customer);
+
+                $newsletterOptin = Mage::helper('oyst_oneclick')->getSalesObjectExtraData($order, 'newsletter_optin');
+                if ($newsletterOptin != Mage::getModel('newsletter/subscriber')->loadByCustomer($customer)->isSubscribed()) {
+                    $customer
+                        ->setIsSubscribed($newsletterOptin)
+                        ->save();
+                }
+            }
 
             $session = Mage::getSingleton('checkout/type_onepage')->getCheckout();
             $session->setLastQuoteId($order->getQuoteId())

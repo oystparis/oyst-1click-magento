@@ -145,6 +145,9 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
         $quote =  Mage::getModel('sales/quote')->load($this->orderResponse['order']['context']['quote_id']);
+        Mage::helper('oyst_oneclick')->addQuoteExtraData(
+            $quote, 'newsletter_optin', $this->orderResponse['order']['newsletter_optin']
+        );
         $quote->collectTotals();        
 
         Mage::dispatchEvent(

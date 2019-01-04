@@ -429,6 +429,8 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
 
         $this->getCartItems($magentoQuoteBuilder, $oneClickOrderCartEstimate);
 
+        $this->getNewsletterOptin($magentoQuoteBuilder, $oneClickOrderCartEstimate);
+
         return $oneClickOrderCartEstimate->toJson();
     }
 
@@ -806,6 +808,16 @@ class Oyst_OneClick_Model_Catalog extends Mage_Core_Model_Abstract
     {
         foreach (Mage::getModel('catalog/product_type_configurable')->getConfigurableAttributes($product) as $attribute) {
             $this->configurableAttributesCode[] = $attribute->getData('product_attribute')->getAttributeCode();
+        }
+    }
+
+    protected function getNewsletterOptin($magentoQuoteBuilder, $oneClickOrderCartEstimate)
+    {
+        if ($magentoQuoteBuilder->getQuote()->getCustomerId()) {
+            $customer = $magentoQuoteBuilder->getQuote()->getCustomer();
+            $oneClickOrderCartEstimate->setNewsletterOptin(
+                Mage::getModel('newsletter/subscriber')->loadByCustomer($customer)->isSubscribed()
+            );
         }
     }
 }
