@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Oyst_OneClick>
-            <version>1.13.8</version>
+            <version>1.13.9</version>
         </Oyst_OneClick>
     </modules>
     <global>
@@ -43,11 +43,17 @@
                 <oyst_order_id>
                     <to_order>*</to_order>
                 </oyst_order_id>
+                <oyst_extra_data>
+                    <to_order>*</to_order>
+                </oyst_extra_data>
             </sales_convert_quote>
             <sales_convert_order>
                 <oyst_order_id>
                     <to_quote>*</to_quote>
                 </oyst_order_id>
+                <oyst_extra_data>
+                    <to_order>*</to_order>
+                </oyst_extra_data>
             </sales_convert_order>
         </fieldsets>
         <events>
