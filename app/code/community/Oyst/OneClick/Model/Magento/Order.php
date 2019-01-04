@@ -60,10 +60,16 @@ class Oyst_OneClick_Model_Magento_Order
                 );
                 $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER);
                 $this->quote->setCustomer($customer);
-                $this->quote->setCustomerIsGuest(false);
                 //$this->quote->save();
             }
 
+            if (!$this->quote->getCustomerId()) {
+                $this->quote->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
+                $this->quote->setCustomerIsGuest(true);
+            } else {
+                $this->quote->setCustomerIsGuest(false);
+            }
+            
             $this->order = $this->placeOrder();
             $this->order->save();
             $this->quote->setIsActive(false)->save();

@@ -99,7 +99,6 @@ class Oyst_OneClick_Model_Magento_Quote
             if ($customer instanceof Mage_Customer_Model_Customer) {
                 $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER);
                 $this->quote->setCustomer($customer);
-                $this->quote->setCustomerIsGuest(false);
             }
         }
 
@@ -118,8 +117,6 @@ class Oyst_OneClick_Model_Magento_Quote
             $this->quote->setCustomerLastname($lastname);
             $this->quote->setCustomerEmail($email);
 
-            $this->quote->setCustomerIsGuest(true);
-            $this->quote->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
             $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_GUEST);
             $this->quote->setCustomerId(null);
         }
