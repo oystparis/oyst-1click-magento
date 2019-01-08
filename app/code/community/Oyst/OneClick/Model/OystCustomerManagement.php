@@ -35,12 +35,16 @@ class Oyst_OneClick_Model_OystCustomerManagement extends Oyst_OneClick_Model_Abs
                 ->setIsDefaultShipping(true)
                 ->setSaveInAddressBook(true);
             $address->save();
+
+            $order->setCustomerId($customer->getId());
+            $order->setCustomerIsGuest(0);
+            $order->save();
         } catch (Exception $e) {
             Mage::log($e->__toString(), null, 'error_oyst.log', true);
         }
 
         Mage::dispatchEvent(
-            'oyst_oneclick_model_oyst_customer_management_create_magento_customer_from_order_after', 
+            'oyst_oneclick_model_oyst_customer_management_create_magento_customer_from_order_after',
             array('customer' => $customer, 'order' => $order)
         );
 

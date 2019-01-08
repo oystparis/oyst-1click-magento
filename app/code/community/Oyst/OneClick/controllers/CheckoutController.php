@@ -61,6 +61,16 @@ class Oyst_OneClick_CheckoutController extends Mage_Checkout_CartController
                     Mage::getSingleton('customer/session')->loginById($customer->getId());
                 }
             }
+
+            $customer = Mage::getSingleton('customer/session')->getCustomer();
+            if ($customer->getId()) {
+                $newsletterOptin = Mage::helper('oyst_oneclick')->getSalesObjectExtraData($order, 'newsletter_optin');
+                if ($newsletterOptin != Mage::getModel('newsletter/subscriber')->loadByCustomer($customer)->isSubscribed()) {
+                    $customer
+                        ->setIsSubscribed($newsletterOptin)
+                        ->save();
+                }
+            }
         } catch (\Exception $e) {
             // Handle non blocking behaviour
             Mage::log($e->__toString(), null, 'error_oyst.log', true);

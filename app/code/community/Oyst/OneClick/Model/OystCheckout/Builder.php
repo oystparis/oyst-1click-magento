@@ -290,10 +290,12 @@ class Oyst_OneClick_Model_OystCheckout_Builder extends Oyst_OneClick_Model_Commo
             $oystCommonUser['email'] = $customer->getEmail();
             $oystCommonUser['firstname'] = $customer->getFirstname();
             $oystCommonUser['lastname'] = $customer->getLastname();
+            $oystCommonUser['newsletter'] = $customer->getNewsletterSubscriber()->isSubscribed();
         } else {
             $oystCommonUser['email'] = $quote->getCustomerEmail();
             $oystCommonUser['firstname'] = $quote->getCustomerFirstname();
             $oystCommonUser['lastname'] = $quote->getCustomerLastname();
+            $oystCommonUser['newsletter'] = false;
         }
 
         return $oystCommonUser;

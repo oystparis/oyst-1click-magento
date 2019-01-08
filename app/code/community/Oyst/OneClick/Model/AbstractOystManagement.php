@@ -13,6 +13,15 @@ class Oyst_OneClick_Model_AbstractOystManagement
         return Mage::getModel('customer/customer')->setWebsiteId($websiteId)->loadByEmail($email);
     }
 
+    protected function addNewsletterSubscriberToCustomer($customer)
+    {
+        if ($customer->getId()) {
+            $customer->setNewsletterSubscriber(
+                Mage::getModel('newsletter/subscriber')->loadByCustomer($customer)
+            );
+        }
+    }
+
     protected function getMagentoQuote($id)
     {
         $quote = Mage::getModel('sales/quote')->loadActive($id);

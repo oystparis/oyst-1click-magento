@@ -17,6 +17,8 @@ class Oyst_OneClick_Model_OystCheckoutManagement extends Oyst_OneClick_Model_Abs
             $quote->getStoreId()
         );
 
+        $this->addNewsletterSubscriberToCustomer($quote->getCustomer());
+
         return Mage::getModel('oyst_oneclick/oystCheckout_builder')->buildOystCheckout($quote, $shippingMethods, $products);
     }
 

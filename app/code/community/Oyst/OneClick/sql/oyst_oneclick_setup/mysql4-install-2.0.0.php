@@ -19,6 +19,21 @@ $sales->addAttribute(
         'type' => 'varchar',
     )
 );
+// Add attribute to order and quote for synchronisation
+$sales->addAttribute(
+    'order',
+    'oyst_extra_data',
+    array(
+        'type' => 'text',
+    )
+);
+$sales->addAttribute(
+    'quote',
+    'oyst_extra_data',
+    array(
+        'type' => 'text',
+    )
+);
 
 $data     = array();
 $data[] = array(
