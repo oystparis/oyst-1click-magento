@@ -102,7 +102,7 @@ class Oyst_OneClick_Model_OystPaymentManagement extends Oyst_OneClick_Model_Abst
         $payment->setIsTransactionClosed(1);
 
         if (Mage::getStoreConfig('oyst_oneclick/general/enable_invoice_auto_generation')) {
-            $payment->registerCaptureNotification($helper->getHumanAmount($this->orderResponse['order']['order_amount']['value']));
+            $payment->registerCaptureNotification($oystOrder['payment']['last_transaction']['amount']);
         }
 
         if ($order->getState() != Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW) {

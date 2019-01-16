@@ -32,6 +32,11 @@ class Oyst_OneClick_Model_OystCheckout_Builder extends Oyst_OneClick_Model_Commo
             $oystCheckout['coupons'] = $this->buildOystCheckoutCoupons($quote->getCouponCode());
         }
 
+        Mage::dispatchEvent(
+            'oyst_oneclick_model_oyst_checkout_builder_build_oyst_checkout',
+            array('oyst_checkout' => $oystCheckout, 'quote' => $quote, 'shipping_methods' => $shippingMethods, 'products' => $products)
+        );
+
         return $oystCheckout;
     }
 

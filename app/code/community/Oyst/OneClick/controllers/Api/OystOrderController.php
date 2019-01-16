@@ -6,9 +6,13 @@ class Oyst_OneClick_Api_OystOrderController extends Oyst_OneClick_Controller_Api
     {
         $oystOrderId = $this->getRequest()->getParam('oyst_order_id');
 
-        $result = Mage::getModel('oyst_oneclick/oystOrderManagement')->getOystOrderFromMagentoOrder($oystOrderId);
+        try {
+            $result = Mage::getModel('oyst_oneclick/oystOrderManagement')->getOystOrderFromMagentoOrder($oystOrderId);
 
-        $this->getResponse()->setBody(json_encode($result));
+            $this->getResponse()->setBody(json_encode($result));
+        } catch (Exception $e) {
+            $this->handleException($e);
+        }
     }
 
     public function createOrderFromOystOrderAction()
@@ -19,9 +23,13 @@ class Oyst_OneClick_Api_OystOrderController extends Oyst_OneClick_Controller_Api
             // TODO
         }
 
-        $result = Mage::getModel('oyst_oneclick/oystOrderManagement')->createOrderFromOystOrder($oystOrder['oystOrder']);
+        try {
+            $result = Mage::getModel('oyst_oneclick/oystOrderManagement')->createOrderFromOystOrder($oystOrder['oystOrder']);
 
-        $this->getResponse()->setBody(json_encode($result));
+            $this->getResponse()->setBody(json_encode($result));
+        } catch (Exception $e) {
+            $this->handleException($e);
+        }
     }
 
     public function syncMagentoOrderWithOystOrderStatusAction()
@@ -33,10 +41,14 @@ class Oyst_OneClick_Api_OystOrderController extends Oyst_OneClick_Controller_Api
             // TODO
         }
 
-        $result = Mage::getModel('oyst_oneclick/oystOrderManagement')->syncMagentoOrderWithOystOrderStatus(
-            $oystOrderId, $oystOrder['oystOrder']
-        );
+        try {
+            $result = Mage::getModel('oyst_oneclick/oystOrderManagement')->syncMagentoOrderWithOystOrderStatus(
+                $oystOrderId, $oystOrder['oystOrder']
+            );
 
-        $this->getResponse()->setBody(json_encode($result));
+            $this->getResponse()->setBody(json_encode($result));
+        } catch (Exception $e) {
+            $this->handleException($e);
+        }
     }
 }

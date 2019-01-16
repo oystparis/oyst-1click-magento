@@ -4,9 +4,13 @@ class Oyst_OneClick_Api_OystConfigController extends Oyst_OneClick_Controller_Ap
 {
     public function getEcommerceConfigAction()
     {
-        $result = Mage::getModel('oyst_oneclick/oystConfigManagement')->getEcommerceConfig();
+        try {
+            $result = Mage::getModel('oyst_oneclick/oystConfigManagement')->getEcommerceConfig();
 
-        $this->getResponse()->setBody(json_encode($result));
+            $this->getResponse()->setBody(json_encode($result));
+        } catch (Exception $e) {
+            $this->handleException($e);
+        }
     }
 
     public function saveOystConfigAction()
@@ -17,8 +21,12 @@ class Oyst_OneClick_Api_OystConfigController extends Oyst_OneClick_Controller_Ap
             // TODO
         }
 
-        $result = Mage::getModel('oyst_oneclick/oystConfigManagement')->saveOystConfig($oystConfig['oystConfig']);
+        try {
+            $result = Mage::getModel('oyst_oneclick/oystConfigManagement')->saveOystConfig($oystConfig['oystConfig']);
 
-        $this->getResponse()->setBody(json_encode($result));
+            $this->getResponse()->setBody(json_encode($result));
+        } catch (Exception $e) {
+            $this->handleException($e);
+        }
     }
 }

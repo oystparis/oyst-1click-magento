@@ -14,6 +14,10 @@ class Oyst_OneClick_Model_OystOrder_Builder
         $oystOrder['internal_id'] = $order->getIncrementId();
 
         // TODO : All members
+        Mage::dispatchEvent(
+            'oyst_oneclick_model_oyst_order_builder_build_oyst_order',
+            array('oyst_order' => $oystOrder, 'order' => $order)
+        );
 
         return $oystOrder;
     }

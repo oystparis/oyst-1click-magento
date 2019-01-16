@@ -18,6 +18,11 @@ class Oyst_OneClick_Model_MagentoQuote_Synchronizer
         $this->syncMagentoCoupon($quote, $coupon);
         $this->syncMagentoPaymentMethod($quote);
 
+        Mage::dispatchEvent(
+            'oyst_oneclick_model_magento_quote_sync_quote_after',
+            array('quote' => $quote, 'oyst_checkout' => $oystCheckout)
+        );
+
         return true;
     }
 
@@ -66,6 +71,11 @@ class Oyst_OneClick_Model_MagentoQuote_Synchronizer
             $quote->setCustomerLastname($oystCheckoutUser['lastname']);
             $quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_GUEST);
         }
+
+        Mage::dispatchEvent(
+            'oyst_oneclick_model_magento_quote_sync_customer_after',
+            array('quote' => $quote, 'customer' => $customer, 'oyst_checkout_user' => $oystCheckoutUser)
+        );
 
         return true;
     }

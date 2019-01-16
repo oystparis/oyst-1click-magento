@@ -61,6 +61,11 @@ class Oyst_OneClick_Model_OystOrderManagement extends Oyst_OneClick_Model_Abstra
             throw new \Exception('Non handled status : '.$oystOrder['status']);
         }
 
+        Mage::dispatchEvent(
+            'oyst_oneclick_model_oyst_order_management_sync_magento_order_with_oyst_order_status_after',
+            array('order' => $order, 'oyst_order' => $oystOrder)
+        );
+
         return Mage::getModel('oyst_oneclick/oystOrder_builder')->buildOystOrder($order);
     }
 }
