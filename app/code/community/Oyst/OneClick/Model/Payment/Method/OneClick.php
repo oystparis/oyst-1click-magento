@@ -34,4 +34,16 @@ class Oyst_OneClick_Model_Payment_Method_OneClick extends Mage_Payment_Model_Met
     {
         return Mage::getStoreConfig('oyst_oneclick/general/enabled');
     }
+
+    public function refund(Varien_Object $payment, $amount)
+    {
+        $creditmemo = $payment->getCreditmemo();
+        $order = $payment->getOrder();
+
+        Mage::getModel('oyst_oneclick/oystPaymentManagement')->handleMagentoOrdersToRefund(
+            array($order->getId() => $creditmemo->getBaseGrandTotal()), true
+        );
+
+        return $this;
+    }
 }

@@ -10,12 +10,4 @@ class Oyst_OneClick_Model_Observer
             Mage::getModel('oyst_oneclick/oystPaymentManagement')->handleMagentoOrdersToCapture([$order->getId() => $order->getGrandTotal()]);
         }
     }
-
-    public function handleOrderRefund(Varien_Event_Observer $observer)
-    {
-        $creditmemo = $observer->getEvent()->getDataObject();
-        $order = $creditmemo->getOrder();
-
-        Mage::getModel('oyst_oneclick/oystPaymentManagement')->handleMagentoOrdersToRefund([$order->getId() => $creditmemo->getGrandTotal()], true);
-    }
 }

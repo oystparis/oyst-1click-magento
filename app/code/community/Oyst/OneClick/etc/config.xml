@@ -64,14 +64,6 @@
                     </oyst_oneclick>
                 </observers>
             </sales_order_save_after>
-            <sales_order_creditmemo_save_after>
-                <observers>
-                    <oyst_oneclick>
-                        <class>oyst_oneclick/observer</class>
-                        <method>handleOrderRefund</method>
-                    </oyst_oneclick>
-                </observers>
-            </sales_order_creditmemo_save_after>
         </events>
     </global>
     <admin>
