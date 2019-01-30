@@ -95,4 +95,6 @@ $sales->getConnection()->insertArray(
     $data
 );
 
+Mage::getConfig()->saveConfig('oyst_oneclick/general/access_token', Mage::helper('core')->getRandomString(32), 'default', 0);
+
 $sales->endSetup();

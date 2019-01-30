@@ -20,7 +20,7 @@ class Oyst_OneClick_Gateway_CallbackClient
         $client->setRawData(json_encode([
             'orderAmounts' => $oystOrderAmounts
         ]))->setEncType('application/json');
-        $client->setUri($endpoint['url']);
+        $client->setUri($this->getEndpointUrl($endpoint['url']));
 
         $response = $client->request('POST');
 
@@ -37,5 +37,14 @@ class Oyst_OneClick_Gateway_CallbackClient
         }
 
         throw new Exception('Invalid endpoint type : '.$endpointType);
+    }
+
+    protected function getEndpointUrl($endpointUrl)
+    {
+        return str_replace(
+            Oyst_OneClick_Helper_Constants::MERCHANT_ID_PLACEHOLDER,
+            Mage::getStoreConfig('oyst_oneclick/general/merchant_id'),
+            $endpointUrl
+        );
     }
 }
