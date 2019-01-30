@@ -237,6 +237,12 @@ class Oyst_OneClick_Model_OystCheckout_Builder extends Oyst_OneClick_Model_Commo
         $oystCheckoutShipping['methods_available'] = $this->buildOystCheckoutShippingMethodsAvailable($shippingMethods, $shippingAddress);
         $oystCheckoutShipping['method_applied'] = $this->buildOystCheckoutShippingMethodApplied($shippingAddress->getShippingMethod(), $shippingMethods, $shippingAddress);
 
+        foreach ($oystCheckoutShipping['methods_available'] as $idx => $methodAvailable) {
+            if ($methodAvailable['reference'] == $oystCheckoutShipping['method_applied']['reference']) {
+                $oystCheckoutShipping['methods_available'][$idx] = $oystCheckoutShipping['method_applied'];
+            }
+        }
+
         return $oystCheckoutShipping;
     }
 
