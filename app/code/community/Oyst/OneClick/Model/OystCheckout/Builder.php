@@ -319,7 +319,7 @@ class Oyst_OneClick_Model_OystCheckout_Builder extends Oyst_OneClick_Model_Commo
         foreach ($totals as $total) {
             if ($total->getData('code') == 'discount') {
                 $oystCheckoutDiscount = array();
-                $oystCheckoutDiscount['label'] = $total->getData('title')->__toString();
+                $oystCheckoutDiscount['label'] = $total->getData('title');
                 $oystCheckoutDiscount['amount_tax_incl'] = $total->getData('value');
 
                 $oystCheckoutDiscounts[] = $oystCheckoutDiscount;

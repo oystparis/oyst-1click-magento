@@ -78,9 +78,9 @@ class Oyst_OneClick_Model_AbstractOystManagement
             return Mage::getModel('salesrule/coupon');
         } else {
             foreach ($oystCoupons as $oystCoupon) {
-                $coupon = Mage::getModel('salesrule/coupon')->load($oystCoupon->getCode(), 'code');
+                $coupon = Mage::getModel('salesrule/coupon')->load($oystCoupon['code'], 'code');
                 if (!$coupon->getId()) {
-                    throw new Exception('Invalid coupon code : '.$oystCoupon->getCode());
+                    throw new Exception('Invalid coupon code : '.$oystCoupon['code']);
                 }
                 return $coupon;
             }
