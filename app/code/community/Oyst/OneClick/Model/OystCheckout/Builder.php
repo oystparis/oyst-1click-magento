@@ -23,9 +23,9 @@ class Oyst_OneClick_Model_OystCheckout_Builder extends Oyst_OneClick_Model_Commo
 
         if (!$quote->isVirtual()) {
             $oystCheckout['shipping'] = $this->buildOystCheckoutShipping($quote->getShippingAddress(), $shippingMethods);
-            $oystCheckout['discounts'] = $this->buildOystCheckoutDiscounts($quote->getShippingAddress()->getTotals());
+            $oystCheckout['discounts'] = $this->buildOystCheckoutDiscounts($quote->getTotals());
         } else {
-            $oystCheckout['discounts'] = $this->buildOystCheckoutDiscounts($quote->getBillingAddress()->getTotals());
+            $oystCheckout['discounts'] = $this->buildOystCheckoutDiscounts($quote->getTotals());
         }
 
         if ($quote->getCouponCode()) {
@@ -318,11 +318,21 @@ class Oyst_OneClick_Model_OystCheckout_Builder extends Oyst_OneClick_Model_Commo
 
         foreach ($totals as $total) {
             if ($total->getData('code') == 'discount') {
-                $oystCheckoutDiscount = array();
-                $oystCheckoutDiscount['label'] = $total->getData('title');
-                $oystCheckoutDiscount['amount_tax_incl'] = $total->getData('value');
+                if ($total->getFullInfo()) {
+                    foreach ($total->getFullInfo() as $salesRuleId => $discountInfo) {
+                        $oystCheckoutDiscount = array();
+                        $oystCheckoutDiscount['label'] = strip_tags($discountInfo['label']);
+                        $oystCheckoutDiscount['amount_tax_incl'] = abs($discountInfo['amount']);
 
-                $oystCheckoutDiscounts[] = $oystCheckoutDiscount;
+                        $oystCheckoutDiscounts[] = $oystCheckoutDiscount;
+                    }
+                } else {
+                    $oystCheckoutDiscount = array();
+                    $oystCheckoutDiscount['label'] = $total->getData('title');
+                    $oystCheckoutDiscount['amount_tax_incl'] = abs($total->getData('value'));
+
+                    $oystCheckoutDiscounts[] = $oystCheckoutDiscount;
+                }
             }
         }
 

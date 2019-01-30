@@ -4,7 +4,11 @@ class Oyst_OneClick_Model_OystCheckoutManagement extends Oyst_OneClick_Model_Abs
 {
     public function getOystCheckoutFromMagentoQuote($id)
     {
-        $quote = $this->getMagentoQuote($id);
+        $quote = Mage::registry('oyst_oneclick_current_quote');
+        if(empty($quote) || $quote->getId() != $id) {
+            $quote = $this->getMagentoQuote($id);
+        }
+
         $shippingMethods = $this->getShippingMethodList($quote->getShippingAddress());
 
         $productIds = array();
@@ -41,6 +45,7 @@ class Oyst_OneClick_Model_OystCheckoutManagement extends Oyst_OneClick_Model_Abs
 
         $quote->setTotalsCollectedFlag(false)->collectTotals();
         $quote->save();
+        Mage::register('oyst_oneclick_current_quote', $quote, true);
 
         return $this->getOystCheckoutFromMagentoQuote($quote->getId());
     }
