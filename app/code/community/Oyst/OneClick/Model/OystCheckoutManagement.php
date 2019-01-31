@@ -44,6 +44,7 @@ class Oyst_OneClick_Model_OystCheckoutManagement extends Oyst_OneClick_Model_Abs
         }
 
         $quote->setTotalsCollectedFlag(false)->collectTotals();
+        Mage::helper('oyst_oneclick')->handleQuoteErrors($quote);
         $quote->save();
         Mage::register('oyst_oneclick_current_quote', $quote, true);
 
