@@ -18,12 +18,11 @@ class Oyst_OneClick_Block_Checkout_Tracking extends Mage_Core_Block_Abstract
 
     protected function _toHtml()
     {
-        if (!$this->getOrder()->getId()
-         || strpos($this->getOrder()->getPayment()->getMethod(), 'oyst') !== false) {
+        if (!$this->getOrder()->getId()) {
             return '';
         }
 
-        return '<img src="'.$this->getTrackerBaseUrl().'?'.$this->getExtraParameters().'"/>';
+        return '<img src="'.$this->getTrackerBaseUrl().'?'.$this->getParameters().'&'.$this->getExtraParameters().'"/>';
     }
 
     protected function getOrder()
@@ -37,7 +36,16 @@ class Oyst_OneClick_Block_Checkout_Tracking extends Mage_Core_Block_Abstract
 
     protected function getTrackerBaseUrl()
     {
-        if (Mage::getStoreConfig('oyst/oneclick/mode') == 'prod') {
+        $isCustomEnvProd = Mage::getStoreConfig('oyst/oneclick/mode') == 'custom';
+
+        foreach(array('staging', 'sandbox', 'test') as $env) {
+            if (strpos(Mage::getStoreConfig('oyst/oneclick/api_url'), $env) !== false) {
+                $isCustomEnvProd = false;
+                break;
+            }
+        }
+
+        if (Mage::getStoreConfig('oyst/oneclick/mode') == 'prod' || $isCustomEnvProd) {
             return 'https://tkr.11rupt.io/';
         } else {
             return 'https://staging-tkr.11rupt.eu/';
@@ -51,8 +59,25 @@ class Oyst_OneClick_Block_Checkout_Tracking extends Mage_Core_Block_Abstract
             'extra_parameters[paymentMethod]='.$this->getOrder()->getPayment()->getMethod(),
             'extra_parameters[currency]='.$this->getOrder()->getOrderCurrencyCode(),
             'extra_parameters[referrer]='.urlencode(Mage::helper('core/url')->getCurrentUrl()),
+            'extra_parameters[userEmail]='.urlencode($this->getOrder()->getCustomerEmail()),
+            'extra_parameters[orderId]='.$this->getOrder()->getIncrementId(),
         );
 
+        if ($this->getOrder()->getCustomerId()) {
+            $extraParameters['extra_parameters[userId]'] = $this->getOrder()->getCustomerId();
+        }
+
         return implode('&', $extraParameters);
+    }
+
+    protected function getParameters()
+    {
+        $parameters = array(
+            'version=1',
+            'type=track',
+            'event=Confirmation%20Displayed'
+        );
+
+        return implode('&', $parameters);
     }
 }

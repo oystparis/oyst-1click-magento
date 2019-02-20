@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Oyst_OneClick</name>
-    <version>1.13.9</version>
+    <version>1.13.10</version>
     <stability>stable</stability>
     <license uri="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache</license>
     <channel>community</channel>
