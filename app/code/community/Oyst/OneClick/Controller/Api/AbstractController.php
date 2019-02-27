@@ -19,14 +19,18 @@ class Oyst_OneClick_Controller_Api_AbstractController extends Mage_Core_Controll
 
         return $this;
     }
-    
+
     protected function handleException($e)
     {
         Mage::log($e->__toString(), null, 'error_oyst.log', true);
-        
+
         $this->getResponse()
             ->clearHeaders()
             ->setHeader('HTTP/1.1', '400 Bad Request')
-            ->setBody(json_encode(array('error' => 'M1-Oyst-Error', 'message' => $e->getMessage())));
+            ->setBody(json_encode(array(
+                'type' => 'M1-Oyst-Error', 
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            )));
     }
 }
