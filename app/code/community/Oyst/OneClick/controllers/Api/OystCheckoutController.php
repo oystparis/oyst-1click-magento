@@ -32,4 +32,3 @@ class Oyst_OneClick_Api_OystCheckoutController extends Oyst_OneClick_Controller_
         }
     }
 }
-

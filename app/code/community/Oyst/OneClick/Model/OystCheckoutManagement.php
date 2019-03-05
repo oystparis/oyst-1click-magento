@@ -8,6 +8,7 @@ class Oyst_OneClick_Model_OystCheckoutManagement extends Oyst_OneClick_Model_Abs
         if(empty($quote) || $quote->getId() != $id) {
             $quote = $this->getMagentoQuote($id);
         }
+        Mage::helper('oyst_oneclick')->handleQuoteErrors($quote);
 
         $shippingMethods = $this->getShippingMethodList($quote->getShippingAddress());
 

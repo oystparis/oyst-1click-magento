@@ -21,8 +21,18 @@ class Oyst_OneClick_CheckoutController extends Mage_Checkout_CartController
 
         $this->getResponse()->setHttpResponseCode(200);
         $this->getResponse()->clearHeader('Location');
+        $data = array('cart_id' => $quote->getId());
+
+        if ($quote->getHasError()) {
+            $data['error'] = true;
+            foreach ($quote->getErrors() as $error) {
+                $errorMessages[] = $error->getCode();
+            }
+            $data['message'] = implode('\n', $errorMessages);
+        }
+
         $this->getResponse()->setBody(
-            json_encode(array('cart_id' => $quote->getId()))
+            json_encode($data)
         );
     }
 
