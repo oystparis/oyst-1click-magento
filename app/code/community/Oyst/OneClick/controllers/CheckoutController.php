@@ -49,8 +49,8 @@ class Oyst_OneClick_CheckoutController extends Mage_Checkout_CartController
         $checkoutSession->setLastRealOrderId($order->getIncrementId());
         $checkoutSession->setLastOrderStatus($order->getStatus());
 
-        $this->handleDeactivateQuote($quote);
         $this->handleCustomerRedirectFromOrder($order);
+        $this->handleDeactivateQuote($quote);
         $this->handleSendNewOrderEmail($order);
 
         $this->_redirect('checkout/onepage/success');
