@@ -4,6 +4,8 @@ class Oyst_OneClick_Controller_Api_AbstractController extends Mage_Core_Controll
 {
     public function preDispatch()
     {
+        set_error_handler(array($this, 'handleError'));
+
         parent::preDispatch();
 
         $authorizationHeader = str_replace('Bearer ', '', $this->getRequest()->getHeader('Authorization'));
@@ -28,9 +30,18 @@ class Oyst_OneClick_Controller_Api_AbstractController extends Mage_Core_Controll
             ->clearHeaders()
             ->setHeader('HTTP/1.1', '400 Bad Request')
             ->setBody(json_encode(array(
-                'type' => 'M1-Oyst-Error', 
+                'type' => 'M1-Oyst-Error',
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             )));
+    }
+
+    public function handleError($severity, $message, $file, $line)
+    {
+        if (!(error_reporting() & $severity)) {
+            // Ce code d'erreur n'est pas inclu dans error_reporting
+            return;
+        }
+        throw new ErrorException($message, 0, $severity, $file, $line);
     }
 }

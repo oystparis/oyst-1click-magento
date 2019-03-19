@@ -34,7 +34,7 @@ class Oyst_OneClick_Model_OystCheckoutManagement extends Oyst_OneClick_Model_Abs
         /* @var Mage_Customer_Model_Customer $customer */
         $customer = $this->getMagentoCustomer($oystCheckout['user']['email'], $quote->getStore()->getWebsiteId());
         /* @var Mage_SalesRule_Model_Coupon $coupon */
-        $coupon = $this->getMagentoCoupon($oystCheckout['coupons']);
+        $coupon = $this->getMagentoCoupon(isset($oystCheckout['coupons']) ? $oystCheckout['coupons'] : null);
         Mage::getModel('oyst_oneclick/magentoQuote_synchronizer')->syncMagentoQuote($oystCheckout, $quote, $customer, $coupon);
 
         if(!$quote->isVirtual()) {
