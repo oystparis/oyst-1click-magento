@@ -4,6 +4,12 @@ class Oyst_OneClick_Block_Adminhtml_System_Config_Form_AccessToken extends Mage_
 {
     protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
-        return Mage::getStoreConfig('oyst_oneclick/general/access_token');
+        $accessToken = Mage::getStoreConfig('oyst_oneclick/general/access_token');
+
+        if (empty($accessToken)) {
+            return parent::_getElementHtml($element);
+        } else {
+            return $accessToken;
+        }
     }
 }
