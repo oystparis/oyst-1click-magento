@@ -106,9 +106,7 @@ class Oyst_OneClick_Model_MagentoQuote_Synchronizer
         $billingAddress->addData($billingAddressData);
 
         $billingAddress->setSaveInAddressBook(false);
-        if (($validateRes = $billingAddress->validate()) !== true) {
-            throw new Mage_Checkout_Exception(implode('\n', $validateRes));
-        }
+        Mage::helper('oyst_oneclick')->validateAddress($billingAddress, $quote->getStore());
 
         /* @var Mage_Sales_Model_Quote_Address $shippingAddress */
         $shippingAddress = $quote->getShippingAddress();
@@ -117,9 +115,7 @@ class Oyst_OneClick_Model_MagentoQuote_Synchronizer
         $shippingAddress->addData($shippingAddressData);
 
         $shippingAddress->setSaveInAddressBook(false);
-        if (($validateRes = $shippingAddress->validate()) !== true) {
-            throw new Mage_Checkout_Exception(implode('\n', $validateRes));
-        }
+        Mage::helper('oyst_oneclick')->validateAddress($shippingAddress, $quote->getStore());
 
         Mage::dispatchEvent('oyst_oneclick_model_magento_quote_sync_addresses_after', array('quote' => $quote));
 

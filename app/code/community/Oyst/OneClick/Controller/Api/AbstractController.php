@@ -30,7 +30,8 @@ class Oyst_OneClick_Controller_Api_AbstractController extends Mage_Core_Controll
             ->clearHeaders()
             ->setHeader('HTTP/1.1', '400 Bad Request')
             ->setBody(json_encode(array(
-                'type' => 'M1-Oyst-Error',
+                'platform' => 'MAGENTO1',
+                'code' => Mage::helper('oyst_oneclick')->mapMagentoExceptionCodeToOystErrorCode($e->getCode()),
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             )));
