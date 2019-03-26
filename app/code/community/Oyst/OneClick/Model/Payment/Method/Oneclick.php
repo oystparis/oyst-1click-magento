@@ -28,6 +28,7 @@ class Oyst_OneClick_Model_Payment_Method_Oneclick extends Mage_Payment_Model_Met
     protected $_canUseCheckout = false;
     protected $_canUseForMultishipping = false;
     protected $_canManageRecurringProfiles = false;
+    protected $_canReviewPayment = true;
 
     /**
      * @return string
@@ -83,5 +84,17 @@ class Oyst_OneClick_Model_Payment_Method_Oneclick extends Mage_Payment_Model_Met
         }
 
         return $this;
+    }
+
+    public function denyPayment(Mage_Payment_Model_Info $payment)
+    {
+        parent::denyPayment($payment);
+        return true;
+    }
+
+    public function acceptPayment(Mage_Payment_Model_Info $payment)
+    {
+        parent::acceptPayment($payment);
+        return true;
     }
 }
