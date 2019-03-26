@@ -24,8 +24,7 @@
     (function () {
         if ("function" === typeof oystOneClick) {
             var oystOneClickConfig = {
-                'oneClickUrl': <?php echo $this->getOneClickUrl(); ?>,
-                'isCheckoutCart': true
+                'oneClickUrl': <?php echo $this->getOneClickUrl(); ?>
             };
 
             oystOneClick(oystOneClickConfig);

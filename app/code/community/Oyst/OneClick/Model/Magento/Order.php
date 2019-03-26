@@ -22,15 +22,23 @@ class Oyst_OneClick_Model_Magento_Order
 
     private $additionalData = array();
 
-    public function __construct(Mage_Sales_Model_Quote $quote)
+    /** @var string[] API response */
+    private $apiData = null;
+
+    public function __construct($orderResponse)
+    {
+        $this->apiData = $orderResponse;
+    }
+
+    public function setQuote(Mage_Sales_Model_Quote $quote)
     {
         $this->quote = $quote;
+        return $this;
     }
 
     public function setAdditionalData($additionalData)
     {
         $this->additionalData = $additionalData;
-
         return $this;
     }
 
@@ -42,16 +50,27 @@ class Oyst_OneClick_Model_Magento_Order
         return $this->order;
     }
 
-    public function buildOrder()
-    {
-        $this->createOrder();
-    }
-
-    private function createOrder()
+    public function saveOrder()
     {
         try {
+            if (!$this->quote->getCustomerId() 
+              && Mage::getStoreConfig('oyst/oneclick/new_customer_account')) {
+                $customer = $this->createCustomer(
+                    $this->quote->getCustomerFirstname(), $this->quote->getCustomerLastname(), $this->quote->getCustomerEmail()
+                );
+                $this->quote->setCheckoutMethod(Mage_Checkout_Model_Type_Onepage::METHOD_CUSTOMER);
+                $this->quote->setCustomer($customer);
+                //$this->quote->save();
+            }
+
+            if (!$this->quote->getCustomerId()) {
+                $this->quote->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
+                $this->quote->setCustomerIsGuest(true);
+            } else {
+                $this->quote->setCustomerIsGuest(false);
+            }
+            
             $this->order = $this->placeOrder();
-            $this->order->setCreatedAt($this->quote->getCreatedAt());
             $this->order->save();
             $this->quote->setIsActive(false)->save();
         } catch (Exception $e) {
@@ -101,5 +120,60 @@ class Oyst_OneClick_Model_Magento_Order
         $orderObj->save();
 
         return $orderObj;
+    }
+
+    /**
+     * Create new customer.
+     *
+     * @param string $firstname
+     * @param string $lastname
+     * @param string $email
+     *
+     * @return false|Mage_Core_Model_Abstract
+     */
+    private function createCustomer($firstname, $lastname, $email)
+    {
+        /** @var Mage_Customer_Model_Customer $customer */
+        $customer = Mage::getModel('customer/customer');
+        $store = Mage::app()->getStore();
+        $websiteId = $store->getWebsiteId();
+
+        try {
+            $customer->setWebsiteId($websiteId)
+                ->setStore($store)
+                ->setFirstname($this->quote->getCustomerFirstname())
+                ->setLastname($this->quote->getCustomerLastname())
+                ->setEmail($this->quote->getCustomerEmail());
+            $customer->save();
+
+            // Send welcome email
+            $customer->sendNewAccountEmail('registered', '', $store->getId(), $customer->generatePassword(16));
+
+            /** @var Mage_Customer_Model_Address $address */
+            $address = Mage::getModel('customer/address');
+            $quoteAddress = $this->quote->isVirtual() ? $this->quote->getBillingAddress() : $this->quote->getShippingAddress();
+
+            $address->setCustomerId($customer->getId())
+                ->setFirstname($customer->getFirstname())
+                ->setLastname($customer->getLastname())
+                ->setCountryId($quoteAddress->getCountryId())
+                ->setPostcode($quoteAddress->getPostcode())
+                ->setCity($quoteAddress->getCity())
+                ->setTelephone($quoteAddress->getTelephone())
+                ->setStreet($quoteAddress->getStreet())
+                ->setIsDefaultBilling(true)
+                ->setIsDefaultShipping(true)
+                ->setSaveInAddressBook(true);
+            if (($validateRes = $address->validate())!==true) {
+                throw new Exception(implode('\n', $validateRes));
+            }
+            $address->save();
+        } catch (Exception $e) {
+            Mage::helper('oyst_oneclick')->log($e->getMessage());
+        }
+
+        Mage::dispatchEvent('oyst_oneclick_model_magento_order_create_customer_after', array('quote' => $this->quote, 'request' => $this->apiData, 'customer' => $customer));
+
+        return $customer;
     }
 }

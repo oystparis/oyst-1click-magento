@@ -14,13 +14,10 @@ use Oyst\Api\OystOrderApi;
 use Oyst\Classes\OystPrice;
 
 /**
- * Order ApiWrapper Model
+ * ApiWrapper_Type_Order Model
  */
-class Oyst_OneClick_Model_Order_ApiWrapper extends Mage_Core_Model_Abstract
+class Oyst_OneClick_Model_ApiWrapper_Type_Order extends Oyst_OneClick_Model_ApiWrapper_AbstractType
 {
-    /** @var Oyst_OneClick_Model_Api $_oystClient */
-    protected $_oystClient;
-
     /** @var OystOrderApi $_orderApi */
     protected $_orderApi;
 
@@ -28,7 +25,7 @@ class Oyst_OneClick_Model_Order_ApiWrapper extends Mage_Core_Model_Abstract
 
     public function __construct()
     {
-        $this->_oystClient = Mage::getModel('oyst_oneclick/api');
+        parent::__construct();
         $this->_orderApi = $this->_oystClient->getClient($this->_type);
     }
 

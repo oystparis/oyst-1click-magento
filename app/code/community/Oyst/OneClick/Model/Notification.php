@@ -18,6 +18,8 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
 
     const NOTIFICATION_STATUS_FINISHED = 'finished';
 
+    const NOTIFICATION_STATUS_FAIL = 'fail';
+
     const NOTIFICATION_STATUS_ZOMBIE = 'zombie';
 
     const XML_PATH_NOTIFICATIONS_UPDATE_MAX_DELAY = 'oyst/oneclick/notifications_update_max_delay';
@@ -121,5 +123,31 @@ class Oyst_OneClick_Model_Notification extends Mage_Core_Model_Abstract
                 Mage::logException($e);
             }
         }
+    }
+
+    public function registerNotificationStart($event, $data)
+    {
+        $this->setData(array(
+            'event' => $event,
+            'oyst_data' => Zend_Json::encode($data),
+            'status' => self::NOTIFICATION_STATUS_START,
+            'created_at' => Mage::getModel('core/date')->gmtDate(),
+            'executed_at' => Mage::getModel('core/date')->gmtDate(),
+        ));
+        $this->save();
+    }
+
+    public function registerNotificationFinish()
+    {
+        $this->setStatus(self::NOTIFICATION_STATUS_FINISHED)
+            ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
+            ->save();
+    }
+
+    public function registerNotificationFail()
+    {
+        $this->setStatus(self::NOTIFICATION_STATUS_FAIL)
+            ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
+            ->save();
     }
 }

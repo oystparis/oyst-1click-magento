@@ -12,13 +12,11 @@
 use Oyst\Api\OystApiClientFactory;
 use Oyst\Api\OystCatalogApi;
 use Oyst\Classes\OystUserAgent;
-use Oyst\Api\OystPaymentApi;
-use Oyst\Classes\OystPrice;
 
 /**
  * API Model
  */
-class Oyst_OneClick_Model_Api extends Mage_Core_Model_Abstract
+class Oyst_OneClick_Model_ApiWrapper_Client extends Mage_Core_Model_Abstract
 {
     /*
      * API length

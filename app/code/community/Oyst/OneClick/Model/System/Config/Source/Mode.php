@@ -25,8 +25,8 @@ class Oyst_OneClick_Model_System_Config_Source_Mode
      */
     public function toOptionArray()
     {
-        /** @var Oyst_OneClick_Model_Api $oystClient */
-        $oystApi = Mage::getModel('oyst_oneclick/api');
+        /** @var Oyst_OneClick_Model_ApiWrapper_Client $oystClient */
+        $oystApi = Mage::getModel('oyst_oneclick/apiWrapper_client');
 
         $list = array();
         foreach ($oystApi->getEnvironments() as $environment) {

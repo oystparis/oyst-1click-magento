@@ -63,16 +63,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         // Create new notification in db with status 'start'
         $notification = Mage::getModel('oyst_oneclick/notification');
-        $notification->setData(
-            array(
-                'event' => $this->eventNotification,
-                'oyst_data' => Zend_Json::encode($apiData),
-                'status' => Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_START,
-                'created_at' => Mage::getModel('core/date')->gmtDate(),
-                'executed_at' => Mage::getModel('core/date')->gmtDate(),
-            )
-        );
-        $notification->save();
+        $notification->registerNotificationStart($this->eventNotification, $apiData);
 
         // When notification already processed
         if (!is_null($magentoOrderId = $lastNotification->isOrderProcessed($oystOrderId))) {
@@ -81,23 +72,31 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
                 'message' => 'notification has been already processed.',
             ));
         } else {
-            // Sync Order From Api
-            $result = $this->sync(array(
-                'oyst_order_id' => $oystOrderId,
-            ));
-            $magentoOrderId = $result['magento_order_id'];
+            try {
+                // Sync Order From Api
+                $result = $this->sync(array(
+                    'oyst_order_id' => $oystOrderId,
+                ));
+                $magentoOrderId = $result['magento_order_id'];
 
-            $response = Zend_Json::encode(array(
-                'magento_order_id' => $result['magento_order_id'],
-            ));
+                $response = Zend_Json::encode(array(
+                    'magento_order_id' => $result['magento_order_id'],
+                ));
+            } catch(Exception $e) {
+                $notification
+                    ->setMageResponse(Zend_Json::encode(array(
+                        'message' => $e->getMessage() . ' see : error_oyst.log',
+                    )))
+                    ->registerNotificationFail();
+                throw $e;
+            }
         }
 
         // Save new status and result in db
-        $notification->setStatus(Oyst_OneClick_Model_Notification::NOTIFICATION_STATUS_FINISHED)
+        $notification
             ->setMageResponse($response)
             ->setOrderId($magentoOrderId)
-            ->setExecutedAt(Mage::getSingleton('core/date')->gmtDate())
-            ->save();
+            ->registerNotificationFinish();
 
         return $response;
     }
@@ -115,8 +114,8 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         $oystOrderId = $params['oyst_order_id'];
 
         // Sync API
-        /** @var Oyst_OneClick_Model_Order_ApiWrapper $orderApi */
-        $orderApi = Mage::getModel('oyst_oneclick/order_apiWrapper');
+        /** @var Oyst_OneClick_Model_ApiWrapper_Type_Order $orderApi */
+        $orderApi = Mage::getModel('oyst_oneclick/apiWrapper_type_order');
 
         try {
             $this->orderResponse = $orderApi->getOrder($oystOrderId);
@@ -145,12 +144,25 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         Mage::register('order_status_changing', true);
 
         /** @var Oyst_OneClick_Model_Magento_Quote $magentoQuoteBuilder */
-        $magentoQuoteBuilder = Mage::getModel('oyst_oneclick/magento_quote', $this->orderResponse);
-        $magentoQuoteBuilder->syncQuoteFacade();
+        $quote =  Mage::getModel('sales/quote')->load($this->orderResponse['order']['context']['quote_id']);
+        Mage::helper('oyst_oneclick')->addQuoteExtraData(
+            $quote, 'newsletter_optin', $this->orderResponse['order']['newsletter_optin']
+        );
+        $quote->collectTotals();        
+
+        Mage::dispatchEvent(
+            'oyst_oneclick_model_order_create_magento_order_before',
+            array('quote' => $quote)
+        );
 
         /** @var Oyst_OneClick_Model_Magento_Order $magentoOrderBuilder */
-        $magentoOrderBuilder = Mage::getModel('oyst_oneclick/magento_order', $magentoQuoteBuilder->getQuote());
-        $magentoOrderBuilder->buildOrder();
+        $magentoOrderBuilder = Mage::getModel('oyst_oneclick/magento_order', $this->orderResponse);
+        $magentoOrderBuilder->setQuote($quote)->saveOrder();
+
+        Mage::dispatchEvent(
+            'oyst_oneclick_model_order_create_magento_order_after',
+            array('quote' => $quote, 'order' => $magentoOrderBuilder->getOrder())
+        );
 
         $magentoOrderBuilder->getOrder()->addStatusHistoryComment(
             Mage::helper('oyst_oneclick')->__(
@@ -165,7 +177,7 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         Mage::unregister('order_status_changing');
 
-        $this->clearCart($magentoQuoteBuilder->getQuote()->getQuoteId(), $oystOrderId);
+        $this->clearCart($quote->getQuoteId(), $oystOrderId);
 
         $magentoOrderBuilder->getOrder()->sendNewOrderEmail();
 
@@ -182,8 +194,8 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
         // Update Oyst order to accepted and auto-generate invoice
         if (in_array($currentStatus, array(OystOrderStatus::PENDING))) {
-            /** @var Oyst_OneClick_Model_Order_ApiWrapper $orderApiClient */
-            $orderApiClient = Mage::getModel('oyst_oneclick/order_apiWrapper');
+            /** @var Oyst_OneClick_Model_ApiWrapper_Type_Order $orderApiClient */
+            $orderApiClient = Mage::getModel('oyst_oneclick/apiWrapper_type_order');
 
             try {
                 $response = $orderApiClient->updateOrder($this->orderResponse['order']['id'], OystOrderStatus::ACCEPTED, $order->getIncrementId());
@@ -191,13 +203,21 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
 
                 $this->initTransaction($order);
 
-                $order->addStatusHistoryComment(
-                    Mage::helper('oyst_oneclick')->__(
-                        '%s update order status to: "%s".',
-                        $this->paymentMethod,
-                        OystOrderStatus::ACCEPTED
-                    )
-                );
+                if (!$order->getPayment()->getIsFraudDetected()) {
+                    $status = Mage::getStoreConfig('oyst/oneclick/order_status_payment_accepted');
+                    $order->setState(
+                        Mage_Sales_Model_Order::STATE_PROCESSING,
+                        $status ? $status : Oyst_OneClick_Helper_Data::STATUS_OYST_PAYMENT_ACCEPTED,
+                        Mage::helper('oyst_oneclick')->__(
+                            '%s update order status to: "%s".',
+                            $this->paymentMethod,
+                            OystOrderStatus::ACCEPTED
+                        )
+                    );
+                } else {
+                    $status = Mage::getStoreConfig('oyst/oneclick/order_status_payment_fraud');
+                    $order->setStatus($status ? $status : Oyst_OneClick_Helper_Data::STATUS_OYST_PAYMENT_FRAUD);
+                }
 
                 $invIncrementIDs = array();
                 if ($order->hasInvoices()) {
@@ -223,6 +243,11 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         if (in_array($currentStatus, array('denied', 'refunded'))) {
             $order->cancel();
         }
+
+        Mage::dispatchEvent(
+            'oyst_oneclick_model_order_change_status_after',
+            array('order' => $order)
+        );
 
         $order->save();
     }
@@ -251,6 +276,11 @@ class Oyst_OneClick_Model_Order extends Mage_Core_Model_Abstract
         if (Mage::helper('oyst_oneclick')->getConfig('enable_invoice_auto_generation')) {
             $payment->registerCaptureNotification($helper->getHumanAmount($this->orderResponse['order']['order_amount']['value']));
         }
+
+        Mage::dispatchEvent(
+            'oyst_oneclick_model_order_init_transaction_after',
+            array('payment' => $payment, 'order' => $order)
+        );
     }
 
     /**

@@ -35,10 +35,8 @@ function oystOneClick(config) {
 
         ready(function () {
             var form = new FormData();
+
             form.append("preload", opts.preload);
-            if (config.isCheckoutCart) {
-                form.append("isCheckoutCart", config.isCheckoutCart);
-            }
 
             if (config.addToCartProductFormId) {
                 var isErrorsInForm = null;
@@ -72,6 +70,9 @@ function oystOneClick(config) {
                         }
                     });
                     form.append("add_to_cart_form", JSON.stringify(addToCartFormData));
+                    $$('#'+config.addToCartProductFormId+' input[type="file"]').each(function(elem){
+                        form.append(elem.name, elem.files[0]);
+                    });
                 }
             }
 
@@ -111,7 +112,7 @@ function oystOneClick(config) {
 
                     cb(isErrorsInForm, data.url);
 
-                    if (messageProductViewElem) {
+                    if (messageProductViewElem && messageProductViewElem.parentNode) {
                         messageProductViewElem.parentNode.removeChild(messageProductViewElem);
                     }
                 }
@@ -123,17 +124,18 @@ function oystOneClick(config) {
     };
 
     var allowOystRedirectSelf = true;
-    window.addEventListener('message', function(event){
-        if (event.data.type == 'ORDER_COMPLETE' && config.isCheckoutCart) {
-           allowOystRedirectSelf = false;
+    window.addEventListener("message", function (event) {
+        if (event.data.type == "ORDER_COMPLETE"
+         || event.data.type == "ORDER_CONVERSION") {
+            allowOystRedirectSelf = false;
         }
 
-        if (event.data.type == 'ORDER_CANCEL') {
-           allowOystRedirectSelf = true;
+        if (event.data.type == "ORDER_CANCEL") {
+            allowOystRedirectSelf = true;
         }
 
-        if (event.data.type == 'MODAL_CLOSE' && allowOystRedirectSelf) {
-           window.location.reload(false);
+        if (event.data.type == "MODAL_CLOSE" && allowOystRedirectSelf) {
+            window.location.reload(false);
         }
     });
 }

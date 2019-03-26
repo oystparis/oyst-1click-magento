@@ -35,7 +35,7 @@ class Oyst_OneClick_Block_Adminhtml_Field_LogActions extends Mage_Adminhtml_Bloc
      */
     public function __construct(array $args = array())
     {
-        $this->_logFiles = array('system.log', 'exception.log', Oyst_OneClick_Helper_Data::MODULE_NAME . '.log');
+        $this->_logFiles = array('system.log', 'exception.log', Oyst_OneClick_Helper_Data::MODULE_NAME . '.log', 'error_oyst.log');
         parent::__construct($args);
     }
 

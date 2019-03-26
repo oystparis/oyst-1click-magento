@@ -26,6 +26,10 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
 
     const XML_PATH_RESTRICT_ALLOW_IPS = 'restrict_allow_ips';
 
+    const STATUS_OYST_PAYMENT_ACCEPTED = 'oyst_payment_accepted';
+
+    const STATUS_OYST_PAYMENT_FRAUD = 'oyst_payment_fraud';
+
     /**
      * Get config from Magento
      *
@@ -56,8 +60,8 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getSdkVersion()
     {
-        /** @var Oyst_OneClick_Model_Api $oystModel */
-        $oystModel = Mage::getModel('oyst_oneclick/api');
+        /** @var Oyst_OneClick_Model_ApiWrapper_Client $oystModel */
+        $oystModel = Mage::getModel('oyst_oneclick/apiWrapper_client');
 
         return $oystModel->getSdkVersion();
     }
@@ -109,8 +113,8 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     public function isApiKeyValid()
     {
         try {
-            /** @var Oyst_OneClick_Model_Api $api */
-            $api = Mage::getModel('oyst_oneclick/api');
+            /** @var Oyst_OneClick_Model_ApiWrapper_Client $api */
+            $api = Mage::getModel('oyst_oneclick/apiWrapper_client');
             $api->isApiKeyValid();
         } catch (Exception $e) {
             /** @var Oyst_OneClick_Helper_Data $oystHelper */
@@ -183,28 +187,6 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
         $freepayPaymentMethod = Mage::getModel('oyst_oneclick/payment_method_freepay');
 
         return false !== strpos($order->getPayment()->getMethod(), $freepayPaymentMethod->getCode());
-    }
-
-    /**
-     * Get metadata string.
-     *
-     * @return null|string
-     */
-    public function getTrackingMeta()
-    {
-        return '<script src="https://trk.10ru.pt"></script>' . PHP_EOL
-            . '<meta name="oyst_tracker_info_freepay_activated" content="'
-            . (int)Mage::getStoreConfigFlag('payment/oyst_freepay/active') . '">' . PHP_EOL
-            . '<meta name="oyst_tracker_info_freepay_apikey" content="'
-            . (int)Mage::getStoreConfigFlag('payment/oyst_abstract/api_login') . '">' . PHP_EOL
-            . '<meta name="oyst_tracker_environnement_freepay" content="'
-            . Mage::getStoreConfig('payment/oyst_abstract/mode') . '">' . PHP_EOL
-            . '<meta name="oyst_tracker_info_oneclick_activated" content="'
-            . (int)Mage::getStoreConfigFlag('oyst/oneclick/enable') . '">' . PHP_EOL
-            . '<meta name="oyst_tracker_info_oneclick_apikey" content="'
-            . (int)Mage::getStoreConfigFlag('oyst/oneclick/api_login') . '">' . PHP_EOL
-            . '<meta name="oyst_tracker_environnement_1click" content="'
-            . Mage::getStoreConfig('oyst/oneclick/mode') . '">' . PHP_EOL;
     }
 
     /**
@@ -283,5 +265,37 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $allow;
+    }
+
+    public function handleQuoteErrors(Mage_Sales_Model_Quote $quote)
+    {
+        if ($quote->getHasError()) {
+            $errorMessages = array();
+            foreach ($quote->getErrors() as $error) {
+                $errorMessages[] = $error->getCode();
+            }
+            throw new Mage_Checkout_Exception(implode('\n', $errorMessages));
+        }
+
+        return $this;
+    }
+
+    public function addQuoteExtraData($quote, $key, $value)
+    {
+        $extraData = json_decode($quote->getOystExtraData(), true);
+
+        if(empty($extraData)) {
+            $extraData = array();
+        }
+
+        $extraData[$key] = $value;
+
+        $quote->setOystExtraData(json_encode($extraData));
+    }
+
+    public function getSalesObjectExtraData($salesObject, $key)
+    {
+        $extraData = json_decode($salesObject->getOystExtraData(), true);
+        return isset($extraData[$key]) ? $extraData[$key] : null;
     }
 }

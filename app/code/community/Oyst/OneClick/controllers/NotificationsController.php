@@ -23,9 +23,15 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
     {
         $event = $this->getRequest()->getPost('event');
         $data = $this->getRequest()->getPost('data');
+        $input = $this->getRequest()->getRawBody();
 
-        // @codingStandardsIgnoreLine
-        $post = (array)Zend_Json::decode(str_replace("\n", '', file_get_contents('php://input')));
+        try {
+            // @codingStandardsIgnoreLine
+            $post = (array)Zend_Json::decode(str_replace("\n", '', $input));
+        } catch (\Exception $e) {
+            $this->traceException($e, $input);
+            return $this->badRequest('Invalid JSON Data '.json_encode($input));
+        }
 
         // Set the type and data from notification url
         if (empty($event) && empty($data) && !empty($post)) {
@@ -55,8 +61,6 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
                 break;
             // OneClick
             case 'order.cart.estimate':
-            case 'order.stock.book':
-            case 'order.stock.released':
                 $modelName = 'oyst_oneclick/catalog';
                 break;
             // FreePay
@@ -76,11 +80,21 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
             /** @var Oyst_OneClick_Model_Catalog|Oyst_OneClick_Model_Order $model */
             $model = Mage::getModel($modelName);
         } catch (\Exception $e) {
+            $this->traceException($e, $data);
             return $this->badRequest('Model name ' . $modelName . ' is missing. ' . $e->getMessage());
         }
 
-        /** @var Oyst_OneClick_Model_Catalog|Oyst_OneClick_Model_Order $model */
-        $response = $model->processNotification($event, $data);
+        try {
+            /** @var Oyst_OneClick_Model_Catalog|Oyst_OneClick_Model_Order $model */
+            Mage::app()->getStore()->setConfig(Mage_Directory_Helper_Data::XML_PATH_STATES_REQUIRED, '');
+            $response = $model->processNotification($event, $data);
+        } catch (\Mage_Checkout_Exception $e) {
+            $this->traceException($e, $data);
+            return $this->badRequest($e->getMessage());
+        } catch (\Exception $e) {
+            $this->traceException($e, $data);
+            return $this->errorResponse($e->getMessage());
+        }
 
         if ('cgi-fcgi' === php_sapi_name()) {
             $this->getResponse()->setHeader('Content-type', 'application/json');
@@ -100,6 +114,28 @@ class Oyst_OneClick_NotificationsController extends Mage_Core_Controller_Front_A
         $this->getResponse()
             ->clearHeaders()
             ->setHeader('HTTP/1.1', '400 Bad Request')
-            ->setBody('400 Bad Request' . $message);
+            ->setBody(json_encode(array('error' => 'M1-Oyst-Error', 'message' => $message)));
+    }
+
+    /**
+     * @param string $message
+     */
+    public function errorResponse($message = null)
+    {
+        if (isset($message)) {
+            $message = ': ' . (string)$message;
+        }
+
+        $this->getResponse()
+            ->clearHeaders()
+            ->setHeader('HTTP/1.1', '500 Internal Server Error')
+            ->setBody('500 Internal Server Error' . $message);
+    }
+
+    protected function traceException($exception, $input)
+    {
+        Mage::log($input, null, 'error_oyst.log', true);
+        Mage::log($exception->__toString(), null, 'error_oyst.log', true);
+        return $this;
     }
 }
