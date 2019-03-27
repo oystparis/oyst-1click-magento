@@ -68,7 +68,7 @@ class Oyst_OneClick_Model_OystCheckoutManagement extends Oyst_OneClick_Model_Abs
     {
         $isRequestedShippingMethodAvailable = false;
         $shippingMethod = null;
-        if ($oystCheckoutShipping['method_applied']) {
+        if (isset($oystCheckoutShipping['method_applied'])) {
             foreach ($methodsAvailable as $methodAvailable) {
                 $shippingMethod = $methodAvailable->getCode();
                 if ($shippingMethod == $oystCheckoutShipping['method_applied']['reference']) {

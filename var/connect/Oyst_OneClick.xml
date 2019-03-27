@@ -20,7 +20,7 @@ Oyst 1-Click is powered by strong security technologies:&lt;br /&gt;
 &lt;/ul&gt;</description>
    <license>Apache</license>
    <license_uri>https://www.apache.org/licenses/LICENSE-2.0.txt</license_uri>
-   <version>2.0.2</version>
+   <version>2.0.3</version>
    <stability>stable</stability>
    <notes>Check https://github.com/oystparis/oyst-1click-magento/releases/latest for details.</notes>
    <authors>
