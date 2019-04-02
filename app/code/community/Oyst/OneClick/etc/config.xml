@@ -19,7 +19,11 @@
         <models>
             <oyst_oneclick>
                 <class>Oyst_OneClick_Model</class>
+                <resourceModel>oyst_oneclick_resource</resourceModel>
             </oyst_oneclick>
+            <oyst_oneclick_resource>
+                <class>Oyst_OneClick_Model_Resource</class>
+            </oyst_oneclick_resource>
         </models>
         <resources>
             <oyst_oneclick_setup>

@@ -22,6 +22,8 @@ class Oyst_OneClick_Model_Payment_Method_OneClick extends Mage_Payment_Model_Met
 
     protected $_canRefundInvoicePartial = true;
 
+    protected $_canUseCheckout = false;
+
     /**
      * @return string
      */

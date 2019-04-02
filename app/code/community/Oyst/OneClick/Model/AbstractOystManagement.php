@@ -52,7 +52,7 @@ class Oyst_OneClick_Model_AbstractOystManagement
 
     protected function getMagentoProductsById($ids, $storeId)
     {
-        $products = Mage::getModel('catalog/product')->getCollection()
+        $products = Mage::getResourceModel('oyst_oneclick/product_collection')
             ->addAttributeToFilter('entity_id', array('in' => $ids))
             ->addAttributeToSelect('*')
             ->setStore($storeId)
