@@ -10,8 +10,9 @@ class Oyst_OneClick_Model_OystOrderManagement extends Oyst_OneClick_Model_Abstra
             throw new \Exception('Quote is not available.');
         }
 
+        $newsletter = isset($oystOrder['user']['newsletter']) ? $oystOrder['user']['newsletter'] : false;
         Mage::helper('oyst_oneclick')->addQuoteExtraData(
-            $quote, 'newsletter_optin', $oystOrder['user']['newsletter']
+            $quote, 'newsletter_optin', $newsletter
         );
 
         $quote->collectTotals();
