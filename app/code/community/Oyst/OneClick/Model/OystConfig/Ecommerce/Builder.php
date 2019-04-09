@@ -5,7 +5,8 @@ class Oyst_OneClick_Model_OystConfig_Ecommerce_Builder
      public function buildOystConfigEcommerce(
         array $carriers,
         array $countries,
-        array $orderStatuses
+        array $orderStatuses,
+        array $stores
     )
     {
         $oystConfigEcommerce = array();
@@ -13,6 +14,7 @@ class Oyst_OneClick_Model_OystConfig_Ecommerce_Builder
         $oystConfigEcommerce['shipping_methods'] = $this->buildOystConfigEcommerceShippingMethods($carriers);
         $oystConfigEcommerce['countries'] = $this->buildOystConfigEcommerceCountries($countries);
         $oystConfigEcommerce['order_statuses'] = $this->buildOystConfigEcommerceOrderStatuses($orderStatuses);
+        $oystConfigEcommerce['shops'] = $this->buildOystConfigEcommerceShops($stores);
 
         return $oystConfigEcommerce;
     }
@@ -62,6 +64,23 @@ class Oyst_OneClick_Model_OystConfig_Ecommerce_Builder
             $oystConfigEcommerceOrderStatus['code'] = $key;
 
             $result[] = $oystConfigEcommerceOrderStatus;
+        }
+
+        return $result;
+    }
+
+    protected function buildOystConfigEcommerceShops(array $stores)
+    {
+        $result = [];
+
+        foreach ($stores as $store) {
+            $oystConfigEcommerceShop = array();
+
+            $oystConfigEcommerceShop['code'] = $store->getCode();
+            $oystConfigEcommerceShop['url'] = $store->getBaseUrl();
+            $oystConfigEcommerceShop['label'] = $store->getName();
+
+            $result[] = $oystConfigEcommerceShop;
         }
 
         return $result;

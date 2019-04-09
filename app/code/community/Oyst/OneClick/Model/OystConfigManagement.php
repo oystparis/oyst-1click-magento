@@ -30,10 +30,13 @@ class Oyst_OneClick_Model_OystConfigManagement
 
         $orderStatuses = Mage::getModel('sales/order_config')->getStatuses();
 
+        $stores = Mage::app()->getStores(true);
+        
         return Mage::getModel('oyst_oneclick/oystConfig_ecommerce_builder')->buildOystConfigEcommerce(
             $carriers,
             $countries,
-            $orderStatuses
+            $orderStatuses,
+            $stores
         );
     }
 }
