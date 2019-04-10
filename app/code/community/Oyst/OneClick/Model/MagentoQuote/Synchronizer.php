@@ -132,11 +132,16 @@ class Oyst_OneClick_Model_MagentoQuote_Synchronizer
         $addressData['lastname'] = $oystCheckoutAddress['lastname'];
         $addressData['city'] = $oystCheckoutAddress['city'];
         $addressData['postcode'] = $oystCheckoutAddress['postcode'];
-        $addressData['street'] = [$oystCheckoutAddress['street1'], $oystCheckoutAddress['street2']];
+        $addressData['street'] = [$oystCheckoutAddress['street1']];
+        if (isset($oystCheckoutAddress['street2'])) {
+            $addressData['street'][] = $oystCheckoutAddress['street2'];
+        }
         $addressData['country_id'] = $oystCheckoutAddress['country']['code'];
         $addressData['telephone'] = $oystCheckoutAddress['phone_mobile'];
         $addressData['email'] = $oystCheckoutAddress['email'];
-        $addressData['company'] = $oystCheckoutAddress['company'];
+        if (isset($oystCheckoutAddress['company'])) {
+            $addressData['company'] = $oystCheckoutAddress['company'];
+        }
 
         return $addressData;
     }
