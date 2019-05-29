@@ -36,6 +36,10 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     public function mapMagentoExceptionCodeToOystErrorCode($exceptionCode)
     {
         switch($exceptionCode) {
+            case 3:
+                return 'address-validation-failed';
+            case 2:
+                return 'coupon-error';
             case 1:
                 return 'unhandled-address';
             default:
@@ -46,7 +50,7 @@ class Oyst_OneClick_Helper_Data extends Mage_Core_Helper_Abstract
     public function validateAddress(Mage_Customer_Model_Address_Abstract $address, $store = null)
     {
         if (($validateRes = $address->validate()) !== true) {
-            throw new Mage_Checkout_Exception(implode('\n', $validateRes));
+            throw new Mage_Checkout_Exception(implode('\n', $validateRes), 3);
         }
 
         $allowCountries = explode(',', (string)Mage::getStoreConfig('general/country/allow', $store));
